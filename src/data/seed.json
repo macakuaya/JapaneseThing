@@ -1,0 +1,3566 @@
+{
+  "id": "japones-sensei-ai",
+  "name": "Japonés con 先生Ai",
+  "nativeLang": "es",
+  "targetLang": "ja",
+  "categories": [
+    {
+      "id": "gramatica",
+      "label": "Gramática",
+      "subcategories": [
+        "N5",
+        "N4"
+      ]
+    },
+    {
+      "id": "verbos",
+      "label": "Verbos",
+      "subcategories": [
+        "Movimiento / viaje",
+        "Cocina",
+        "Vestirse / arreglo personal",
+        "Dar / recibir",
+        "Pares transitivo / intransitivo (cambios de estado)",
+        "Emociones / estado mental",
+        "Cuerpo / salud",
+        "Comunicación / trabajo",
+        "Percepción / conocimiento",
+        "Otros verbos de uso general"
+      ]
+    },
+    {
+      "id": "vocabulario",
+      "label": "Vocabulario",
+      "subcategories": [
+        "Comida y cocina",
+        "Casa y objetos cotidianos",
+        "Cuerpo y salud",
+        "Familia",
+        "Trabajo / profesiones",
+        "Cultura y festividades japonesas",
+        "Clima y naturaleza",
+        "Colores y diseño",
+        "Animales",
+        "Abstractos / emociones / situaciones"
+      ]
+    },
+    {
+      "id": "expresiones",
+      "label": "Expresiones",
+      "subcategories": []
+    }
+  ],
+  "entries": [
+    {
+      "category": "gramatica",
+      "subcategory": "N5",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "02m10id",
+      "pattern": "〜より〜のほうが〜です",
+      "meaning": "A es más ~ que B",
+      "example": {
+        "target": "ドイツはバルセロナより涼しいです。",
+        "native": "Alemania es más fresca que Barcelona."
+      },
+      "level": "N5"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N5",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "1746y1e",
+      "pattern": "〜と〜とどちらが〜ですか／〜のほうが〜です",
+      "meaning": "¿Cuál es más ~, A o B?",
+      "example": {
+        "target": "犬と猫とどちらが好きですか。犬のほうが好きです。",
+        "native": "¿Qué te gusta más, perros o gatos? Me gustan más los perros."
+      },
+      "level": "N5"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N5",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "0omgxo5",
+      "pattern": "〜なければなりません／いけません",
+      "meaning": "tener que hacer ~",
+      "example": {
+        "target": "薬を買わなければなりません。",
+        "native": "Tengo que comprar medicina."
+      },
+      "level": "N5"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N5",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "08a2t5o",
+      "pattern": "〜たり〜たりします",
+      "meaning": "hacer cosas como... y...",
+      "example": {
+        "target": "週末は歩いたり走ったりします。",
+        "native": "El fin de semana camino y corro."
+      },
+      "level": "N5"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N5",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "16qy7lx",
+      "pattern": "この／その／あの、ここ／そこ／あそこ",
+      "meaning": "este/ese/aquel, aquí/ahí/allí",
+      "example": {
+        "target": "あの店はおいしいです。",
+        "native": "Esa tienda de allí es rica."
+      },
+      "level": "N5"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N5",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "09o2eor",
+      "pattern": "〜ことがあります／ありません",
+      "meaning": "hay veces que ~ / experiencia de haber hecho ~",
+      "example": {
+        "target": "日本に行ったことがあります。",
+        "native": "He ido a Japón alguna vez."
+      },
+      "level": "N5"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N5",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "0whhpdd",
+      "pattern": "〜と言います",
+      "meaning": "se llama ~",
+      "example": {
+        "target": "この魚は鮭と言います。",
+        "native": "A este pescado se le llama salmón."
+      },
+      "level": "N5"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N5",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "18omp7e",
+      "pattern": "〜てもいいです",
+      "meaning": "está bien si hago ~",
+      "example": {
+        "target": "ここに座ってもいいですか。",
+        "native": "¿Puedo sentarme aquí?"
+      },
+      "level": "N5"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N5",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "16efos3",
+      "pattern": "Vます＋はじめる",
+      "meaning": "empezar a hacer ~",
+      "example": {
+        "target": "雨が降りはじめました。",
+        "native": "Empezó a llover."
+      },
+      "level": "N5"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "0ty6gt5",
+      "pattern": "〜について",
+      "meaning": "acerca de ~",
+      "example": {
+        "target": "歴史についての本です。",
+        "native": "Es un libro acerca de la historia."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "1nwhqss",
+      "pattern": "〜にとって",
+      "meaning": "para ~ / desde el punto de vista de ~",
+      "example": {
+        "target": "子供にとって公園は大切です。",
+        "native": "Para los niños, el parque es importante."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "08mixmg",
+      "pattern": "〜という〜",
+      "meaning": "llamado ~ / que se llama ~",
+      "example": {
+        "target": "「国宝」という映画を見ました。",
+        "native": "Vi una película llamada \"Kokuhō\"."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "197fi4a",
+      "pattern": "〜と言われています",
+      "meaning": "se dice que ~",
+      "example": {
+        "target": "このお寺は古いと言われています。",
+        "native": "Se dice que este templo es antiguo."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "06czohm",
+      "pattern": "〜ように見えました",
+      "meaning": "parecía que ~",
+      "example": {
+        "target": "彼は疲れているように見えました。",
+        "native": "Parecía que él estaba cansado."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "0jigqaj",
+      "pattern": "〜そうです（様態）",
+      "meaning": "parece que ~ (apariencia)",
+      "example": {
+        "target": "このケーキはおいしそうです。",
+        "native": "Esta tarta parece rica."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "1q4nowt",
+      "pattern": "〜による／〜によって",
+      "meaning": "según ~ / depende de ~",
+      "example": {
+        "target": "州によります。",
+        "native": "Depende del estado/provincia."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "1cnsx2k",
+      "pattern": "〜とはかぎりません",
+      "meaning": "no necesariamente ~",
+      "example": {
+        "target": "高いものがいいとはかぎりません。",
+        "native": "Lo caro no necesariamente es bueno."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "1ererk2",
+      "pattern": "〜たら",
+      "meaning": "si ~ / cuando ~",
+      "example": {
+        "target": "雨がふったら、うちにいます。",
+        "native": "Si llueve, me quedo en casa."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "16wc9l2",
+      "pattern": "〜ば",
+      "meaning": "si ~ (más formal)",
+      "example": {
+        "target": "勉強すれば、日本語が上手になります。",
+        "native": "Si estudias, mejorarás en japonés."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "15kpf06",
+      "pattern": "もし〜なら",
+      "meaning": "si fuera el caso de que ~",
+      "example": {
+        "target": "もし時間があったら、行きます。",
+        "native": "Si tuviera tiempo, iría."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "1mrt82z",
+      "pattern": "〜のに",
+      "meaning": "a pesar de que ~ / pero (contraste)",
+      "example": {
+        "target": "安いのに、おいしいです。",
+        "native": "A pesar de ser barato, está rico."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "1ulpzz5",
+      "pattern": "〜んだけど／〜んですが",
+      "meaning": "~ pero... (forma suave)",
+      "example": {
+        "target": "行きたいんだけど、時間がありません。",
+        "native": "Quiero ir, pero no tengo tiempo."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "0zzzboi",
+      "pattern": "〜ため（に）",
+      "meaning": "para ~ / a causa de ~",
+      "example": {
+        "target": "健康のために野菜を食べます。",
+        "native": "Como verduras por mi salud."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "0zw4nit",
+      "pattern": "〜かわりに",
+      "meaning": "en lugar de ~",
+      "example": {
+        "target": "コーヒーのかわりにお茶を飲みます。",
+        "native": "Bebo té en lugar de café."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "1u9ul0r",
+      "pattern": "〜たびに",
+      "meaning": "cada vez que ~",
+      "example": {
+        "target": "会うたびに元気になります。",
+        "native": "Cada vez que lo veo, me animo."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "1yx7d7w",
+      "pattern": "〜てくる／〜ていく",
+      "meaning": "~ va pasando gradualmente",
+      "example": {
+        "target": "寒くなってきました。",
+        "native": "Ha ido haciendo más frío."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "0m46iue",
+      "pattern": "〜しか〜ない",
+      "meaning": "solo ~ / nada más que ~",
+      "example": {
+        "target": "土曜日しか行けません。",
+        "native": "Solo puedo ir el sábado."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "1oken6x",
+      "pattern": "〜として",
+      "meaning": "como ~ / en calidad de ~",
+      "example": {
+        "target": "先生として働いています。",
+        "native": "Trabajo como profesor/a."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "17txf6x",
+      "pattern": "〜ばかり",
+      "meaning": "recién hecho / acabado de ~",
+      "example": {
+        "target": "着いたばかりです。",
+        "native": "Acabo de llegar."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "0axigje",
+      "pattern": "〜ことになりました",
+      "meaning": "se decidió/resultó que ~",
+      "example": {
+        "target": "来月引っ越すことになりました。",
+        "native": "Se decidió que me mudo el próximo mes."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "003qlv1",
+      "pattern": "〜ぶりに",
+      "meaning": "después de tanto tiempo sin ~",
+      "example": {
+        "target": "3年ぶりに日本に来ました。",
+        "native": "Vine a Japón después de 3 años."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "1m1tmwv",
+      "pattern": "少しずつ／〜ずつ",
+      "meaning": "poco a poco / de ~ en ~",
+      "example": {
+        "target": "物が少しずつ変わります。",
+        "native": "Las cosas cambian poco a poco."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "1jwgxxq",
+      "pattern": "〜せいで",
+      "meaning": "por culpa de ~",
+      "example": {
+        "target": "雨のせいで出かけられません。",
+        "native": "Por culpa de la lluvia no puedo salir."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "0bxjauo",
+      "pattern": "〜てもらう／くれる／あげる",
+      "meaning": "recibir/dar el favor de que alguien haga ~",
+      "example": {
+        "target": "友達に本をすすめてもらいました。",
+        "native": "Un amigo me recomendó un libro."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "1fjkhlu",
+      "pattern": "〜すぎる",
+      "meaning": "demasiado ~",
+      "example": {
+        "target": "このラーメンはおいしすぎます。",
+        "native": "Este ramen está demasiado rico."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "gramatica",
+      "subcategory": "N4",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "156vfrb",
+      "pattern": "〜同士（で）",
+      "meaning": "entre/mutuamente (mismo tipo)",
+      "example": {
+        "target": "友達同士で話します。",
+        "native": "Hablamos entre amigos."
+      },
+      "level": "N4"
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Movimiento / viaje",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "15lj03l",
+      "kanji": "行く",
+      "kana": "いく",
+      "variants": [
+        "行く"
+      ],
+      "meaning": "ir",
+      "example": {
+        "target": "学校に行きます。",
+        "native": "Voy a la escuela."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Movimiento / viaje",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "05hafpl",
+      "kanji": "帰る",
+      "kana": "かえる",
+      "variants": [
+        "帰る"
+      ],
+      "meaning": "volver (a casa/país)",
+      "example": {
+        "target": "国に帰りました。",
+        "native": "Volví a mi país."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Movimiento / viaje",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1aekvpw",
+      "kanji": "戻る",
+      "kana": "もどる",
+      "variants": [
+        "戻る"
+      ],
+      "meaning": "volver/regresar (general)",
+      "example": {
+        "target": "家に戻りました。",
+        "native": "Volví a casa."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Movimiento / viaje",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0aoguf1",
+      "kanji": "着く",
+      "kana": "つく",
+      "variants": [
+        "着く"
+      ],
+      "meaning": "llegar",
+      "example": {
+        "target": "駅に着きました。",
+        "native": "Llegué a la estación."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Movimiento / viaje",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1sxs6d2",
+      "kanji": "飛ぶ／飛ばす",
+      "kana": "とぶ／とばす",
+      "variants": [
+        "飛ぶ",
+        "飛ばす"
+      ],
+      "meaning": "volar / hacer volar",
+      "example": {
+        "target": "鳥が空を飛びます。",
+        "native": "El pájaro vuela en el cielo."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Movimiento / viaje",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1wjt75h",
+      "kanji": "泊まる",
+      "kana": "とまる",
+      "variants": [
+        "泊まる"
+      ],
+      "meaning": "alojarse, pasar la noche",
+      "example": {
+        "target": "ホテルに泊まります。",
+        "native": "Me alojo en un hotel."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Movimiento / viaje",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0tb9tby",
+      "kanji": "移動する",
+      "kana": "いどうする",
+      "variants": [
+        "移動する"
+      ],
+      "meaning": "desplazarse",
+      "example": {
+        "target": "電車で移動します。",
+        "native": "Me desplazo en tren."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Movimiento / viaje",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "120sz1r",
+      "kanji": "出かける",
+      "kana": "でかける",
+      "variants": [
+        "出かける"
+      ],
+      "meaning": "salir (de casa)",
+      "example": {
+        "target": "今から出かけます。",
+        "native": "Voy a salir ahora."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Movimiento / viaje",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1ts9yhw",
+      "kanji": "出会う",
+      "kana": "であう",
+      "variants": [
+        "出会う"
+      ],
+      "meaning": "encontrarse con, conocer a alguien",
+      "example": {
+        "target": "公園で友達と出会いました。",
+        "native": "Me encontré con un amigo en el parque."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0n2xm0v",
+      "kanji": "入れる／淹れる",
+      "kana": "いれる",
+      "variants": [
+        "入れる",
+        "淹れる"
+      ],
+      "meaning": "meter/poner / preparar (café, té)",
+      "example": {
+        "target": "コーヒーを淹れます。",
+        "native": "Preparo un café."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1a0nc1p",
+      "kanji": "むく",
+      "kana": "むく",
+      "variants": [
+        "むく"
+      ],
+      "meaning": "pelar",
+      "example": {
+        "target": "りんごの皮をむきます。",
+        "native": "Pelo la manzana."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0mp9g3n",
+      "kanji": "蒸す",
+      "kana": "むす",
+      "variants": [
+        "蒸す"
+      ],
+      "meaning": "cocinar al vapor",
+      "example": {
+        "target": "野菜を蒸します。",
+        "native": "Cocino verduras al vapor."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0sjf4sq",
+      "kanji": "詰める",
+      "kana": "つめる",
+      "variants": [
+        "詰める"
+      ],
+      "meaning": "rellenar, empacar",
+      "example": {
+        "target": "箱に荷物を詰めます。",
+        "native": "Empaco el equipaje en la caja."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Vestirse / arreglo personal",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "046jg61",
+      "kanji": "着る",
+      "kana": "きる",
+      "variants": [
+        "着る"
+      ],
+      "meaning": "ponerse (ropa por la cabeza)",
+      "example": {
+        "target": "シャツを着ます。",
+        "native": "Me pongo la camisa."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Vestirse / arreglo personal",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0kxcguk",
+      "kanji": "はく",
+      "kana": "はく",
+      "variants": [
+        "はく"
+      ],
+      "meaning": "ponerse (pantalones, zapatos)",
+      "example": {
+        "target": "靴をはきます。",
+        "native": "Me pongo los zapatos."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Vestirse / arreglo personal",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1jm9nxs",
+      "kanji": "かぶる",
+      "kana": "かぶる",
+      "variants": [
+        "かぶる"
+      ],
+      "meaning": "ponerse (sombrero, gorro)",
+      "example": {
+        "target": "帽子をかぶります。",
+        "native": "Me pongo el sombrero."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Vestirse / arreglo personal",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0yw65lh",
+      "kanji": "はめる",
+      "kana": "はめる",
+      "variants": [
+        "はめる"
+      ],
+      "meaning": "ponerse (guantes, anillo)",
+      "example": {
+        "target": "手袋をはめます。",
+        "native": "Me pongo los guantes."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Vestirse / arreglo personal",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0po8ura",
+      "kanji": "つける",
+      "kana": "つける",
+      "variants": [
+        "つける"
+      ],
+      "meaning": "ponerse (accesorios)",
+      "example": {
+        "target": "ネクタイをつけます。",
+        "native": "Me pongo la corbata."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Vestirse / arreglo personal",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1lebc6k",
+      "kanji": "似合う",
+      "kana": "にあう",
+      "variants": [
+        "似合う"
+      ],
+      "meaning": "quedar bien, sentar bien",
+      "example": {
+        "target": "その色は似合います。",
+        "native": "Ese color te queda bien."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Dar / recibir",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1blor1d",
+      "kanji": "あげる",
+      "kana": "あげる",
+      "variants": [
+        "あげる"
+      ],
+      "meaning": "dar (a otra persona)",
+      "example": {
+        "target": "友達に本をあげました。",
+        "native": "Le di un libro a un amigo."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Dar / recibir",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "14zqcp2",
+      "kanji": "くれる",
+      "kana": "くれる",
+      "variants": [
+        "くれる"
+      ],
+      "meaning": "dar (a mí/mi grupo)",
+      "example": {
+        "target": "友達が本をくれました。",
+        "native": "Un amigo me dio un libro."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Dar / recibir",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "14y3j0p",
+      "kanji": "もらう",
+      "kana": "もらう",
+      "variants": [
+        "もらう"
+      ],
+      "meaning": "recibir",
+      "example": {
+        "target": "友達に本をもらいました。",
+        "native": "Recibí un libro de un amigo."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Pares transitivo / intransitivo (cambios de estado)",
+      "source": "seed",
+      "relatedIds": [
+        "0kkzvem"
+      ],
+      "kind": "word",
+      "id": "1l9v55w",
+      "kanji": "開く",
+      "kana": "あく",
+      "variants": [],
+      "role": "intransitive",
+      "meaning": "abrirse",
+      "example": {
+        "target": "ドアが開きます。",
+        "native": "La puerta se abre."
+      },
+      "note": "intransitivo"
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Pares transitivo / intransitivo (cambios de estado)",
+      "source": "seed",
+      "relatedIds": [
+        "1l9v55w"
+      ],
+      "kind": "word",
+      "id": "0kkzvem",
+      "kanji": "開ける",
+      "kana": "あける",
+      "variants": [],
+      "role": "transitive",
+      "meaning": "abrir",
+      "example": {
+        "target": "ドアを開けます。",
+        "native": "Abro la puerta."
+      },
+      "note": "transitivo"
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Pares transitivo / intransitivo (cambios de estado)",
+      "source": "seed",
+      "relatedIds": [
+        "133gev2"
+      ],
+      "kind": "word",
+      "id": "1wp4vn3",
+      "kanji": null,
+      "kana": "こわれる",
+      "variants": [],
+      "role": "intransitive",
+      "meaning": "romperse",
+      "example": {
+        "target": "おもちゃがこわれました。",
+        "native": "El juguete se rompió."
+      },
+      "note": "intransitivo"
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Pares transitivo / intransitivo (cambios de estado)",
+      "source": "seed",
+      "relatedIds": [
+        "1wp4vn3"
+      ],
+      "kind": "word",
+      "id": "133gev2",
+      "kanji": null,
+      "kana": "こわす",
+      "variants": [],
+      "role": "transitive",
+      "meaning": "romper",
+      "example": {
+        "target": "おもちゃがこわれました。",
+        "native": "El juguete se rompió."
+      },
+      "note": "transitivo"
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Pares transitivo / intransitivo (cambios de estado)",
+      "source": "seed",
+      "relatedIds": [
+        "1k8hlh0"
+      ],
+      "kind": "word",
+      "id": "19kw1te",
+      "kanji": "点く",
+      "kana": "つく",
+      "variants": [],
+      "role": "intransitive",
+      "meaning": "encenderse",
+      "example": {
+        "target": "テレビがついています。",
+        "native": "La tele está encendida."
+      },
+      "note": "intransitivo"
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Pares transitivo / intransitivo (cambios de estado)",
+      "source": "seed",
+      "relatedIds": [
+        "19kw1te"
+      ],
+      "kind": "word",
+      "id": "1k8hlh0",
+      "kanji": "点ける",
+      "kana": "つける",
+      "variants": [],
+      "role": "transitive",
+      "meaning": "encender",
+      "example": {
+        "target": "テレビがついています。",
+        "native": "La tele está encendida."
+      },
+      "note": "transitivo"
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Pares transitivo / intransitivo (cambios de estado)",
+      "source": "seed",
+      "relatedIds": [
+        "1vgtw1z"
+      ],
+      "kind": "word",
+      "id": "10fh4xl",
+      "kanji": "変わる",
+      "kana": "かわる",
+      "variants": [],
+      "role": "intransitive",
+      "meaning": "cambiar (algo cambia/algo se cambia)",
+      "example": {
+        "target": "天気が変わりました。",
+        "native": "El clima cambió."
+      },
+      "note": "intransitivo"
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Pares transitivo / intransitivo (cambios de estado)",
+      "source": "seed",
+      "relatedIds": [
+        "10fh4xl"
+      ],
+      "kind": "word",
+      "id": "1vgtw1z",
+      "kanji": "変える",
+      "kana": "かえる",
+      "variants": [],
+      "role": "transitive",
+      "meaning": "cambiar (algo cambia/algo se cambia)",
+      "example": {
+        "target": "天気が変わりました。",
+        "native": "El clima cambió."
+      },
+      "note": "transitivo"
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Pares transitivo / intransitivo (cambios de estado)",
+      "source": "seed",
+      "relatedIds": [
+        "039mcgi"
+      ],
+      "kind": "word",
+      "id": "0egr89r",
+      "kanji": null,
+      "kana": "わかれる",
+      "variants": [],
+      "role": "intransitive",
+      "meaning": "dividirse",
+      "example": {
+        "target": "２つに分かれています。",
+        "native": "Está dividido en dos."
+      },
+      "note": "intransitivo"
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Pares transitivo / intransitivo (cambios de estado)",
+      "source": "seed",
+      "relatedIds": [
+        "0egr89r"
+      ],
+      "kind": "word",
+      "id": "039mcgi",
+      "kanji": null,
+      "kana": "わける",
+      "variants": [],
+      "role": "transitive",
+      "meaning": "dividir",
+      "example": {
+        "target": "２つに分かれています。",
+        "native": "Está dividido en dos."
+      },
+      "note": "transitivo"
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Pares transitivo / intransitivo (cambios de estado)",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1u69giy",
+      "kanji": "増える",
+      "kana": "ふえる",
+      "variants": [],
+      "role": "intransitive",
+      "meaning": "aumentar",
+      "example": {
+        "target": "人口が増えます。",
+        "native": "La población aumenta."
+      },
+      "note": "intransitivo"
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Pares transitivo / intransitivo (cambios de estado)",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1vvv4g8",
+      "kanji": "減る",
+      "kana": "へる",
+      "variants": [],
+      "role": "intransitive",
+      "meaning": "disminuir",
+      "example": {
+        "target": "人口が減ります。",
+        "native": "La población disminuye."
+      },
+      "note": "intransitivo"
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Pares transitivo / intransitivo (cambios de estado)",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0akd4zf",
+      "kanji": "落ちる",
+      "kana": "おちる",
+      "variants": [],
+      "role": "intransitive",
+      "meaning": "caerse",
+      "example": {
+        "target": "葉が落ちます。",
+        "native": "Las hojas se caen."
+      },
+      "note": "intransitivo"
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Pares transitivo / intransitivo (cambios de estado)",
+      "source": "seed",
+      "relatedIds": [
+        "03z2p12"
+      ],
+      "kind": "word",
+      "id": "1sd4e9f",
+      "kanji": "回る",
+      "kana": "まわる",
+      "variants": [],
+      "role": "intransitive",
+      "meaning": "girar (algo gira)",
+      "example": {
+        "target": "車輪が回ります。",
+        "native": "La rueda gira."
+      },
+      "note": "intransitivo"
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Pares transitivo / intransitivo (cambios de estado)",
+      "source": "seed",
+      "relatedIds": [
+        "1sd4e9f"
+      ],
+      "kind": "word",
+      "id": "03z2p12",
+      "kanji": "回す",
+      "kana": "まわす",
+      "variants": [],
+      "role": "transitive",
+      "meaning": "girar (algo)",
+      "example": {
+        "target": "車輪が回ります。",
+        "native": "La rueda gira."
+      },
+      "note": "transitivo"
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Emociones / estado mental",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "053f7qi",
+      "kanji": "慣れる",
+      "kana": "なれる",
+      "variants": [
+        "慣れる"
+      ],
+      "meaning": "acostumbrarse",
+      "example": {
+        "target": "新しい仕事に慣れました。",
+        "native": "Me acostumbré al trabajo nuevo."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Emociones / estado mental",
+      "source": "seed",
+      "relatedIds": [
+        "05ztrm5"
+      ],
+      "kind": "word",
+      "id": "0m4xznz",
+      "kanji": "落ち着く",
+      "kana": "おちつく",
+      "variants": [
+        "落ち着く"
+      ],
+      "meaning": "calmarse, tranquilizarse",
+      "example": {
+        "target": "だんだん落ち着いてきました。",
+        "native": "Poco a poco me fui calmando."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Emociones / estado mental",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "15k9oaj",
+      "kanji": "驚く",
+      "kana": "おどろく",
+      "variants": [
+        "驚く"
+      ],
+      "meaning": "sorprenderse",
+      "example": {
+        "target": "そのニュースに驚きました。",
+        "native": "Me sorprendió esa noticia."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Emociones / estado mental",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1rs09kz",
+      "kanji": "びっくりする",
+      "kana": "びっくりする",
+      "variants": [
+        "びっくりする"
+      ],
+      "meaning": "sorprenderse (informal)",
+      "example": {
+        "target": "音にびっくりしました。",
+        "native": "Me sorprendió el ruido."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Emociones / estado mental",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0bhn08f",
+      "kanji": "うんざりする",
+      "kana": "うんざりする",
+      "variants": [
+        "うんざりする"
+      ],
+      "meaning": "estar harto/a",
+      "example": {
+        "target": "暑さにうんざりしています。",
+        "native": "Estoy harto/a del calor."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Emociones / estado mental",
+      "source": "seed",
+      "relatedIds": [
+        "1iv84ct"
+      ],
+      "kind": "word",
+      "id": "1bnf525",
+      "kanji": "気になる",
+      "kana": "きになる",
+      "variants": [
+        "気になる"
+      ],
+      "meaning": "preocupar, llamar la atención",
+      "example": {
+        "target": "明日の天気が気になります。",
+        "native": "Me preocupa el clima de mañana."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Emociones / estado mental",
+      "source": "seed",
+      "relatedIds": [
+        "18rmfdu"
+      ],
+      "kind": "word",
+      "id": "0svt7h0",
+      "kanji": "気に入る",
+      "kana": "きにいる",
+      "variants": [
+        "気に入る"
+      ],
+      "meaning": "gustar, agradar",
+      "example": {
+        "target": "このデザインが気に入りました。",
+        "native": "Me gustó este diseño."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Emociones / estado mental",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0sh3cw5",
+      "kanji": "緊張する",
+      "kana": "きんちょうする",
+      "variants": [
+        "緊張する"
+      ],
+      "meaning": "ponerse nervioso/a",
+      "example": {
+        "target": "面接で緊張しました。",
+        "native": "Me puse nervioso/a en la entrevista."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Emociones / estado mental",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1awj991",
+      "kanji": "恋に落ちる",
+      "kana": "こいにおちる",
+      "variants": [
+        "恋に落ちる"
+      ],
+      "meaning": "enamorarse",
+      "example": {
+        "target": "彼女は恋に落ちました。",
+        "native": "Ella se enamoró."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Emociones / estado mental",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0pgrlqc",
+      "kanji": "信じる",
+      "kana": "しんじる",
+      "variants": [
+        "信じる"
+      ],
+      "meaning": "creer",
+      "example": {
+        "target": "星座を信じますか。",
+        "native": "¿Crees en los signos del zodiaco?"
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Cuerpo / salud",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "071vyim",
+      "kanji": "嘔吐する／吐く",
+      "kana": "おうとする／はく",
+      "variants": [
+        "嘔吐する",
+        "吐く"
+      ],
+      "meaning": "vomitar",
+      "example": {
+        "target": "気分が悪くて吐きました。",
+        "native": "Me sentí mal y vomité."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Cuerpo / salud",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0qvup1m",
+      "kanji": "注射する",
+      "kana": "ちゅうしゃする",
+      "variants": [
+        "注射する"
+      ],
+      "meaning": "poner una inyección",
+      "example": {
+        "target": "医者が注射します。",
+        "native": "El médico pone una inyección."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Cuerpo / salud",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1ee01lv",
+      "kanji": "入院する",
+      "kana": "にゅういんする",
+      "variants": [
+        "入院する"
+      ],
+      "meaning": "ser hospitalizado/a",
+      "example": {
+        "target": "一週間入院しました。",
+        "native": "Estuve hospitalizado/a una semana."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Cuerpo / salud",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1gkscoj",
+      "kanji": "診察する",
+      "kana": "しんさつする",
+      "variants": [
+        "診察する"
+      ],
+      "meaning": "examinar (médicamente)",
+      "example": {
+        "target": "医者が診察します。",
+        "native": "El médico me examina."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Cuerpo / salud",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1j708p4",
+      "kanji": "泣く",
+      "kana": "なく",
+      "variants": [
+        "泣く"
+      ],
+      "meaning": "llorar",
+      "example": {
+        "target": "映画を見て泣きました。",
+        "native": "Lloré viendo la película."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Comunicación / trabajo",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "19z6b8k",
+      "kanji": "発表する",
+      "kana": "はっぴょうする",
+      "variants": [
+        "発表する"
+      ],
+      "meaning": "presentar, anunciar",
+      "example": {
+        "target": "研究を発表しました。",
+        "native": "Presenté mi investigación."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Comunicación / trabajo",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "02bfh2u",
+      "kanji": "頼む",
+      "kana": "たのむ",
+      "variants": [
+        "頼む"
+      ],
+      "meaning": "pedir (un favor/encargo)",
+      "example": {
+        "target": "友達に頼みました。",
+        "native": "Se lo pedí a un amigo."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Comunicación / trabajo",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0f112bh",
+      "kanji": "変更する",
+      "kana": "へんこうする",
+      "variants": [
+        "変更する"
+      ],
+      "meaning": "cambiar, modificar",
+      "example": {
+        "target": "予定を変更しました。",
+        "native": "Cambié los planes."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Comunicación / trabajo",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0r7hhob",
+      "kanji": "抗議する",
+      "kana": "こうぎする",
+      "variants": [
+        "抗議する"
+      ],
+      "meaning": "protestar",
+      "example": {
+        "target": "決定に抗議しました。",
+        "native": "Protesté por la decisión."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Comunicación / trabajo",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0ukg2hp",
+      "kanji": "放送する",
+      "kana": "ほうそうする",
+      "variants": [
+        "放送する"
+      ],
+      "meaning": "transmitir (radio/TV)",
+      "example": {
+        "target": "ニュースを放送します。",
+        "native": "Transmiten las noticias."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Comunicación / trabajo",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0nnu92d",
+      "kanji": "雇う",
+      "kana": "やとう",
+      "variants": [
+        "雇う"
+      ],
+      "meaning": "contratar",
+      "example": {
+        "target": "新しい人を雇いました。",
+        "native": "Contraté a una persona nueva."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Percepción / conocimiento",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0ia12a5",
+      "kanji": "気づく",
+      "kana": "きづく",
+      "variants": [
+        "気づく"
+      ],
+      "meaning": "darse cuenta",
+      "example": {
+        "target": "間違いに気づきました。",
+        "native": "Me di cuenta del error."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Percepción / conocimiento",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "08wvwxx",
+      "kanji": "知り合う",
+      "kana": "しりあう",
+      "variants": [
+        "知り合う"
+      ],
+      "meaning": "conocerse (mutuamente)",
+      "example": {
+        "target": "パーティーで知り合いました。",
+        "native": "Nos conocimos en una fiesta."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Percepción / conocimiento",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1md1twj",
+      "kanji": "見つける",
+      "kana": "みつける",
+      "variants": [
+        "見つける"
+      ],
+      "meaning": "encontrar",
+      "example": {
+        "target": "鍵を見つけました。",
+        "native": "Encontré las llaves."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Percepción / conocimiento",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0yf0pun",
+      "kanji": "覚える",
+      "kana": "おぼえる",
+      "variants": [
+        "覚える"
+      ],
+      "meaning": "memorizar, recordar",
+      "example": {
+        "target": "単語を覚えます。",
+        "native": "Memorizo vocabulario."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Percepción / conocimiento",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1q8rp8r",
+      "kanji": "わかる",
+      "kana": "わかる",
+      "variants": [
+        "わかる"
+      ],
+      "meaning": "entender",
+      "example": {
+        "target": "質問がわかりません。",
+        "native": "No entiendo la pregunta."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Otros verbos de uso general",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1nfkuv1",
+      "kanji": "使う",
+      "kana": "つかう",
+      "variants": [
+        "使う"
+      ],
+      "meaning": "usar",
+      "example": {
+        "target": "このアプリを使います。",
+        "native": "Uso esta app."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Otros verbos de uso general",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1jp8bu3",
+      "kanji": "片付ける",
+      "kana": "かたづける",
+      "variants": [
+        "片付ける"
+      ],
+      "meaning": "ordenar, guardar",
+      "example": {
+        "target": "部屋を片付けます。",
+        "native": "Ordeno la habitación."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Otros verbos de uso general",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0432tz8",
+      "kanji": "たたむ",
+      "kana": "たたむ",
+      "variants": [
+        "たたむ"
+      ],
+      "meaning": "doblar (ropa, papel)",
+      "example": {
+        "target": "服をたたみます。",
+        "native": "Doblo la ropa."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Otros verbos de uso general",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "042fdmj",
+      "kanji": "隠す",
+      "kana": "かくす",
+      "variants": [
+        "隠す"
+      ],
+      "meaning": "esconder",
+      "example": {
+        "target": "秘密を隠します。",
+        "native": "Escondo un secreto."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Otros verbos de uso general",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0rd63sm",
+      "kanji": "集める／集まる",
+      "kana": "あつめる／あつまる",
+      "variants": [
+        "集める",
+        "集まる"
+      ],
+      "meaning": "reunir (algo) / reunirse",
+      "example": {
+        "target": "友達と集まります。",
+        "native": "Me reúno con amigos."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Otros verbos de uso general",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1q7qgrz",
+      "kanji": "払う",
+      "kana": "はらう",
+      "variants": [
+        "払う"
+      ],
+      "meaning": "pagar",
+      "example": {
+        "target": "お金を払います。",
+        "native": "Pago el dinero."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Otros verbos de uso general",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "064ep7p",
+      "kanji": "保つ",
+      "kana": "もつ",
+      "variants": [
+        "保つ"
+      ],
+      "meaning": "mantener",
+      "example": {
+        "target": "健康を保ちます。",
+        "native": "Mantengo la salud."
+      }
+    },
+    {
+      "category": "verbos",
+      "subcategory": "Otros verbos de uso general",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1qgmxiq",
+      "kanji": "降る",
+      "kana": "ふる",
+      "variants": [
+        "降る"
+      ],
+      "meaning": "caer (lluvia, nieve), llover",
+      "example": {
+        "target": "雨が降りはじめました。",
+        "native": "Empezó a llover."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0l6rf6i",
+      "kanji": null,
+      "kana": "にんにく",
+      "variants": [],
+      "meaning": "ajo",
+      "example": {
+        "target": "にんにくを使います。",
+        "native": "Uso ajo."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "10ito3c",
+      "kanji": null,
+      "kana": "たまねぎ",
+      "variants": [],
+      "meaning": "cebolla",
+      "example": {
+        "target": "たまねぎを切ります。",
+        "native": "Corto la cebolla."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0ba8mjn",
+      "kanji": null,
+      "kana": "ささみ",
+      "variants": [],
+      "meaning": "pechuga de pollo",
+      "example": {
+        "target": "ささみは安いです。",
+        "native": "La pechuga de pollo es barata."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1oifsv8",
+      "kanji": "酢",
+      "kana": "す",
+      "variants": [
+        "酢"
+      ],
+      "meaning": "vinagre",
+      "example": {
+        "target": "酢を入れます。",
+        "native": "Añado vinagre."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1ja8pm1",
+      "kanji": "缶詰め",
+      "kana": "かんづめ",
+      "variants": [
+        "缶詰め"
+      ],
+      "meaning": "comida enlatada",
+      "example": {
+        "target": "缶詰めを買いました。",
+        "native": "Compré comida enlatada."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1tlu8e6",
+      "kanji": "牛肉",
+      "kana": "ぎゅうにく",
+      "variants": [
+        "牛肉"
+      ],
+      "meaning": "carne de res",
+      "example": {
+        "target": "牛肉が好きです。",
+        "native": "Me gusta la carne de res."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1ncf7qy",
+      "kanji": "肉団子",
+      "kana": "にくだんご",
+      "variants": [
+        "肉団子"
+      ],
+      "meaning": "albóndiga",
+      "example": {
+        "target": "肉団子を作ります。",
+        "native": "Hago albóndigas."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "045v2hx",
+      "kanji": "白菜",
+      "kana": "はくさい",
+      "variants": [
+        "白菜"
+      ],
+      "meaning": "col china",
+      "example": {
+        "target": "白菜を鍋に入れます。",
+        "native": "Pongo col china en el nabe."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1tcnbn9",
+      "kanji": "鍋",
+      "kana": "なべ",
+      "variants": [
+        "鍋"
+      ],
+      "meaning": "olla / nabe (plato)",
+      "example": {
+        "target": "冬は鍋を食べます。",
+        "native": "En invierno como nabe."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1yxjj2e",
+      "kanji": "酢豚",
+      "kana": "すぶた",
+      "variants": [
+        "酢豚"
+      ],
+      "meaning": "cerdo agridulce",
+      "example": {
+        "target": "酢豚を注文しました。",
+        "native": "Pedí cerdo agridulce."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1lifnlj",
+      "kanji": null,
+      "kana": "さつまいも",
+      "variants": [],
+      "meaning": "boniato",
+      "example": {
+        "target": "さつまいもを焼きます。",
+        "native": "Aso boniato."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "00ky3md",
+      "kanji": "甘栗",
+      "kana": "あまぐり",
+      "variants": [
+        "甘栗"
+      ],
+      "meaning": "castaña dulce",
+      "example": {
+        "target": "甘栗をむきました。",
+        "native": "Pelé castañas dulces."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1544f7n",
+      "kanji": "唐辛子",
+      "kana": "とうがらし",
+      "variants": [
+        "唐辛子"
+      ],
+      "meaning": "chile/ají",
+      "example": {
+        "target": "唐辛子は辛いです。",
+        "native": "El chile pica."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "13osw2v",
+      "kanji": "塩",
+      "kana": "しお",
+      "variants": [
+        "塩"
+      ],
+      "meaning": "sal",
+      "example": {
+        "target": "塩を入れます。",
+        "native": "Añado sal."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "12e5ndz",
+      "kanji": null,
+      "kana": "パプリカ",
+      "variants": [],
+      "meaning": "pimiento (paprika)",
+      "example": {
+        "target": "パプリカを食べます。",
+        "native": "Como pimiento."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1pe66rv",
+      "kanji": "赤ピーマン",
+      "kana": "あかピーマン",
+      "variants": [
+        "赤ピーマン"
+      ],
+      "meaning": "pimiento rojo",
+      "example": {
+        "target": "赤ピーマンは甘いです。",
+        "native": "El pimiento rojo es dulce."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0l33j7n",
+      "kanji": "鮭",
+      "kana": "さけ",
+      "variants": [
+        "鮭"
+      ],
+      "meaning": "salmón",
+      "example": {
+        "target": "鮭を焼きます。",
+        "native": "Aso salmón."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1lhpezd",
+      "kanji": null,
+      "kana": "あさり",
+      "variants": [],
+      "meaning": "almeja",
+      "example": {
+        "target": "あさりのスープです。",
+        "native": "Es sopa de almejas."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "16foocu",
+      "kanji": null,
+      "kana": "しじみ",
+      "variants": [],
+      "meaning": "almeja pequeña",
+      "example": {
+        "target": "しじみで出汁を取ります。",
+        "native": "Hago caldo con almejas pequeñas."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Comida y cocina",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1at45qi",
+      "kanji": "巻貝",
+      "kana": "まきがい",
+      "variants": [
+        "巻貝"
+      ],
+      "meaning": "caracol marino",
+      "example": {
+        "target": "巻貝を拾いました。",
+        "native": "Recogí un caracol marino."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Casa y objetos cotidianos",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1t9n8is",
+      "kanji": "毛布",
+      "kana": "もうふ",
+      "variants": [
+        "毛布"
+      ],
+      "meaning": "manta",
+      "example": {
+        "target": "毛布をかけます。",
+        "native": "Me tapo con la manta."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Casa y objetos cotidianos",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1yb3s3y",
+      "kanji": "扇風機",
+      "kana": "せんぷうき",
+      "variants": [
+        "扇風機"
+      ],
+      "meaning": "ventilador",
+      "example": {
+        "target": "扇風機をつけます。",
+        "native": "Enciendo el ventilador."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Casa y objetos cotidianos",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0uomnuw",
+      "kanji": "天井",
+      "kana": "てんじょう",
+      "variants": [
+        "天井"
+      ],
+      "meaning": "techo (interior)",
+      "example": {
+        "target": "天井が高いです。",
+        "native": "El techo es alto."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Casa y objetos cotidianos",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1soqq8u",
+      "kanji": "屋根",
+      "kana": "やね",
+      "variants": [
+        "屋根"
+      ],
+      "meaning": "tejado",
+      "example": {
+        "target": "屋根の上に猫がいます。",
+        "native": "Hay un gato sobre el tejado."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Casa y objetos cotidianos",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1jt71af",
+      "kanji": "暖房",
+      "kana": "だんぼう",
+      "variants": [
+        "暖房"
+      ],
+      "meaning": "calefacción",
+      "example": {
+        "target": "暖房をつけます。",
+        "native": "Enciendo la calefacción."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Casa y objetos cotidianos",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "07mfays",
+      "kanji": "手帳",
+      "kana": "てちょう",
+      "variants": [
+        "手帳"
+      ],
+      "meaning": "agenda",
+      "example": {
+        "target": "手帳に書きます。",
+        "native": "Escribo en la agenda."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Casa y objetos cotidianos",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0k377a7",
+      "kanji": "鏡",
+      "kana": "かがみ",
+      "variants": [
+        "鏡"
+      ],
+      "meaning": "espejo",
+      "example": {
+        "target": "鏡を見ます。",
+        "native": "Me miro en el espejo."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Casa y objetos cotidianos",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1rgeqhz",
+      "kanji": "空気清浄機",
+      "kana": "くうきせいじょうき",
+      "variants": [
+        "空気清浄機"
+      ],
+      "meaning": "purificador de aire",
+      "example": {
+        "target": "部屋に空気清浄機があります。",
+        "native": "Hay un purificador de aire en la habitación."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Cuerpo y salud",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1go6mu8",
+      "kanji": "風邪",
+      "kana": "かぜ",
+      "variants": [
+        "風邪"
+      ],
+      "meaning": "resfriado",
+      "example": {
+        "target": "風邪をひきました。",
+        "native": "Me resfrié."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Cuerpo y salud",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1dhbk88",
+      "kanji": "体調不良",
+      "kana": "たいちょうふりょう",
+      "variants": [
+        "体調不良"
+      ],
+      "meaning": "mal estado físico",
+      "example": {
+        "target": "体調不良で休みました。",
+        "native": "Falté por estar mal de salud."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Cuerpo y salud",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0t4h0wx",
+      "kanji": "点滴",
+      "kana": "てんてき",
+      "variants": [
+        "点滴"
+      ],
+      "meaning": "suero intravenoso",
+      "example": {
+        "target": "点滴を受けました。",
+        "native": "Me pusieron suero."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Cuerpo y salud",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0gvd87x",
+      "kanji": "飲み薬",
+      "kana": "のみぐすり",
+      "variants": [
+        "飲み薬"
+      ],
+      "meaning": "medicina oral",
+      "example": {
+        "target": "飲み薬をもらいました。",
+        "native": "Me dieron medicina oral."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Cuerpo y salud",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "15cyert",
+      "kanji": "筋肉痛",
+      "kana": "きんにくつう",
+      "variants": [
+        "筋肉痛"
+      ],
+      "meaning": "dolor muscular",
+      "example": {
+        "target": "筋肉痛があります。",
+        "native": "Tengo dolor muscular."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Cuerpo y salud",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "047cfbg",
+      "kanji": "心臓",
+      "kana": "しんぞう",
+      "variants": [
+        "心臓"
+      ],
+      "meaning": "corazón",
+      "example": {
+        "target": "心臓が痛いです。",
+        "native": "Me duele el corazón."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Cuerpo y salud",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0nh1b6c",
+      "kanji": "体力",
+      "kana": "たいりょく",
+      "variants": [
+        "体力"
+      ],
+      "meaning": "resistencia física",
+      "example": {
+        "target": "体力があります。",
+        "native": "Tengo resistencia física."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Familia",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1ndazt3",
+      "kanji": "両親",
+      "kana": "りょうしん",
+      "variants": [
+        "両親"
+      ],
+      "meaning": "padres",
+      "example": {
+        "target": "両親と住んでいます。",
+        "native": "Vivo con mis padres."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Familia",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0fp1ncx",
+      "kanji": "兄弟",
+      "kana": "きょうだい",
+      "variants": [
+        "兄弟"
+      ],
+      "meaning": "hermanos",
+      "example": {
+        "target": "兄弟がいますか。",
+        "native": "¿Tienes hermanos?"
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Familia",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "006cb38",
+      "kanji": "姉妹",
+      "kana": "しまい",
+      "variants": [
+        "姉妹"
+      ],
+      "meaning": "hermanas",
+      "example": {
+        "target": "姉妹が二人います。",
+        "native": "Tengo dos hermanas."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Familia",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0yljv9o",
+      "kanji": "末っ子",
+      "kana": "すえっこ",
+      "variants": [
+        "末っ子"
+      ],
+      "meaning": "el/la menor",
+      "example": {
+        "target": "私は末っ子です。",
+        "native": "Soy el/la menor."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Familia",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0b46xo7",
+      "kanji": "祖父母",
+      "kana": "そふぼ",
+      "variants": [
+        "祖父母"
+      ],
+      "meaning": "abuelos",
+      "example": {
+        "target": "祖父母に会います。",
+        "native": "Veo a mis abuelos."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Familia",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1w8mev9",
+      "kanji": "父母",
+      "kana": "ふぼ",
+      "variants": [
+        "父母"
+      ],
+      "meaning": "padre y madre",
+      "example": {
+        "target": "父母に電話します。",
+        "native": "Llamo a mis padres."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Trabajo / profesiones",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1dyxd1g",
+      "kanji": "獣医",
+      "kana": "じゅうい",
+      "variants": [
+        "獣医"
+      ],
+      "meaning": "veterinario/a",
+      "example": {
+        "target": "獣医になりたいです。",
+        "native": "Quiero ser veterinario/a."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Trabajo / profesiones",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0s9wttv",
+      "kanji": "料理人",
+      "kana": "りょうりにん",
+      "variants": [
+        "料理人"
+      ],
+      "meaning": "cocinero/a, chef",
+      "example": {
+        "target": "料理人として働きます。",
+        "native": "Trabajo como chef."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Trabajo / profesiones",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0rue20o",
+      "kanji": "美容師",
+      "kana": "びようし",
+      "variants": [
+        "美容師"
+      ],
+      "meaning": "estilista",
+      "example": {
+        "target": "美容師に髪を切ってもらいました。",
+        "native": "El/la estilista me cortó el pelo."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Trabajo / profesiones",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "03u7c4w",
+      "kanji": "理容師",
+      "kana": "りようし",
+      "variants": [
+        "理容師"
+      ],
+      "meaning": "barbero",
+      "example": {
+        "target": "理容師は男性の髪を切ります。",
+        "native": "El barbero corta el pelo de hombres."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Trabajo / profesiones",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1b72jv6",
+      "kanji": "店員",
+      "kana": "てんいん",
+      "variants": [
+        "店員"
+      ],
+      "meaning": "dependiente",
+      "example": {
+        "target": "店員に聞きました。",
+        "native": "Le pregunté al dependiente."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Trabajo / profesiones",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "12668bm",
+      "kanji": "彫刻家",
+      "kana": "ちょうこくか",
+      "variants": [
+        "彫刻家"
+      ],
+      "meaning": "escultor/a",
+      "example": {
+        "target": "彼は彫刻家です。",
+        "native": "Él es escultor."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Trabajo / profesiones",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "05rrejx",
+      "kanji": "教授",
+      "kana": "きょうじゅ",
+      "variants": [
+        "教授"
+      ],
+      "meaning": "profesor/a universitario/a",
+      "example": {
+        "target": "大学の教授です。",
+        "native": "Es profesor universitario."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Trabajo / profesiones",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0c6pcsu",
+      "kanji": "神父",
+      "kana": "しんぷ",
+      "variants": [
+        "神父"
+      ],
+      "meaning": "sacerdote",
+      "example": {
+        "target": "神父と話しました。",
+        "native": "Hablé con el sacerdote."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Trabajo / profesiones",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1my98qg",
+      "kanji": "作家",
+      "kana": "さっか",
+      "variants": [
+        "作家"
+      ],
+      "meaning": "escritor/a",
+      "example": {
+        "target": "好きな作家がいます。",
+        "native": "Tengo un escritor favorito."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Cultura y festividades japonesas",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "05afzh6",
+      "kanji": "大晦日",
+      "kana": "おおみそか",
+      "variants": [
+        "大晦日"
+      ],
+      "meaning": "Nochevieja (31 dic)",
+      "example": {
+        "target": "大晦日に年越しそばを食べます。",
+        "native": "En Nochevieja como soba de fin de año."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Cultura y festividades japonesas",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1abqv8q",
+      "kanji": "元日",
+      "kana": "がんじつ",
+      "variants": [
+        "元日"
+      ],
+      "meaning": "Año Nuevo (1 ene)",
+      "example": {
+        "target": "元日は家族と過ごします。",
+        "native": "Paso el Año Nuevo con la familia."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Cultura y festividades japonesas",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1la5itu",
+      "kanji": "お盆",
+      "kana": "おぼん",
+      "variants": [
+        "お盆"
+      ],
+      "meaning": "Obon (festival de difuntos)",
+      "example": {
+        "target": "お盆に実家に帰ります。",
+        "native": "En Obon vuelvo a la casa de mis padres."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Cultura y festividades japonesas",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "034akp8",
+      "kanji": "卒業式",
+      "kana": "そつぎょうしき",
+      "variants": [
+        "卒業式"
+      ],
+      "meaning": "ceremonia de graduación",
+      "example": {
+        "target": "卒業式は3月です。",
+        "native": "La graduación es en marzo."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Cultura y festividades japonesas",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1xjhxvy",
+      "kanji": "紅白歌合戦",
+      "kana": "こうはくうたがっせん",
+      "variants": [
+        "紅白歌合戦"
+      ],
+      "meaning": "programa musical de fin de año",
+      "example": {
+        "target": "紅白歌合戦を見ます。",
+        "native": "Veo el Kōhaku."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Cultura y festividades japonesas",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0cjwerg",
+      "kanji": "年越しそば",
+      "kana": "としこしそば",
+      "variants": [
+        "年越しそば"
+      ],
+      "meaning": "soba de fin de año",
+      "example": {
+        "target": "年越しそばを食べました。",
+        "native": "Comí soba de fin de año."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Cultura y festividades japonesas",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1jyjqdu",
+      "kanji": "初詣",
+      "kana": "はつもうで",
+      "variants": [
+        "初詣"
+      ],
+      "meaning": "primera visita al templo del año",
+      "example": {
+        "target": "初詣に行きました。",
+        "native": "Fui a la primera visita del año al templo."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Cultura y festividades japonesas",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0hioku0",
+      "kanji": "除夜の鐘",
+      "kana": "じょやのかね",
+      "variants": [
+        "除夜の鐘"
+      ],
+      "meaning": "campanadas de fin de año",
+      "example": {
+        "target": "除夜の鐘を聞きます。",
+        "native": "Escucho las campanadas de fin de año."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Clima y naturaleza",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "03nkqtz",
+      "kanji": "霙",
+      "kana": "みぞれ",
+      "variants": [
+        "霙"
+      ],
+      "meaning": "aguanieve",
+      "example": {
+        "target": "霙が降っています。",
+        "native": "Está cayendo aguanieve."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Clima y naturaleza",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1fyzvks",
+      "kanji": "花粉",
+      "kana": "かふん",
+      "variants": [
+        "花粉"
+      ],
+      "meaning": "polen",
+      "example": {
+        "target": "花粉症です。",
+        "native": "Tengo alergia al polen."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Clima y naturaleza",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "06zaql6",
+      "kanji": "気温",
+      "kana": "きおん",
+      "variants": [
+        "気温"
+      ],
+      "meaning": "temperatura (del aire)",
+      "example": {
+        "target": "気温が高いです。",
+        "native": "La temperatura es alta."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Clima y naturaleza",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1jck1dl",
+      "kanji": "氷",
+      "kana": "こおり",
+      "variants": [
+        "氷"
+      ],
+      "meaning": "hielo",
+      "example": {
+        "target": "氷を入れます。",
+        "native": "Añado hielo."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Clima y naturaleza",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1hgjguk",
+      "kanji": "湿気／湿度",
+      "kana": "しっけ／しつど",
+      "variants": [
+        "湿気",
+        "湿度"
+      ],
+      "meaning": "humedad",
+      "example": {
+        "target": "湿度が高いです。",
+        "native": "La humedad es alta."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Clima y naturaleza",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "08uefdl",
+      "kanji": "梅雨",
+      "kana": "つゆ",
+      "variants": [
+        "梅雨"
+      ],
+      "meaning": "temporada de lluvias",
+      "example": {
+        "target": "梅雨がはじまりました。",
+        "native": "Empezó la temporada de lluvias."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Clima y naturaleza",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "17lc9m1",
+      "kanji": "大寒",
+      "kana": "だいかん",
+      "variants": [
+        "大寒"
+      ],
+      "meaning": "día más frío del invierno",
+      "example": {
+        "target": "大寒は一年で一番寒い日です。",
+        "native": "Daikan es el día más frío del año."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Clima y naturaleza",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0ks6uk8",
+      "kanji": "夏至",
+      "kana": "げし",
+      "variants": [
+        "夏至"
+      ],
+      "meaning": "solsticio de verano",
+      "example": {
+        "target": "夏至は昼が一番長いです。",
+        "native": "En el solsticio de verano el día es más largo."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Colores y diseño",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0qlvx9a",
+      "kanji": "寒色",
+      "kana": "かんしょく",
+      "variants": [
+        "寒色"
+      ],
+      "meaning": "colores fríos",
+      "example": {
+        "target": "寒色が好きです。",
+        "native": "Me gustan los colores fríos."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Colores y diseño",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0ug4ieq",
+      "kanji": "暖色",
+      "kana": "だんしょく",
+      "variants": [
+        "暖色"
+      ],
+      "meaning": "colores cálidos",
+      "example": {
+        "target": "暖色が好きです。",
+        "native": "Me gustan los colores cálidos."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Colores y diseño",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0qbkv9n",
+      "kanji": "白黒",
+      "kana": "しろくろ",
+      "variants": [
+        "白黒"
+      ],
+      "meaning": "blanco y negro",
+      "example": {
+        "target": "白黒の写真です。",
+        "native": "Es una foto en blanco y negro."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Colores y diseño",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1vpn4pc",
+      "kanji": "灰色",
+      "kana": "はいいろ",
+      "variants": [
+        "灰色"
+      ],
+      "meaning": "gris",
+      "example": {
+        "target": "灰色の空です。",
+        "native": "El cielo está gris."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Animales",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1wu1wj0",
+      "kanji": "猪",
+      "kana": "いのしし",
+      "variants": [
+        "猪"
+      ],
+      "meaning": "jabalí",
+      "example": {
+        "target": "猪が出ました。",
+        "native": "Apareció un jabalí."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Animales",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1b9lrqd",
+      "kanji": "蟻",
+      "kana": "あり",
+      "variants": [
+        "蟻"
+      ],
+      "meaning": "hormiga",
+      "example": {
+        "target": "蟻がたくさんいます。",
+        "native": "Hay muchas hormigas."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Animales",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0j0znlf",
+      "kanji": "百足",
+      "kana": "むかで",
+      "variants": [
+        "百足"
+      ],
+      "meaning": "ciempiés",
+      "example": {
+        "target": "百足を見つけました。",
+        "native": "Encontré un ciempiés."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Animales",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1i2k6xy",
+      "kanji": null,
+      "kana": "みみず",
+      "variants": [],
+      "meaning": "lombriz",
+      "example": {
+        "target": "雨の後みみずがいます。",
+        "native": "Después de la lluvia hay lombrices."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Animales",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1j94asp",
+      "kanji": null,
+      "kana": "とかげ",
+      "variants": [],
+      "meaning": "lagartija",
+      "example": {
+        "target": "とかげが庭にいます。",
+        "native": "Hay una lagartija en el jardín."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Animales",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0seer9o",
+      "kanji": "蚊",
+      "kana": "か",
+      "variants": [
+        "蚊"
+      ],
+      "meaning": "mosquito",
+      "example": {
+        "target": "蚊にさされました。",
+        "native": "Me picó un mosquito."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Animales",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1dc8ye6",
+      "kanji": null,
+      "kana": "ねずみ",
+      "variants": [],
+      "meaning": "ratón",
+      "example": {
+        "target": "ねずみが出ました。",
+        "native": "Apareció un ratón."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Animales",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0lj8t3o",
+      "kanji": null,
+      "kana": "くらげ",
+      "variants": [],
+      "meaning": "medusa",
+      "example": {
+        "target": "くらげに気をつけて。",
+        "native": "Cuidado con las medusas."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Animales",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1cl1e3k",
+      "kanji": null,
+      "kana": "ワニ",
+      "variants": [],
+      "meaning": "cocodrilo",
+      "example": {
+        "target": "ワニは危ないです。",
+        "native": "El cocodrilo es peligroso."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Animales",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "00ic4sy",
+      "kanji": "七面鳥",
+      "kana": "しちめんちょう",
+      "variants": [
+        "七面鳥"
+      ],
+      "meaning": "pavo",
+      "example": {
+        "target": "七面鳥を食べます。",
+        "native": "Como pavo."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Abstractos / emociones / situaciones",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0zs3zv1",
+      "kanji": "誤解",
+      "kana": "ごかい",
+      "variants": [
+        "誤解"
+      ],
+      "meaning": "malentendido",
+      "example": {
+        "target": "誤解がありました。",
+        "native": "Hubo un malentendido."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Abstractos / emociones / situaciones",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1gqe9dl",
+      "kanji": "言い訳",
+      "kana": "いいわけ",
+      "variants": [
+        "言い訳"
+      ],
+      "meaning": "excusa",
+      "example": {
+        "target": "言い訳をしないでください。",
+        "native": "No pongas excusas."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Abstractos / emociones / situaciones",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "0pj2t2q",
+      "kanji": "迷信",
+      "kana": "めいしん",
+      "variants": [
+        "迷信"
+      ],
+      "meaning": "superstición",
+      "example": {
+        "target": "それは迷信です。",
+        "native": "Eso es una superstición."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Abstractos / emociones / situaciones",
+      "source": "seed",
+      "relatedIds": [
+        "1vzc7oa"
+      ],
+      "kind": "word",
+      "id": "0hoe48w",
+      "kanji": null,
+      "kana": "もったいない",
+      "variants": [],
+      "meaning": "qué desperdicio",
+      "example": {
+        "target": "食べ物を捨てるのはもったいないです。",
+        "native": "Tirar comida es un desperdicio."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Abstractos / emociones / situaciones",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1s2te0r",
+      "kanji": "印象",
+      "kana": "いんしょう",
+      "variants": [
+        "印象"
+      ],
+      "meaning": "impresión",
+      "example": {
+        "target": "いい印象を受けました。",
+        "native": "Me dio buena impresión."
+      }
+    },
+    {
+      "category": "vocabulario",
+      "subcategory": "Abstractos / emociones / situaciones",
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "word",
+      "id": "1y3ogw1",
+      "kanji": "傾向",
+      "kana": "けいこう",
+      "variants": [
+        "傾向"
+      ],
+      "meaning": "tendencia",
+      "example": {
+        "target": "そういう傾向があります。",
+        "native": "Hay esa tendencia."
+      }
+    },
+    {
+      "category": "expresiones",
+      "subcategory": null,
+      "source": "seed",
+      "relatedIds": [
+        "0hoe48w"
+      ],
+      "kind": "pattern",
+      "id": "1vzc7oa",
+      "pattern": "もったいない",
+      "meaning": "qué desperdicio, es una lástima",
+      "example": {
+        "target": "まだ使えるのに捨てるのはもったいないです。",
+        "native": "Es un desperdicio tirarlo si todavía sirve."
+      }
+    },
+    {
+      "category": "expresiones",
+      "subcategory": null,
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "1hd2qi6",
+      "pattern": "なんとかします",
+      "meaning": "me las arreglaré, lo solucionaré",
+      "example": {
+        "target": "時間がないけど、なんとかします。",
+        "native": "No tengo tiempo, pero me las arreglaré."
+      }
+    },
+    {
+      "category": "expresiones",
+      "subcategory": null,
+      "source": "seed",
+      "relatedIds": [
+        "1bnf525"
+      ],
+      "kind": "pattern",
+      "id": "1iv84ct",
+      "pattern": "気になります",
+      "meaning": "me preocupa / me llama la atención",
+      "example": {
+        "target": "明日のテストが気になります。",
+        "native": "Me preocupa el examen de mañana."
+      }
+    },
+    {
+      "category": "expresiones",
+      "subcategory": null,
+      "source": "seed",
+      "relatedIds": [
+        "0svt7h0"
+      ],
+      "kind": "pattern",
+      "id": "18rmfdu",
+      "pattern": "気に入る",
+      "meaning": "gustar, quedar prendado/a",
+      "example": {
+        "target": "このデザインが気に入りました。",
+        "native": "Me encantó este diseño."
+      }
+    },
+    {
+      "category": "expresiones",
+      "subcategory": null,
+      "source": "seed",
+      "relatedIds": [
+        "0m4xznz"
+      ],
+      "kind": "pattern",
+      "id": "05ztrm5",
+      "pattern": "落ち着く",
+      "meaning": "calmarse / sentirse a gusto (lugar tranquilo)",
+      "example": {
+        "target": "このカフェは落ち着きます。",
+        "native": "Este café da tranquilidad."
+      }
+    },
+    {
+      "category": "expresiones",
+      "subcategory": null,
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "1emld1k",
+      "pattern": "わざわざ",
+      "meaning": "tomarse la molestia de hacer algo",
+      "example": {
+        "target": "わざわざ来てくれてありがとう。",
+        "native": "Gracias por tomarte la molestia de venir."
+      }
+    },
+    {
+      "category": "expresiones",
+      "subcategory": null,
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "05m4tm4",
+      "pattern": "だから",
+      "meaning": "por eso / entonces",
+      "example": {
+        "target": "雨です。だから、うちにいます。",
+        "native": "Está lloviendo. Por eso, me quedo en casa."
+      }
+    },
+    {
+      "category": "expresiones",
+      "subcategory": null,
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "1qp160c",
+      "pattern": "どのぐらい",
+      "meaning": "¿cuánto (tiempo/cantidad)?",
+      "example": {
+        "target": "どのぐらい日本にいますか。",
+        "native": "¿Cuánto tiempo estarás en Japón?"
+      }
+    },
+    {
+      "category": "expresiones",
+      "subcategory": null,
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "pattern",
+      "id": "0q4o3ld",
+      "pattern": "ぐっと来ます",
+      "meaning": "conmover, tocar el corazón",
+      "example": {
+        "target": "その歌はぐっと来ます。",
+        "native": "Esa canción me llega al corazón."
+      }
+    }
+  ]
+}

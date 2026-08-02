@@ -1,0 +1,275 @@
+/*
+ * Surfaces are distinguished by FILL, not by outline.
+ *
+ * A border is treated as a negative: it is only spent where a genuine division
+ * exists that fill and spacing cannot express — the sticky header boundary,
+ * separators between repeated rows on one surface, and the front/back split on
+ * a card. Everything else (panels, buttons, inputs, chips, pills) reads from
+ * its own background against its parent's, so it carries no outline at all.
+ *
+ * That means the surface ramp has to do real work: each step must be legible
+ * against the one below it without help.
+ */
+
+:root {
+  --bg: #0e1014;
+  --surface: #191d25;
+  --surface-2: #242a35;
+  --surface-3: #2f3644;
+
+  /* Spent sparingly — see the note above. */
+  --divider: #262c37;
+
+  --text: #e7e9ef;
+  --muted: #98a0b0;
+  --faint: #666e7e;
+
+  --accent: #7aa2f7;
+  --on-accent: #0b0e14;
+
+  --again: #f2777a;
+  --hard: #e0a45e;
+  --good: #7fc98a;
+  --easy: #6bb6d6;
+
+  --radius: 14px;
+  --radius-sm: 9px;
+  --maxw: 760px;
+  --elevation: none;
+
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f2f4f7;
+    --surface: #ffffff;
+    --surface-2: #eaedf3;
+    --surface-3: #dde2ea;
+
+    --divider: #e7eaf0;
+
+    --text: #171a21;
+    --muted: #5a6271;
+    --faint: #8d95a4;
+
+    --accent: #3763c8;
+    --on-accent: #ffffff;
+
+    --again: #c94a4d;
+    --hard: #a96a17;
+    --good: #34804a;
+    --easy: #2a708e;
+
+    /* White on light grey is a weak fill contrast, so elevation carries it. */
+    --elevation: 0 1px 2px rgba(16, 20, 30, 0.05), 0 4px 12px rgba(16, 20, 30, 0.05);
+
+    color-scheme: light;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Japanese needs its own stack; the Latin defaults render kana badly. */
+.jp {
+  font-family:
+    'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Noto Sans JP', 'Meiryo',
+    sans-serif;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* --- controls: filled, never outlined ------------------------------------ */
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border: none;
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.9rem;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+button:hover:not(:disabled) {
+  background: var(--surface-3);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+button.primary {
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+
+button.primary:hover:not(:disabled) {
+  background: var(--accent);
+  filter: brightness(1.08);
+}
+
+/* The only truly transparent control: it lives inside another surface. */
+button.ghost {
+  background: transparent;
+  color: var(--muted);
+}
+
+button.ghost:hover:not(:disabled) {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface-2);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.65rem;
+  width: 100%;
+}
+
+/* A field sitting on --surface-2 needs the next step up to stay distinct. */
+.card-surface input,
+.card-surface select,
+.card-surface textarea {
+  background: var(--bg);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--faint);
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+
+a {
+  color: var(--accent);
+}
+
+.card-surface {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--elevation);
+}
+
+/* --- the sanctioned dividers --------------------------------------------- */
+
+/* Repeated rows sharing one surface: fill can't separate them, a hairline can. */
+.divide > * + * {
+  border-top: 1px solid var(--divider);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.faint {
+  color: var(--faint);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.wrap {
+  flex-wrap: wrap;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Status pills read as tinted fills rather than outlined chips. */
+.pill {
+  display: inline-block;
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  background: var(--surface-2);
+  color: var(--muted);
+}
+
+.pill.new {
+  color: var(--easy);
+  background: color-mix(in srgb, var(--easy) 16%, transparent);
+}
+.pill.learning {
+  color: var(--hard);
+  background: color-mix(in srgb, var(--hard) 16%, transparent);
+}
+.pill.young {
+  color: var(--good);
+  background: color-mix(in srgb, var(--good) 16%, transparent);
+}
+.pill.mature {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+.pill.leech {
+  color: var(--again);
+  background: color-mix(in srgb, var(--again) 16%, transparent);
+}
+
+/* Wide content scrolls inside its own box; the page never scrolls sideways. */
+.scroll-x {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}

@@ -1,0 +1,29 @@
+{
+  "name": "japanese-srs",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/build-sw.ts",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "import": "node scripts/import-md.ts",
+    "dict": "node scripts/build-dict.ts",
+    "audit": "node scripts/audit-lookup.ts",
+    "deploy": "BASE_PATH=/JapaneseThing/ npm run build && gh-pages -d dist"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^7.2.0",
+    "@types/node": "^26.1.2",
+    "gh-pages": "^6.3.0",
+    "jsdom": "^29.1.1",
+    "svelte": "^5.56.8",
+    "svelte-check": "^4.7.4",
+    "typescript": "^6.0.3",
+    "vite": "^8.1.5",
+    "vitest": "^4.1.10"
+  }
+}

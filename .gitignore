@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.DS_Store
+*.local
+.vite/
+
+# Raw upstream dictionary downloads. `npm run dict` re-fetches them; the
+# trimmed output in public/dict/ is committed instead.
+.dict-cache/

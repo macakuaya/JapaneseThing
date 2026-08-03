@@ -236,8 +236,9 @@ Nos vemos el jueves!
 })
 
 describe('a real WhatsApp export from the teacher', () => {
-  // Verbatim from a class on 10/10/2026. Note there are no translations at
-  // all — the teacher writes word + reading, sometimes with an aside.
+  // Taken from a real class export, with the sender and dates replaced. Note
+  // there are no translations at all — the teacher writes word + reading,
+  // sometimes with an aside — which is the whole point of this fixture.
   const text = `[10/10/2026, 13:54:24] せんせい: 奇抜　きばつ　です
 [10/10/2026, 13:54:41] せんせい: 奇抜な格好(かっこう)
 [10/10/2026, 13:56:38] せんせい: 遊びが足りない　あそびがたりない

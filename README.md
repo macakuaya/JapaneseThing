@@ -82,26 +82,37 @@ first paint rather than bundled, and deliberately excluded from the service
 worker's precache — so the app starts fast, and once the dictionary has loaded
 once it stays available offline.
 
-## Review vs. Practice
-
-Two modes, one engine (`src/lib/session.ts`) under two configurations.
+## Review vs. Drill
 
 **Review** is the scheduler's call. The queue is whatever is due today plus a
-capped trickle of new cards, and every answer rewrites that card's schedule.
-It is deliberately finite — when the queue empties, the day is done.
+capped trickle of new cards; the contents aren't yours to choose, and grading
+rewrites each card's schedule. It is deliberately **finite** — when the queue
+empties, the day is done. That boundedness is what makes daily reps
+sustainable, and it is the actual Anki replacement.
 
-**Practice** is your call. Pick categories, subcategories or maturity ("drill
-only my leeches"), get a shuffled deck, and drill as long as you like. Nothing
-is written to the schedule, so cramming before class doesn't drag your due
-dates out of alignment. A "count toward scheduling" toggle opts back in.
+**Drill** is your call, and lives in the Deck view: filter the list by deck,
+subcategory or a search, then study exactly what you filtered. Nothing is
+written to the schedule, so cramming before class doesn't drag your due dates
+out of alignment. A "count toward scheduling" toggle opts back in.
+
+The two are one engine under two configs (`src/lib/session.ts`) — Review
+sources the due queue and writes back; Drill sources a filter and doesn't.
 
 **Leaving mid-review resumes where you left off.** The queue order and counters
-are stored, so navigating away — or closing the tab entirely — and coming back
-picks up on the same card; Home shows "Resume review" instead of "Start". Only
-the order is stored, never the cards, so a resumed queue reflects any answers
-given since. A session is dropped once the study day rolls over, and Practice
-resumes only if the filters are unchanged: pressing Start with a different
-filter always deals a fresh deck.
+are stored, so navigating away — or closing the tab entirely — picks up on the
+same card; Home shows "Resume review" instead of "Start". Only the order is
+stored, never the cards, so a resumed queue reflects any answers given since. A
+session is dropped once the study day rolls over.
+
+## The two screens
+
+**Home** answers one question: what do I do now? Three numbers, the review
+button, and a read-only strip showing how much of each deck you know.
+
+**Deck** is everything about the cards — browse, search, filter, drill, edit.
+The organising rule is that *what you see is what you drill*: the search box
+and the two dropdowns narrow one list, and the Drill button studies exactly
+that list. Tapping a row opens its editor.
 
 ## Adding words each week
 
@@ -197,7 +208,7 @@ src/
     store.svelte.ts        app state
     tooltip.svelte.ts      the shared lookup popover's state
   components/              Flashcard, Grader, JapaneseText, Tooltip
-  views/                   Home, Session, Review, Practice, Browse, Add, Settings
+  views/                   Home, Deck, Session, Review, Practice, Add, Settings
 ```
 
 Anything language-specific lives in the dataset, not the code: a deck declares

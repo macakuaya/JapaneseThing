@@ -1,6 +1,6 @@
 <script lang="ts">
   import { store, type View } from '../lib/store.svelte.ts'
-  import { dayEnd, dayStart, formatDelay, maturityOf } from '../lib/srs.ts'
+  import { dayStart, formatDelay, maturityOf } from '../lib/srs.ts'
   import { newIntroducedToday } from '../lib/session.ts'
   import * as storage from '../lib/storage.ts'
 
@@ -37,39 +37,22 @@
     }).length,
   )
 
-  /** Which deck rows are expanded to show their subcategories. */
-  let expanded = $state<string[]>([])
-
-  const toggle = (id: string) =>
-    (expanded = expanded.includes(id) ? expanded.filter((x) => x !== id) : [...expanded, id])
-
-  const decks = $derived.by(() => {
-    const cutoff = dayEnd(store.now, store.settings.dayStartHour)
-    return store.dataset.categories.map((cat) => {
+  /**
+   * Read-only. Home answers "what do I do now?"; choosing what to study is
+   * the Deck view's job, and having both navigate there was the duplication
+   * this screen used to carry. What survives is the glance — the only place
+   * in the app that shows how much of each deck you actually know.
+   */
+  const decks = $derived(
+    store.dataset.categories.map((cat) => {
       const cards = store.cards.filter((c) => c.entry.category === cat.id)
       const known = cards.filter((c) => {
         const m = maturityOf(c.state, store.settings)
         return m === 'young' || m === 'mature'
       }).length
-      return {
-        ...cat,
-        total: cards.length,
-        known,
-        due: cards.filter((c) => c.state.stage !== 'new' && c.state.due < cutoff).length,
-        subs: (store.subcategoriesOf.get(cat.id) ?? []).map((sub) => {
-          const inSub = cards.filter((c) => c.entry.subcategory === sub)
-          return {
-            name: sub,
-            total: inSub.length,
-            known: inSub.filter((c) => {
-              const m = maturityOf(c.state, store.settings)
-              return m === 'young' || m === 'mature'
-            }).length,
-          }
-        }),
-      }
-    })
-  })
+      return { ...cat, total: cards.length, known }
+    }),
+  )
 </script>
 
 <section class="stack">
@@ -112,9 +95,12 @@
         Done for now. {counts.later} card{counts.later === 1 ? '' : 's'} coming back
         {#if counts.nextAt}in {formatDelay(counts.nextAt - store.now)}{/if}
       {:else if ready === 0 && newLimitReached}
-        Today's {store.settings.newPerDay} new cards are done. More tomorrow — or drill a deck below.
+        Today's {store.settings.newPerDay} new cards are done. More tomorrow — or open
+        <button class="link" onclick={() => onNavigate('deck')}>Deck</button> to drill anything.
       {:else if ready === 0}
-        Nothing scheduled. Tap a deck below to drill it without affecting your schedule.
+        Nothing scheduled. Open
+        <button class="link" onclick={() => onNavigate('deck')}>Deck</button> to drill any part of
+        it without affecting your schedule.
       {:else}
         <span class="faint">
           {counts.due} scheduled for today, {counts.fresh} you haven't seen before.
@@ -123,46 +109,15 @@
     </p>
   </div>
 
-  <div class="decks card-surface divide">
+  <div class="decks card-surface">
     {#each decks as deck (deck.id)}
       <div class="deck">
-        <div class="deck-row">
-          <!-- Tapping the deck drills it. This was the only thing the row
-               could usefully do, and previously it did nothing at all. -->
-          <button class="deck-main" onclick={() => store.startPractice([deck.id])}>
-            <span class="name">{deck.label}</span>
-            <span class="spacer"></span>
-            {#if deck.due > 0}<span class="tag due">{deck.due} due</span>{/if}
-            <span class="tag known">{deck.known} / {deck.total}</span>
-          </button>
-
-          {#if deck.subs.length}
-            <button
-              class="chevron ghost"
-              onclick={() => toggle(deck.id)}
-              aria-expanded={expanded.includes(deck.id)}
-              aria-label="{expanded.includes(deck.id) ? 'Hide' : 'Show'} {deck.label} subcategories"
-            >
-              {expanded.includes(deck.id) ? '▾' : '▸'}
-            </button>
-          {/if}
-        </div>
-
+        <span class="name">{deck.label}</span>
+        <span class="spacer"></span>
+        <span class="known">{deck.known} / {deck.total}</span>
         <div class="bar" aria-hidden="true">
           <div class="fill" style:width="{deck.total ? (deck.known / deck.total) * 100 : 0}%"></div>
         </div>
-
-        {#if expanded.includes(deck.id)}
-          <div class="subs">
-            {#each deck.subs as sub (sub.name)}
-              <button class="sub" onclick={() => store.startPractice([deck.id], [sub.name])}>
-                <span class="sub-name">{sub.name}</span>
-                <span class="spacer"></span>
-                <span class="tag known">{sub.known} / {sub.total}</span>
-              </button>
-            {/each}
-          </div>
-        {/if}
       </div>
     {/each}
   </div>
@@ -218,63 +173,52 @@
     min-height: 1.2em;
   }
 
-  .decks {
-    padding: 0.2rem 0;
-  }
-
-  .deck {
-    padding: 0.5rem 0.5rem 0.6rem;
-  }
-
-  .deck-row {
-    display: flex;
-    align-items: center;
-  }
-
-  .deck-main {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: transparent;
-    padding: 0.45rem 0.5rem;
+  /* An inline word in a sentence, not a control sitting on its own. */
+  .link {
+    background: none;
+    padding: 0;
     font: inherit;
-    color: inherit;
-    text-align: left;
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
-  .deck-main:hover {
-    background: var(--surface-2);
+  .link:hover {
+    background: none;
+    filter: brightness(1.15);
+  }
+
+  .decks {
+    padding: 0.9rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  /* Name and count on one line, the bar tucked underneath it. Nothing here
+     is interactive, so no hover, no cursor, no affordance to mislead. */
+  .deck {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    gap: 0 0.5rem;
   }
 
   .name {
-    font-weight: 500;
+    font-size: 0.9rem;
   }
 
-  .chevron {
-    padding: 0.4rem 0.6rem;
+  .known {
     font-size: 0.8rem;
-    color: var(--faint);
-  }
-
-  .tag {
-    font-size: 0.78rem;
+    color: var(--muted);
     font-variant-numeric: tabular-nums;
   }
 
-  .tag.due {
-    color: var(--good);
-  }
-
-  .tag.known {
-    color: var(--muted);
-  }
-
-  /* How much of the deck has reached a real interval — the one number that
-     shows progress rather than workload. */
+  /* How much of the deck has reached a real interval — progress, not workload. */
   .bar {
-    height: 2px;
-    margin: 0 0.5rem;
+    grid-column: 1 / -1;
+    height: 3px;
+    margin-top: 0.3rem;
     background: var(--surface-2);
     border-radius: 999px;
     overflow: hidden;
@@ -284,34 +228,5 @@
     height: 100%;
     background: var(--accent);
     transition: width 0.3s ease;
-  }
-
-  .subs {
-    display: flex;
-    flex-direction: column;
-    margin-top: 0.35rem;
-  }
-
-  .sub {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: transparent;
-    padding: 0.35rem 0.5rem 0.35rem 1.25rem;
-    font: inherit;
-    color: var(--muted);
-    text-align: left;
-    font-size: 0.88rem;
-  }
-
-  .sub:hover {
-    background: var(--surface-2);
-    color: var(--text);
-  }
-
-  .sub-name {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 </style>

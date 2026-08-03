@@ -3,7 +3,7 @@
   import Home from './views/Home.svelte'
   import Review from './views/Review.svelte'
   import Practice from './views/Practice.svelte'
-  import Browse from './views/Browse.svelte'
+  import Deck from './views/Deck.svelte'
   import Add from './views/Add.svelte'
   import SettingsView from './views/Settings.svelte'
   import Tooltip from './components/Tooltip.svelte'
@@ -34,17 +34,10 @@
       <span class="jp">語</span>
     </button>
     <span class="spacer"></span>
-    <!-- Every destination lives here. Home used to repeat these as a second
-         row of buttons, which is the same three places twice. -->
-    <button
-      class="ghost"
-      class:on={store.view === 'practice'}
-      onclick={() => (store.view = 'practice')}
-    >
-      Practice
-    </button>
-    <button class="ghost" class:on={store.view === 'browse'} onclick={() => (store.view = 'browse')}>
-      Browse
+    <!-- Two destinations: today's work is Home, everything about the cards is
+         Deck. Practice is reached by drilling from Deck, not as a place. -->
+    <button class="ghost" class:on={store.view === 'deck'} onclick={() => (store.view = 'deck')}>
+      Deck
     </button>
     <button class="ghost" class:on={store.view === 'add'} onclick={() => (store.view = 'add')}>
       Add
@@ -65,9 +58,10 @@
     {:else if store.view === 'review'}
       <Review onExit={home} />
     {:else if store.view === 'practice'}
-      <Practice onExit={home} />
-    {:else if store.view === 'browse'}
-      <Browse onExit={home} />
+      <!-- Leaving a drill returns to the list it came from, not Home. -->
+      <Practice onExit={() => (store.view = 'deck')} />
+    {:else if store.view === 'deck'}
+      <Deck onExit={home} />
     {:else if store.view === 'add'}
       <Add onExit={home} />
     {:else if store.view === 'settings'}

@@ -18,7 +18,15 @@ import * as storage from './storage.ts'
 
 const seed = seedJson as unknown as Dataset
 
-export type View = 'home' | 'review' | 'practice' | 'browse' | 'add' | 'settings'
+export type View = 'home' | 'review' | 'practice' | 'deck' | 'add' | 'settings'
+
+/** What the Deck view asks Practice to study. */
+export interface PracticeRequest {
+  categories: string[]
+  subcategories: string[]
+  limit: number
+  writeThrough: boolean
+}
 
 class Store {
   view = $state<View>('home')
@@ -41,14 +49,27 @@ class Store {
   dictError = $state<string | null>(null)
 
   /**
-   * Filter handed to Practice when a deck row on Home is tapped, so the deck
-   * starts drilling immediately instead of making the user re-pick it on the
-   * next screen. Cleared once consumed.
+   * The set the Deck view is currently showing, handed over when Drill is
+   * pressed. Practice has no picker of its own — what you were looking at is
+   * what you study.
    */
-  practiceRequest = $state<{ categories: string[]; subcategories: string[] } | null>(null)
+  practiceRequest = $state<PracticeRequest | null>(null)
 
-  startPractice(categories: string[], subcategories: string[] = []): void {
-    this.practiceRequest = { categories, subcategories }
+  /**
+   * The Deck view's filter, held here rather than in the component so it
+   * survives navigating away. Drilling a subcategory and coming back to "All
+   * decks" loses your place in a 202-card list.
+   */
+  deckFilter = $state({
+    query: '',
+    category: '',
+    subcategory: '',
+    limit: 20,
+    countToward: false,
+  })
+
+  startPractice(request: PracticeRequest): void {
+    this.practiceRequest = request
     this.view = 'practice'
   }
 

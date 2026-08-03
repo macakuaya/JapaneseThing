@@ -177,7 +177,8 @@
       onExit()
       return
     }
-    if (event.key === 'u' || event.key === 'Backspace') {
+    // ArrowLeft is what people reach for; u and Backspace stay as aliases.
+    if (event.key === 'ArrowLeft' || event.key === 'u' || event.key === 'Backspace') {
       event.preventDefault()
       undo()
       return
@@ -207,6 +208,18 @@
   <header>
     <button class="ghost" onclick={onExit} aria-label="Leave session">← {title}</button>
     <span class="spacer"></span>
+    <!-- Stepping back through answered cards is normal navigation, not an
+         error-recovery corner, so it sits in the header with the counter
+         rather than hiding as a faint link under the grader. -->
+    <button
+      class="ghost back"
+      onclick={undo}
+      disabled={history.length === 0}
+      title="Previous card (←)"
+      aria-label="Go back to the previous card"
+    >
+      ← Back
+    </button>
     <span class="counter muted">{queue.length} left</span>
   </header>
 
@@ -257,10 +270,9 @@
       {/if}
 
       <div class="row footer">
-        <button class="ghost" onclick={undo} disabled={history.length === 0}>Undo</button>
         <span class="spacer"></span>
         <span class="hint faint">
-          {revealed ? 'number keys to grade' : 'space to reveal'} · U to undo · Esc to exit
+          {revealed ? 'number keys to grade' : 'space to reveal'} · ← previous · Esc to exit
         </span>
       </div>
     </div>
@@ -282,6 +294,13 @@
   .counter {
     font-size: 0.85rem;
     font-variant-numeric: tabular-nums;
+    min-width: 4.5rem;
+    text-align: right;
+  }
+
+  .back {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.6rem;
   }
 
   .bar {

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import EntryEditor from '../components/EntryEditor.svelte'
   import { store } from '../lib/store.svelte.ts'
   import { cardFront } from '../lib/text.ts'
   import { MATURITY_LABEL, formatDelay, maturityOf } from '../lib/srs.ts'
@@ -13,11 +14,6 @@
   let query = $state('')
   let category = $state('')
   let editing = $state<string | null>(null)
-  let draft = $state<{ meaning: string; exampleTarget: string; exampleNative: string }>({
-    meaning: '',
-    exampleTarget: '',
-    exampleNative: '',
-  })
 
   const rows = $derived.by(() => {
     const q = query.trim().toLowerCase()
@@ -45,25 +41,6 @@
         }
       })
   })
-
-  function startEdit(entry: Entry) {
-    editing = entry.id
-    draft = {
-      meaning: entry.meaning,
-      exampleTarget: entry.example?.target ?? '',
-      exampleNative: entry.example?.native ?? '',
-    }
-  }
-
-  function save(entry: Entry) {
-    store.updateEntry(entry.id, {
-      meaning: draft.meaning.trim(),
-      example: draft.exampleTarget.trim()
-        ? { target: draft.exampleTarget.trim(), native: draft.exampleNative.trim() }
-        : null,
-    })
-    editing = null
-  }
 
   function remove(entry: Entry) {
     const label = cardFront(entry)
@@ -105,56 +82,47 @@
 
   <div class="list card-surface divide">
     {#each rows as row (row.entry.id)}
-      <div class="entry">
-        <div class="head row">
-          <div class="text">
-            <div class="jp front">{cardFront(row.entry)}</div>
-            <div class="meaning muted">{row.entry.meaning}</div>
-            {#if row.entry.subcategory}
-              <div class="sub faint">{row.entry.subcategory}</div>
-            {/if}
-          </div>
-          <span class="spacer"></span>
-          <div class="meta">
-            <span class="pill {row.maturity}">{MATURITY_LABEL[row.maturity]}</span>
-            {#if row.next}
-              <span class="next faint">{relativeDue(row.next)}</span>
-            {/if}
-          </div>
-        </div>
-
+      <div class="entry" class:open={editing === row.entry.id}>
         {#if editing === row.entry.id}
-          <div class="editor">
-            <div>
-              <label for="m-{row.entry.id}">Meaning</label>
-              <input id="m-{row.entry.id}" bind:value={draft.meaning} />
-            </div>
-            <div>
-              <label for="et-{row.entry.id}">Example</label>
-              <input id="et-{row.entry.id}" class="jp" bind:value={draft.exampleTarget} />
-            </div>
-            <div>
-              <label for="en-{row.entry.id}">Example translation</label>
-              <input id="en-{row.entry.id}" bind:value={draft.exampleNative} />
-            </div>
-            <div class="row">
-              <button class="primary" onclick={() => save(row.entry)}>Save</button>
-              <button class="ghost" onclick={() => (editing = null)}>Cancel</button>
-              <span class="spacer"></span>
-              <button class="ghost danger" onclick={() => remove(row.entry)}>Delete</button>
-            </div>
+          <EntryEditor entry={row.entry} onDone={() => (editing = null)} />
+          <div class="row after-edit">
+            <span class="spacer"></span>
+            <button class="ghost danger tiny" onclick={() => remove(row.entry)}>Delete</button>
           </div>
         {:else}
-          <div class="row detail">
+          <!-- The whole row opens the editor. Reaching for a small "Edit"
+               link at the far right is the wrong target on a phone, and the
+               row already looks like the card it represents. -->
+          <button class="row-button" onclick={() => (editing = row.entry.id)}>
+            <div class="head row">
+              <div class="text">
+                <div class="jp front">{cardFront(row.entry)}</div>
+                <div class="meaning muted">{row.entry.meaning}</div>
+                {#if row.entry.subcategory}
+                  <div class="sub faint">{row.entry.subcategory}</div>
+                {/if}
+              </div>
+              <span class="spacer"></span>
+              <div class="meta">
+                <span class="pill {row.maturity}">{MATURITY_LABEL[row.maturity]}</span>
+                {#if row.next}
+                  <span class="next faint">{relativeDue(row.next)}</span>
+                {/if}
+              </div>
+            </div>
+
             {#if row.entry.example}
-              <span class="jp example">{row.entry.example.target}</span>
-              <span class="faint example-native">{row.entry.example.native}</span>
-            {:else}
-              <span class="faint">no example</span>
+              <!-- Translation sits under its sentence, not beside it: side by
+                   side, the eye has to jump the width of the row to pair them,
+                   and the Japanese wraps into the gap on a narrow screen. -->
+              <div class="detail">
+                <div class="jp example">{row.entry.example.target}</div>
+                {#if row.entry.example.native}
+                  <div class="faint example-native">{row.entry.example.native}</div>
+                {/if}
+              </div>
             {/if}
-            <span class="spacer"></span>
-            <button class="ghost tiny" onclick={() => startEdit(row.entry)}>Edit</button>
-          </div>
+          </button>
         {/if}
       </div>
     {:else}
@@ -186,8 +154,25 @@
     overflow: hidden;
   }
 
-  .entry {
+  .entry.open {
     padding: 0.8rem 1rem;
+  }
+
+  /* The row is the target, so it fills the cell and keeps list typography
+     rather than inheriting the button defaults. */
+  .row-button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border-radius: 0;
+    padding: 0.8rem 1rem;
+    font: inherit;
+    color: inherit;
+  }
+
+  .row-button:hover {
+    background: var(--surface-2);
   }
 
 
@@ -221,20 +206,12 @@
   }
 
   .detail {
-    margin-top: 0.4rem;
-    gap: 0.5rem;
+    margin-top: 0.45rem;
     font-size: 0.84rem;
-    min-height: 1.9rem;
   }
 
   .example-native {
-    display: none;
-  }
-
-  @media (min-width: 620px) {
-    .example-native {
-      display: inline;
-    }
+    margin-top: 0.1rem;
   }
 
   .tiny {
@@ -246,11 +223,8 @@
     color: var(--again);
   }
 
-  .editor {
+  .after-edit {
     margin-top: 0.6rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
   }
 
   .empty {

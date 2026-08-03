@@ -30,9 +30,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Node 24 ships npm 11, matching the toolchain the lockfile was written
+      # with. On npm 10 the same lockfile fails `npm ci` with "Missing:
+      # picomatch from lock file", because the two versions resolve that
+      # transitive dependency differently.
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
 
       - run: npm ci

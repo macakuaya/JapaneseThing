@@ -208,19 +208,12 @@
   <header>
     <button class="ghost" onclick={onExit} aria-label="Leave session">← {title}</button>
     <span class="spacer"></span>
-    <!-- Stepping back through answered cards is normal navigation, not an
-         error-recovery corner, so it sits in the header with the counter
-         rather than hiding as a faint link under the grader. -->
-    <button
-      class="ghost back"
-      onclick={undo}
-      disabled={history.length === 0}
-      title="Previous card (←)"
-      aria-label="Go back to the previous card"
-    >
-      ← Back
-    </button>
-    <span class="counter muted">{queue.length} left</span>
+    <!-- "Done" counts answers, not distinct cards, so a card that comes back
+         for its next learning step counts each time it is answered. That is
+         what the progress bar measures too, so the two always agree. -->
+    <span class="counter muted">
+      <span class="done">{answered}</span> done · {queue.length} left
+    </span>
   </header>
 
   <!-- Pinned to the very top of the viewport and full-bleed, above the nav —
@@ -294,13 +287,11 @@
   .counter {
     font-size: 0.85rem;
     font-variant-numeric: tabular-nums;
-    min-width: 4.5rem;
     text-align: right;
   }
 
-  .back {
-    font-size: 0.85rem;
-    padding: 0.3rem 0.6rem;
+  .done {
+    color: var(--text);
   }
 
   .bar {

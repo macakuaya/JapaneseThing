@@ -69,12 +69,17 @@
       aria-label="Edit this card">✎</button
     >
 
-  <!-- No lookup on the front: it already prints kanji・kana, and the back
-       gives the meaning, so a tooltip here would only repeat the card. -->
-  <div class="face front" class:jp={frontIsJapanese}>
-    {#each splitSlashLines(front) as line (line)}
-      <div class="line">{line}</div>
-    {/each}
+  <!-- The question owns a fixed-height band of its own. Centring it in the
+       card meant revealing the answer made the card taller and shunted the
+       question upward — you look away to read, and it has moved. -->
+  <div class="question">
+    <!-- No lookup on the front: it already prints kanji・kana, and the back
+         gives the meaning, so a tooltip here would only repeat the card. -->
+    <div class="face front" class:jp={frontIsJapanese}>
+      {#each splitSlashLines(front) as line (line)}
+        <div class="line">{line}</div>
+      {/each}
+    </div>
   </div>
 
   {#if revealed}
@@ -139,10 +144,22 @@
     position: relative;
     padding: 2rem 1.25rem;
     text-align: center;
-    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    /* Content stacks from the top so that revealing the answer only ever adds
+       height below the question, never repositions it. */
+    justify-content: flex-start;
+  }
+
+  /* Constant height whether or not the answer is showing. The question is
+     centred within this band, so it sits in the same place on every card and
+     on both sides of the flip. */
+  .question {
+    min-height: 190px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: stretch;
   }
 
   .flashcard.editing {

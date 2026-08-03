@@ -18,12 +18,18 @@
 
   const MATURITIES: Maturity[] = ['new', 'learning', 'young', 'mature', 'leech']
 
-  let categories = $state<string[]>([])
-  let subcategories = $state<string[]>([])
+  // A deck tapped on Home arrives pre-filtered and starts straight away —
+  // re-picking on this screen what you just tapped is pure friction. Pressing
+  // Back lands on the filter panel, so nothing is out of reach.
+  const request = store.practiceRequest
+  store.practiceRequest = null
+
+  let categories = $state<string[]>(request?.categories ?? [])
+  let subcategories = $state<string[]>(request?.subcategories ?? [])
   let maturity = $state<Maturity[]>([])
   let limit = $state(20)
   let countToward = $state(false)
-  let started = $state(false)
+  let started = $state(request !== null)
 
   const filter = $derived<Filter>({ categories, subcategories, maturity })
 

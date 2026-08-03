@@ -40,6 +40,18 @@ class Store {
   dict = $state<'idle' | 'loading' | 'ready' | 'error'>('idle')
   dictError = $state<string | null>(null)
 
+  /**
+   * Filter handed to Practice when a deck row on Home is tapped, so the deck
+   * starts drilling immediately instead of making the user re-pick it on the
+   * next screen. Cleared once consumed.
+   */
+  practiceRequest = $state<{ categories: string[]; subcategories: string[] } | null>(null)
+
+  startPractice(categories: string[], subcategories: string[] = []): void {
+    this.practiceRequest = { categories, subcategories }
+    this.view = 'practice'
+  }
+
   async ensureDict(): Promise<void> {
     if (this.dict === 'ready' || this.dict === 'loading') return
     this.dict = 'loading'

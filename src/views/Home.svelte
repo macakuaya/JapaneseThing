@@ -22,26 +22,12 @@
    * is being picked up rather than rebuilt.
    */
   const inProgress = $derived.by(() => {
-    // Re-read whenever the clock ticks or an answer lands.
     void store.now
     void store.srs
     const saved = storage.loadSession()
     if (!saved || saved.mode !== 'review') return null
     if (saved.day !== dayStart(store.now, store.settings.dayStartHour)) return null
     return saved.queue.length ? saved : null
-  })
-
-  const perCategory = $derived.by(() => {
-    const cutoff = dayEnd(store.now, store.settings.dayStartHour)
-    return store.dataset.categories.map((cat) => {
-      const cards = store.cards.filter((c) => c.entry.category === cat.id)
-      return {
-        ...cat,
-        total: cards.length,
-        due: cards.filter((c) => c.state.stage !== 'new' && c.state.due < cutoff).length,
-        fresh: cards.filter((c) => c.state.stage === 'new').length,
-      }
-    })
   })
 
   const learned = $derived(
@@ -51,25 +37,57 @@
     }).length,
   )
 
-  const leeches = $derived(
-    store.cards.filter((c) => maturityOf(c.state, store.settings) === 'leech').length,
-  )
+  /** Which deck rows are expanded to show their subcategories. */
+  let expanded = $state<string[]>([])
+
+  const toggle = (id: string) =>
+    (expanded = expanded.includes(id) ? expanded.filter((x) => x !== id) : [...expanded, id])
+
+  const decks = $derived.by(() => {
+    const cutoff = dayEnd(store.now, store.settings.dayStartHour)
+    return store.dataset.categories.map((cat) => {
+      const cards = store.cards.filter((c) => c.entry.category === cat.id)
+      const known = cards.filter((c) => {
+        const m = maturityOf(c.state, store.settings)
+        return m === 'young' || m === 'mature'
+      }).length
+      return {
+        ...cat,
+        total: cards.length,
+        known,
+        due: cards.filter((c) => c.state.stage !== 'new' && c.state.due < cutoff).length,
+        subs: (store.subcategoriesOf.get(cat.id) ?? []).map((sub) => {
+          const inSub = cards.filter((c) => c.entry.subcategory === sub)
+          return {
+            name: sub,
+            total: inSub.length,
+            known: inSub.filter((c) => {
+              const m = maturityOf(c.state, store.settings)
+              return m === 'young' || m === 'mature'
+            }).length,
+          }
+        }),
+      }
+    })
+  })
 </script>
 
 <section class="stack">
   <div class="hero card-surface">
+    <!-- Labels say what the number is for, rather than naming an SRS concept.
+         "DUE / NEW / LEARNED" meant nothing without knowing the algorithm. -->
     <div class="numbers">
       <div class="stat">
         <span class="value due">{counts.due}</span>
-        <span class="key">due</span>
+        <span class="key">to review</span>
       </div>
       <div class="stat">
         <span class="value fresh">{counts.fresh}</span>
-        <span class="key">new</span>
+        <span class="key">new today</span>
       </div>
       <div class="stat">
         <span class="value">{learned}</span>
-        <span class="key">learned</span>
+        <span class="key">learned <span class="faint">of {store.dataset.entries.length}</span></span>
       </div>
     </div>
 
@@ -87,46 +105,64 @@
       {/if}
     </button>
 
-    {#if inProgress}
-      <p class="muted note">
+    <p class="muted note">
+      {#if inProgress}
         You're {inProgress.answered} card{inProgress.answered === 1 ? '' : 's'} into this session.
-      </p>
-    {:else if ready === 0 && counts.later > 0}
-      <!-- Finished, but cards are still walking their learning steps. Saying
-           "all caught up" here would be a lie, and offering another batch of
-           new cards was the old bug. -->
-      <p class="muted note">
-        Done for now. {counts.later} card{counts.later === 1 ? '' : 's'} in learning
-        {#if counts.nextAt}· next in {formatDelay(counts.nextAt - store.now)}{/if}
-      </p>
-    {:else if ready === 0}
-      <p class="muted note">
-        {newLimitReached
-          ? `Today's ${store.settings.newPerDay} new cards are done. More tomorrow — or use free practice now.`
-          : 'Nothing is scheduled right now. Free practice lets you drill any category without touching the schedule.'}
-      </p>
-    {/if}
+      {:else if ready === 0 && counts.later > 0}
+        Done for now. {counts.later} card{counts.later === 1 ? '' : 's'} coming back
+        {#if counts.nextAt}in {formatDelay(counts.nextAt - store.now)}{/if}
+      {:else if ready === 0 && newLimitReached}
+        Today's {store.settings.newPerDay} new cards are done. More tomorrow — or drill a deck below.
+      {:else if ready === 0}
+        Nothing scheduled. Tap a deck below to drill it without affecting your schedule.
+      {:else}
+        <span class="faint">
+          {counts.due} scheduled for today, {counts.fresh} you haven't seen before.
+        </span>
+      {/if}
+    </p>
   </div>
 
-  <div class="quick row wrap">
-    <button onclick={() => onNavigate('practice')}>Free practice</button>
-    <button onclick={() => onNavigate('add')}>Add words</button>
-    <button onclick={() => onNavigate('browse')}>Browse {store.dataset.entries.length}</button>
-    {#if leeches > 0}
-      <button class="leech" onclick={() => onNavigate('practice')}>
-        {leeches} leech{leeches === 1 ? '' : 'es'}
-      </button>
-    {/if}
-  </div>
+  <div class="decks card-surface divide">
+    {#each decks as deck (deck.id)}
+      <div class="deck">
+        <div class="deck-row">
+          <!-- Tapping the deck drills it. This was the only thing the row
+               could usefully do, and previously it did nothing at all. -->
+          <button class="deck-main" onclick={() => store.startPractice([deck.id])}>
+            <span class="name">{deck.label}</span>
+            <span class="spacer"></span>
+            {#if deck.due > 0}<span class="tag due">{deck.due} due</span>{/if}
+            <span class="tag known">{deck.known} / {deck.total}</span>
+          </button>
 
-  <div class="categories card-surface divide">
-    {#each perCategory as cat (cat.id)}
-      <div class="cat">
-        <span class="name">{cat.label}</span>
-        <span class="spacer"></span>
-        {#if cat.due > 0}<span class="tag due">{cat.due} due</span>{/if}
-        {#if cat.fresh > 0}<span class="tag fresh">{cat.fresh} new</span>{/if}
-        <span class="tag total faint">{cat.total}</span>
+          {#if deck.subs.length}
+            <button
+              class="chevron ghost"
+              onclick={() => toggle(deck.id)}
+              aria-expanded={expanded.includes(deck.id)}
+              aria-label="{expanded.includes(deck.id) ? 'Hide' : 'Show'} {deck.label} subcategories"
+            >
+              {expanded.includes(deck.id) ? '▾' : '▸'}
+            </button>
+          {/if}
+        </div>
+
+        <div class="bar" aria-hidden="true">
+          <div class="fill" style:width="{deck.total ? (deck.known / deck.total) * 100 : 0}%"></div>
+        </div>
+
+        {#if expanded.includes(deck.id)}
+          <div class="subs">
+            {#each deck.subs as sub (sub.name)}
+              <button class="sub" onclick={() => store.startPractice([deck.id], [sub.name])}>
+                <span class="sub-name">{sub.name}</span>
+                <span class="spacer"></span>
+                <span class="tag known">{sub.known} / {sub.total}</span>
+              </button>
+            {/each}
+          </div>
+        {/if}
       </div>
     {/each}
   </div>
@@ -168,8 +204,6 @@
   .key {
     font-size: 0.75rem;
     color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
   }
 
   .start {
@@ -181,26 +215,46 @@
     margin: 0;
     font-size: 0.85rem;
     text-align: center;
+    min-height: 1.2em;
   }
 
-  .quick button.leech {
-    color: var(--again);
-    background: color-mix(in srgb, var(--again) 14%, transparent);
+  .decks {
+    padding: 0.2rem 0;
   }
 
-  .categories {
-    padding: 0.35rem 0;
+  .deck {
+    padding: 0.5rem 0.5rem 0.6rem;
   }
 
-  .cat {
+  .deck-row {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    padding: 0.7rem 1rem;
+  }
+
+  .deck-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    padding: 0.45rem 0.5rem;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+  }
+
+  .deck-main:hover {
+    background: var(--surface-2);
   }
 
   .name {
     font-weight: 500;
+  }
+
+  .chevron {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+    color: var(--faint);
   }
 
   .tag {
@@ -212,12 +266,52 @@
     color: var(--good);
   }
 
-  .tag.fresh {
-    color: var(--easy);
+  .tag.known {
+    color: var(--muted);
   }
 
-  .tag.total {
-    min-width: 2.5rem;
-    text-align: right;
+  /* How much of the deck has reached a real interval — the one number that
+     shows progress rather than workload. */
+  .bar {
+    height: 2px;
+    margin: 0 0.5rem;
+    background: var(--surface-2);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.3s ease;
+  }
+
+  .subs {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0.35rem;
+  }
+
+  .sub {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: transparent;
+    padding: 0.35rem 0.5rem 0.35rem 1.25rem;
+    font: inherit;
+    color: var(--muted);
+    text-align: left;
+    font-size: 0.88rem;
+  }
+
+  .sub:hover {
+    background: var(--surface-2);
+    color: var(--text);
+  }
+
+  .sub-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 </style>

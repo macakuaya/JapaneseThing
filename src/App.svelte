@@ -34,6 +34,15 @@
       <span class="jp">語</span>
     </button>
     <span class="spacer"></span>
+    <!-- Every destination lives here. Home used to repeat these as a second
+         row of buttons, which is the same three places twice. -->
+    <button
+      class="ghost"
+      class:on={store.view === 'practice'}
+      onclick={() => (store.view = 'practice')}
+    >
+      Practice
+    </button>
     <button class="ghost" class:on={store.view === 'browse'} onclick={() => (store.view = 'browse')}>
       Browse
     </button>

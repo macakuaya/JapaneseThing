@@ -6,6 +6,7 @@
   // The dividing rule is always there, so the space the answer will occupy is
   // visible before it arrives and nothing shifts when it does.
 
+  import { ArrowLeftRight, Pencil } from '@lucide/svelte'
   import type { Card } from '../lib/session.ts'
   import type { Grade, WordEntry } from '../lib/types.ts'
   import { cardFront, splitSlashLines } from '../lib/text.ts'
@@ -61,11 +62,13 @@
     <EntryEditor {entry} onDone={() => (editing = false)} />
   {:else}
     <button
-      class="pen ghost"
+      class="pen ghost icon"
       onclick={() => (editing = true)}
       title="Edit this card"
-      aria-label="Edit this card">✎</button
+      aria-label="Edit this card"
     >
+      <Pencil size={15} />
+    </button>
 
     {#if !revealed}
       <!-- The whole face is the target. No label and no hover: an empty half
@@ -128,7 +131,8 @@
 
           {#each partners as partner (partner.id)}
             <p class="partner faint">
-              ⇄ {partner.note ?? 'par'}:
+              <ArrowLeftRight size={13} />
+              {partner.note ?? 'par'}:
               <span class="jp">{cardFront(partner)}</span> — {partner.meaning}
             </p>
           {/each}
@@ -276,12 +280,10 @@
 
   .pen {
     position: absolute;
-    top: 0.35rem;
-    right: 0.4rem;
+    top: 0.3rem;
+    right: 0.3rem;
     z-index: 1;
-    padding: 0.25rem 0.45rem;
-    font-size: 0.9rem;
-    line-height: 1;
+    padding: 0.4rem;
     color: var(--faint);
     opacity: 0.5;
   }

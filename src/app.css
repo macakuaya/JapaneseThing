@@ -161,6 +161,45 @@ button.primary:hover:not(:disabled) {
   filter: brightness(1.08);
 }
 
+/*
+ * Icon-only controls. Square rather than pill-shaped, and the icon inherits
+ * the button's colour so hover and the active state need no extra rules.
+ */
+button.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem;
+  line-height: 0;
+}
+
+/* An icon sitting beside a label, on one row and one optical baseline. */
+button.with-icon,
+button.primary.drill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+/*
+ * An icon standing in for a word inside running text. Nudged up to sit on the
+ * text's optical centre rather than its baseline, which is where an SVG box
+ * would otherwise land.
+ */
+p > svg {
+  vertical-align: -0.12em;
+}
+
+/*
+ * Lucide ships stroke-width as a presentation attribute; CSS outranks it, so
+ * one rule thins every icon at once. 2 reads as heavy next to this palette's
+ * low-contrast greys and the light weight of the Japanese face.
+ */
+svg[stroke-width] {
+  stroke-width: 1.75;
+}
+
 /* The only truly transparent control: it lives inside another surface. */
 button.ghost {
   background: transparent;

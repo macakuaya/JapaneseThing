@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { ArrowLeft } from '@lucide/svelte'
   import { store } from '../lib/store.svelte.ts'
   import type { FuriganaMode } from '../lib/types.ts'
   import {
@@ -73,7 +74,9 @@
 
 <section class="stack">
   <header class="row">
-    <button class="ghost" onclick={onExit}>← Home</button>
+    <button class="ghost with-icon" onclick={onExit}>
+      <ArrowLeft size={16} /> Home
+    </button>
   </header>
 
   <div class="card-surface panel">

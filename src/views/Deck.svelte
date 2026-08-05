@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { ArrowLeft, Play } from '@lucide/svelte'
   // The deck: browse it, filter it, drill it, edit it.
   //
   // This was two screens. Browse listed everything with a category dropdown;
@@ -96,7 +97,9 @@
 
 <section class="stack">
   <header class="row">
-    <button class="ghost" onclick={onExit}>← Home</button>
+    <button class="ghost with-icon" onclick={onExit}>
+      <ArrowLeft size={16} /> Home
+    </button>
   </header>
 
   <input
@@ -133,7 +136,7 @@
     </select>
 
     <button class="primary drill" onclick={drill} disabled={rows.length === 0 || searching}>
-      ▶ Drill {drillCount}
+      <Play size={15} fill="currentColor" /> Drill {drillCount}
     </button>
   </div>
 

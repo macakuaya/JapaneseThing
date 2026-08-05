@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import { Plus, Search, Settings } from '@lucide/svelte'
   import Home from './views/Home.svelte'
   import Review from './views/Review.svelte'
   import Practice from './views/Practice.svelte'
@@ -53,19 +54,32 @@
     {:else}
       <!-- Two destinations: today's work is Home, everything about the cards
            is Deck. Practice is reached by studying, not as a place. -->
-      <button class="ghost" class:on={store.view === 'deck'} onclick={() => (store.view = 'deck')}>
-        Deck
-      </button>
-      <button class="ghost" class:on={store.view === 'add'} onclick={() => (store.view = 'add')}>
-        Add
+      <button
+        class="ghost icon"
+        class:on={store.view === 'deck'}
+        onclick={() => (store.view = 'deck')}
+        title="Deck"
+        aria-label="Deck"
+      >
+        <Search size={19} />
       </button>
       <button
-        class="ghost"
+        class="ghost icon"
+        class:on={store.view === 'add'}
+        onclick={() => (store.view = 'add')}
+        title="Add"
+        aria-label="Add"
+      >
+        <Plus size={19} />
+      </button>
+      <button
+        class="ghost icon"
         class:on={store.view === 'settings'}
         onclick={() => (store.view = 'settings')}
+        title="Settings"
         aria-label="Settings"
       >
-        ⚙
+        <Settings size={19} />
       </button>
     {/if}
   </nav>

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Check } from '@lucide/svelte'
   import { tooltip } from '../lib/tooltip.svelte.ts'
   import { store } from '../lib/store.svelte.ts'
   import { makeId } from '../lib/text.ts'
@@ -168,7 +169,7 @@
         {#if alreadyInDeck}
           <span class="faint small">Ya está en tu mazo</span>
         {:else if tooltip.added}
-          <span class="added small">Añadido ✓</span>
+          <span class="added small"><Check size={12} /> Añadido</span>
         {:else}
           <button class="add" onclick={addToDeck}>+ Añadir al mazo</button>
         {/if}

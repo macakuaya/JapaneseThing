@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { ArrowLeft, X } from '@lucide/svelte'
   import { type Draft, draftToEntry, parseBlock } from '../lib/parse.ts'
   import { store } from '../lib/store.svelte.ts'
 
@@ -79,7 +80,9 @@
 
 <section class="stack">
   <header class="row">
-    <button class="ghost" onclick={onExit}>← Home</button>
+    <button class="ghost with-icon" onclick={onExit}>
+      <ArrowLeft size={16} /> Home
+    </button>
   </header>
 
   <div class="card-surface panel">
@@ -173,7 +176,7 @@
               <button
                 class="ghost tiny"
                 onclick={() => (drafts = drafts.toSpliced(i, 1))}
-                aria-label="Remove row">✕</button
+                aria-label="Remove row"><X size={14} /></button
               >
             </div>
 

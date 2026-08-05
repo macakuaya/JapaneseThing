@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { tick } from 'svelte'
   import Flashcard from '../components/Flashcard.svelte'
   import {
     type Card,
@@ -9,6 +10,7 @@
   } from '../lib/session.ts'
   import { dayStart } from '../lib/srs.ts'
   import { store } from '../lib/store.svelte.ts'
+  import { withViewTransition } from '../lib/transition.ts'
   import * as storage from '../lib/storage.ts'
   import type { CardState, Grade, ReviewLogEntry } from '../lib/types.ts'
 
@@ -200,6 +202,32 @@
     persist()
   }
 
+  /**
+   * Leave the way we came in: the card shrinks back into the Home deck it grew
+   * out of. Claiming the shared name on that deck has to happen before the
+   * transition starts, and the deck only exists once Home has rendered — so
+   * `store.morphing` is set first and Home picks it up inside the callback.
+   */
+  async function dismiss() {
+    store.morphing = store.studySource
+    await tick()
+    await withViewTransition(onExit)
+    store.morphing = null
+    store.studySource = null
+  }
+
+  /**
+   * Anywhere off the card is a way out. The card itself, the header and the
+   * dictionary tooltip are not — those are things you are using, not the
+   * backdrop behind them.
+   */
+  function onWindowClick(event: MouseEvent) {
+    const target = event.target as HTMLElement | null
+    if (!target || !target.isConnected) return
+    if (target.closest('.card, nav, .summary, .panel')) return
+    dismiss()
+  }
+
   function onKeydown(event: KeyboardEvent) {
     if (event.metaKey || event.ctrlKey || event.altKey) return
     const target = event.target as HTMLElement | null
@@ -207,7 +235,7 @@
 
     if (event.key === 'Escape') {
       event.preventDefault()
-      onExit()
+      dismiss()
       return
     }
     // Arrows page through the deck. They neither reveal nor answer: looking
@@ -247,7 +275,7 @@
   }
 </script>
 
-<svelte:window onkeydown={onKeydown} />
+<svelte:window onkeydown={onKeydown} onclick={onWindowClick} />
 
 <section class="session">
   <!-- Pinned to the very top of the viewport and full-bleed, above the nav —
@@ -277,19 +305,22 @@
           {config.writeThrough ? '· scheduling updated' : '· nothing scheduled'}
         </p>
       {/if}
-      <button class="primary" onclick={onExit}>Done</button>
+      <button class="primary" onclick={dismiss}>Done</button>
     </div>
   {:else if current}
-    {#key current.key + ':' + index + ':' + answered}
-      <Flashcard
-        card={current}
-        {revealed}
-        writeThrough={config.writeThrough}
-        {now}
-        onReveal={reveal}
-        onGrade={grade}
-      />
-    {/key}
+    <!-- Takes all the room between header and hint, and centres the card in it. -->
+    <div class="stage">
+      {#key current.key + ':' + index + ':' + answered}
+        <Flashcard
+          card={current}
+          {revealed}
+          writeThrough={config.writeThrough}
+          {now}
+          onReveal={reveal}
+          onGrade={grade}
+        />
+      {/key}
+    </div>
 
     <p class="hint faint">
       {revealed ? 'number keys to grade' : 'space to reveal'} · ←→ browse the deck · Esc to exit
@@ -299,9 +330,27 @@
 
 <style>
   .session {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    min-height: 0;
+  }
+
+  /*
+   * The card is centred on the viewport itself, not on the space left over
+   * after the header and the hint have taken their share. Those two float
+   * above it at the edges, so the one thing you are looking at sits in the
+   * true middle of the screen.
+   *
+   * Below the header's z-index, so 語 stays clickable where they meet.
+   */
+  .stage {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
   }
 
   .bar {
@@ -322,13 +371,23 @@
     transition: width 0.25s ease;
   }
 
+  /* Floats on the bottom edge, the mirror of 語 on the top one. */
   .hint {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+    z-index: 2;
     margin: 0;
     font-size: 0.75rem;
     text-align: center;
+    pointer-events: none;
   }
 
   .summary {
+    margin: auto 0;
+    position: relative;
+    z-index: 1;
     padding: 2.5rem 1.5rem;
     text-align: center;
     display: flex;

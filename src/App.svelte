@@ -91,10 +91,15 @@
 </div>
 
 <style>
+  /* Full height and a column, so a view can ask to fill what's left and pin
+     its own footer to the bottom edge. */
   .shell {
     max-width: var(--maxw);
     margin: 0 auto;
     padding: 0 1rem env(safe-area-inset-bottom);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
   }
 
   /*
@@ -103,23 +108,29 @@
    * size the bar moved everything below it every time you started or left a
    * session.
    */
+  /* Top inset equals the shell's side inset, so 語 sits square in the corner
+     rather than optically centred in a taller bar. */
   nav {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.25rem;
     height: 3.5rem;
-    padding: 0;
+    padding: 1rem 0 0;
     position: sticky;
     top: 0;
     background: var(--bg);
     z-index: 10;
+    flex-shrink: 0;
   }
 
+  /* No padding of its own: the glyph starts exactly at the shell's inset, so
+     its distance from the left edge matches its distance from the top. */
   .brand {
     border: none;
     background: none;
-    padding: 0.1rem 0.4rem;
+    padding: 0;
     font-size: 1.4rem;
+    line-height: 1;
   }
 
   .brand:hover {
@@ -133,13 +144,16 @@
   }
 
   main {
-    padding: 1.25rem 0 4rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1.25rem 0 1rem;
   }
 
   .counter {
     font-size: 0.85rem;
     font-variant-numeric: tabular-nums;
-    padding-right: 0.4rem;
+    line-height: 1.35;
   }
 
   .counter .done {

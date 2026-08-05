@@ -77,6 +77,13 @@ class Store {
   morphing = $state<string | null>(null)
 
   /**
+   * Which Home card the running study view grew out of, so leaving can shrink
+   * back into it. Unlike `morphing` this survives the whole session — it is
+   * remembered on the way in and read on the way out.
+   */
+  studySource = $state<string | null>(null)
+
+  /**
    * The Deck view's filter, held here rather than in the component so it
    * survives navigating away. Drilling a subcategory and coming back to "All
    * decks" loses your place in a 202-card list.

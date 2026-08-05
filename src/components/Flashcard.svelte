@@ -67,6 +67,13 @@
       aria-label="Edit this card">✎</button
     >
 
+    {#if !revealed}
+      <!-- The whole face is the target. No label and no hover: an empty half
+           under a question is already an invitation, and a button drawn inside
+           the card would compete with the card for being the thing you click. -->
+      <button class="tap" onclick={onReveal} aria-label="Show answer"></button>
+    {/if}
+
     <div class="half question" class:jp={frontIsJapanese}>
       {#each splitSlashLines(front) as line (line)}
         <div class="line">{line}</div>
@@ -132,12 +139,6 @@
         <div class="grading">
           <Grader state={card.state} {writeThrough} {now} {onGrade} />
         </div>
-      {:else}
-        <!-- Covers only the empty half, so the question above stays readable
-             and selectable while you think. -->
-        <button class="tap" onclick={onReveal} aria-label="Show answer">
-          <span class="prompt faint">tap to reveal</span>
-        </button>
       {/if}
     </div>
   {/if}
@@ -153,7 +154,10 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    width: min(390px, 100%);
+    /* Third term keeps the card clear of the floating header and hint on a
+       short screen. Clamping the *width* rather than the height means the 3:4
+       proportion holds — and the morph out of a deck depends on it holding. */
+    width: min(390px, 100%, calc((100dvh - 8rem) * 3 / 4));
     aspect-ratio: 3 / 4;
     margin: 0 auto;
     background: var(--surface);
@@ -201,26 +205,20 @@
     display: block;
   }
 
-  /* --- the empty half, before revealing ------------------------------- */
+  /* --- the tap target, before revealing -------------------------------- */
 
+  /* Sits over the entire card, under the pen. Deliberately invisible: it adds
+     a hit area, not a control. */
   .tap {
-    flex: 1;
-    width: 100%;
+    position: absolute;
+    inset: 0;
     background: transparent;
-    border-radius: var(--radius-sm);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 0.4rem;
-    cursor: pointer;
+    border-radius: inherit;
+    padding: 0;
   }
 
   .tap:hover {
-    background: var(--surface-2);
-  }
-
-  .prompt {
-    font-size: 0.72rem;
+    background: transparent;
   }
 
   /* --- the answer ------------------------------------------------------ */

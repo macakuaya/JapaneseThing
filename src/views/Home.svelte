@@ -62,6 +62,9 @@
    */
   async function open(id: string, go: () => void) {
     store.morphing = id
+    // Remembered for the way back: leaving the session shrinks the card into
+    // this same deck.
+    store.studySource = id
     await tick()
     await withViewTransition(go)
     store.morphing = null

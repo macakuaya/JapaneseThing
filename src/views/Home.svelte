@@ -1,14 +1,13 @@
 <script lang="ts">
-  // Home as a board of decks.
+  // Home as a hand of cards: five portrait decks laid out in a row.
   //
-  // Five things you can pick up: Daily — today's scheduled work — plus the
-  // four decks of the deck itself. Each is drawn as a stack of cards with its
-  // counter and progress along the bottom, so "how far through am I" is the
-  // same shape of answer everywhere on the screen.
+  // Every card is the same size and the same shape, Daily included — it is one
+  // of the five, not a banner above them. Tapping a card studies it: Daily
+  // starts today's scheduled review, the others drill that deck. So there is
+  // no button anywhere on this screen; the cards *are* the buttons.
 
   import { store, type View } from '../lib/store.svelte.ts'
   import { dayStart, formatDelay, maturityOf } from '../lib/srs.ts'
-  import { newIntroducedToday } from '../lib/session.ts'
   import * as storage from '../lib/storage.ts'
 
   interface Props {
@@ -20,10 +19,7 @@
   const counts = $derived(store.counts)
   const ready = $derived(counts.due + counts.fresh)
 
-  const newDone = $derived(newIntroducedToday(store.log, store.settings, store.now))
-  const newLimitReached = $derived(newDone >= store.settings.newPerDay)
-
-  /** A review left half-finished, so the button says Resume rather than Start. */
+  /** A review left half-finished, so the card says Resume rather than Start. */
   const inProgress = $derived.by(() => {
     void store.now
     void store.srs
@@ -34,8 +30,10 @@
   })
 
   /** Daily's own progress: how much of today's workload is behind you. */
-  const dailyDone = $derived(newDone + store.log.filter((l) => l.at >= dayStart(store.now, store.settings.dayStartHour)).length)
-  const dailyTotal = $derived(dailyDone + ready)
+  const answeredToday = $derived(
+    store.log.filter((l) => l.at >= dayStart(store.now, store.settings.dayStartHour)).length,
+  )
+  const dailyTotal = $derived(answeredToday + ready)
 
   const decks = $derived(
     store.dataset.categories.map((cat) => {
@@ -48,206 +46,195 @@
     }),
   )
 
-  function openDeck(id: string) {
-    store.deckFilter.category = id
-    store.deckFilter.subcategory = ''
-    store.deckFilter.query = ''
-    onNavigate('deck')
+  /**
+   * Picking up a deck means studying it. Opening a list to then press another
+   * button assumes you came here to look; you came here to practise.
+   *
+   * The Deck view is still where you go to browse, search or edit — it just
+   * isn't in the way of the common case any more.
+   */
+  function studyDeck(id: string) {
+    store.startPractice(
+      {
+        categories: [id],
+        subcategories: [],
+        limit: store.deckFilter.limit,
+        writeThrough: false,
+      },
+      'home',
+    )
   }
 
   const pct = (a: number, b: number) => (b ? (a / b) * 100 : 0)
+
+  const dailyCaption = $derived(
+    inProgress
+      ? `${inProgress.queue.length} left`
+      : ready > 0
+        ? 'tap to start'
+        : counts.later > 0 && counts.nextAt
+          ? `back in ${formatDelay(counts.nextAt - store.now)}`
+          : 'all caught up',
+  )
 </script>
 
-<section class="board">
-  <article class="deck daily">
-    <span class="label">Daily</span>
+<section class="hand">
+  <!-- Daily leads: it is the one you are meant to pick up first. -->
+  <button
+    class="card daily"
+    class:spent={ready === 0 && !inProgress}
+    onclick={() => onNavigate('review')}
+    disabled={ready === 0 && !inProgress}
+  >
+    <span class="name">Daily</span>
 
-    <div class="numbers">
-      <div class="stat">
-        <span class="value">{counts.due}</span>
-        <span class="key">to review</span>
+    <div class="body">
+      <div class="pair">
+        <div class="stat">
+          <span class="value">{counts.due}</span>
+          <span class="tag">review</span>
+        </div>
+        <div class="stat">
+          <span class="value">{counts.fresh}</span>
+          <span class="tag">new</span>
+        </div>
       </div>
-      <div class="stat">
-        <span class="value">{counts.fresh}</span>
-        <span class="key">new today</span>
-      </div>
+      <span class="caption">{dailyCaption}</span>
     </div>
 
-    <button
-      class="primary start"
-      onclick={() => onNavigate('review')}
-      disabled={ready === 0 && !inProgress}
-    >
-      {#if inProgress}
-        Resume · {inProgress.queue.length}
-      {:else if ready === 0}
-        All caught up
-      {:else}
-        Start review · {ready}
-      {/if}
-    </button>
-
-    <p class="note">
-      {#if inProgress}
-        {inProgress.answered} card{inProgress.answered === 1 ? '' : 's'} in so far.
-      {:else if ready === 0 && counts.later > 0}
-        {counts.later} card{counts.later === 1 ? '' : 's'} coming back
-        {#if counts.nextAt}in {formatDelay(counts.nextAt - store.now)}{/if}
-      {:else if ready === 0 && newLimitReached}
-        Today's {store.settings.newPerDay} new cards are done.
-      {:else if ready === 0}
-        Nothing scheduled right now.
-      {:else}
-        {counts.due} scheduled, {counts.fresh} you haven't seen.
-      {/if}
-    </p>
-
     <footer>
-      <span class="count">{dailyDone} / {dailyTotal || dailyDone}</span>
-      <div class="bar"><div class="fill" style:width="{pct(dailyDone, dailyTotal)}%"></div></div>
+      <div class="rule"><div class="fill" style:width="{pct(answeredToday, dailyTotal)}%"></div></div>
+      <span class="count">{answeredToday} / {dailyTotal || answeredToday}</span>
     </footer>
-  </article>
+  </button>
 
   {#each decks as deck (deck.id)}
-    <button class="deck" onclick={() => openDeck(deck.id)}>
-      <span class="label">{deck.label}</span>
-      <span class="grow"></span>
+    <button class="card" onclick={() => studyDeck(deck.id)}>
+      <!-- Centred in the card face, not pinned to the top: the name is the
+           whole content of these, so it sits where the eye lands. -->
+      <div class="body">
+        <span class="name">{deck.label}</span>
+      </div>
       <footer>
+        <div class="rule"><div class="fill" style:width="{pct(deck.known, deck.total)}%"></div></div>
         <span class="count">{deck.known} / {deck.total}</span>
-        <div class="bar"><div class="fill" style:width="{pct(deck.known, deck.total)}%"></div></div>
       </footer>
     </button>
   {/each}
 </section>
 
 <style>
-  .board {
+  /*
+   * Five across on a wide screen; a horizontal scroll on a narrow one. Five
+   * portrait cards squeezed into a phone width would be thumbnails, and
+   * wrapping them into a grid loses the "hand of cards" read entirely.
+   */
+  .hand {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    /* Room to the right and below for the stacked edges to show. */
-    gap: 1.4rem 1.5rem;
-    padding-bottom: 0.75rem;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: 0.7rem;
+    padding-bottom: 0.5rem;
   }
 
-  /*
-   * The stack: two cards peeking out below and to the right.
-   *
-   * Each layer is drawn as a fill plus a hairline one pixel larger, because on
-   * a dark background a fill alone is nearly the same tone as everything else
-   * and the edges disappear. The outline is what makes it read as paper.
-   *
-   * Done with box-shadow rather than real elements: no extra nodes, and it
-   * never participates in layout.
-   */
-  .deck {
-    position: relative;
+  .card {
     display: flex;
     flex-direction: column;
+    aspect-ratio: 3 / 4;
     background: var(--surface);
     border-radius: var(--radius);
-    box-shadow:
-      6px 6px 0 0 var(--divider),
-      6px 6px 0 -1px var(--stack-1),
-      12px 12px 0 0 var(--divider),
-      12px 12px 0 -1px var(--stack-2);
-    padding: 1rem 1.1rem 0.9rem;
-    min-height: 140px;
-    text-align: left;
+    padding: 0.85rem 0.75rem 0.7rem;
+    text-align: center;
     font: inherit;
     color: inherit;
-    transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+    /* A single hairline: these read as cards because of their shape and the
+       gaps between them, so a drop shadow would only add noise. */
+    box-shadow: inset 0 0 0 1px var(--divider);
+    transition: transform 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
   }
 
-  /* Slides toward the stack, as if the top card is being drawn off it. */
-  .deck:not(.daily):hover {
-    transform: translate(3px, 3px);
+  .card:hover:not(:disabled) {
     background: var(--surface-2);
-    box-shadow:
-      3px 3px 0 0 var(--divider),
-      3px 3px 0 -1px var(--stack-1),
-      7px 7px 0 0 var(--divider),
-      7px 7px 0 -1px var(--stack-2);
+    transform: translateY(-3px);
+    box-shadow: inset 0 0 0 1px var(--surface-3);
   }
 
-  .deck:not(.daily):active {
-    transform: translate(6px, 6px);
-    box-shadow:
-      2px 2px 0 0 var(--divider),
-      2px 2px 0 -1px var(--stack-2);
+  .card:active:not(:disabled) {
+    transform: translateY(-1px);
   }
 
-  .daily {
-    grid-column: 1 / -1;
-    min-height: auto;
-    gap: 0.9rem;
+  .card:disabled {
+    opacity: 1;
+    cursor: default;
   }
 
-  .label {
-    font-size: 0.95rem;
+  .name {
+    font-size: 0.9rem;
     font-weight: 500;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
   }
 
-  .daily .label {
-    font-size: 0.72rem;
+  /* Daily's name is a header rather than the content, so it stays at the top
+     and steps back to let the two numbers be the thing you read. */
+  .daily .name {
+    font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--muted);
   }
 
-  .grow {
+  /* Holds the middle open so every footer sits on the same line across the
+     row, whether the card has content in the middle or not. */
+  .body {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    min-height: 0;
   }
 
-  .numbers {
+  .pair {
     display: flex;
-    gap: 2.5rem;
+    gap: 0.9rem;
   }
 
   .stat {
     display: flex;
     flex-direction: column;
+    line-height: 1;
   }
 
   .value {
-    font-size: 2.6rem;
-    line-height: 1;
+    font-size: 1.55rem;
     font-variant-numeric: tabular-nums;
   }
 
-  .key {
-    font-size: 0.75rem;
-    color: var(--muted);
+  .tag {
+    font-size: 0.62rem;
+    color: var(--faint);
     margin-top: 0.2rem;
   }
 
-  .start {
-    padding: 0.8rem;
-    font-size: 0.95rem;
-  }
-
-  .note {
-    margin: -0.35rem 0 0;
-    font-size: 0.82rem;
+  .caption {
+    font-size: 0.66rem;
     color: var(--muted);
-    min-height: 1.2em;
   }
 
-  /* Counter and bar sit on the bottom edge of every card, Daily included, so
-     the same question is answered in the same place five times. */
+  .spent .value {
+    color: var(--faint);
+  }
+
+  /* The rule under which the count sits doubles as the progress track, so the
+     line in the sketch earns its place instead of being decoration. */
   footer {
     margin-top: auto;
-    padding-top: 0.7rem;
   }
 
-  .count {
-    font-size: 0.78rem;
-    color: var(--muted);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .bar {
-    height: 3px;
-    margin-top: 0.35rem;
+  .rule {
+    height: 2px;
     background: var(--surface-3);
     border-radius: 999px;
     overflow: hidden;
@@ -259,13 +246,27 @@
     transition: width 0.3s ease;
   }
 
-  @media (max-width: 480px) {
-    .board {
-      grid-template-columns: minmax(0, 1fr);
+  .count {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (max-width: 620px) {
+    .hand {
+      grid-auto-columns: 42vw;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      /* Bleed to the screen edges so the row reads as scrollable. */
+      margin: 0 -1rem;
+      padding: 0 1rem 0.75rem;
     }
 
-    .numbers {
-      gap: 2rem;
+    .card {
+      scroll-snap-align: start;
     }
   }
 </style>

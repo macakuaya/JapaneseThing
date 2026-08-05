@@ -56,6 +56,13 @@ class Store {
   practiceRequest = $state<PracticeRequest | null>(null)
 
   /**
+   * Where leaving a drill goes back to. A drill started from a Home card
+   * should return to Home, not dump you in the Deck list you never opened.
+   * Kept separate from the request because the request is consumed on arrival.
+   */
+  practiceReturnTo = $state<View>('deck')
+
+  /**
    * The Deck view's filter, held here rather than in the component so it
    * survives navigating away. Drilling a subcategory and coming back to "All
    * decks" loses your place in a 202-card list.
@@ -68,8 +75,9 @@ class Store {
     countToward: false,
   })
 
-  startPractice(request: PracticeRequest): void {
+  startPractice(request: PracticeRequest, returnTo: View = 'deck'): void {
     this.practiceRequest = request
+    this.practiceReturnTo = returnTo
     this.view = 'practice'
   }
 

@@ -58,8 +58,8 @@
     {:else if store.view === 'review'}
       <Review onExit={home} />
     {:else if store.view === 'practice'}
-      <!-- Leaving a drill returns to the list it came from, not Home. -->
-      <Practice onExit={() => (store.view = 'deck')} />
+      <!-- Back to wherever the drill was started from. -->
+      <Practice onExit={() => (store.view = store.practiceReturnTo)} />
     {:else if store.view === 'deck'}
       <Deck onExit={home} />
     {:else if store.view === 'add'}

@@ -14,7 +14,6 @@
 
 <Session
   config={reviewConfig(store.settings)}
-  title="Review"
   mode="review"
   log={store.log}
   {onExit}

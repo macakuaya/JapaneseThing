@@ -29,27 +29,45 @@
 </script>
 
 <div class="shell">
+  <!--
+    One header, and it belongs to whatever you are doing.
+
+    While a session runs it carries that session's counter and nothing else:
+    navigating elsewhere mid-card is not the thing you want made easy, and 語
+    already gets you home. Everywhere else it is navigation.
+  -->
   <nav>
-    <button class="brand" onclick={home}>
+    <button class="brand" onclick={home} aria-label="Home">
       <span class="jp">語</span>
     </button>
     <span class="spacer"></span>
-    <!-- Two destinations: today's work is Home, everything about the cards is
-         Deck. Practice is reached by drilling from Deck, not as a place. -->
-    <button class="ghost" class:on={store.view === 'deck'} onclick={() => (store.view = 'deck')}>
-      Deck
-    </button>
-    <button class="ghost" class:on={store.view === 'add'} onclick={() => (store.view = 'add')}>
-      Add
-    </button>
-    <button
-      class="ghost"
-      class:on={store.view === 'settings'}
-      onclick={() => (store.view = 'settings')}
-      aria-label="Settings"
-    >
-      ⚙
-    </button>
+
+    {#if store.sessionStatus}
+      <!-- "Done" counts answers, not distinct cards, so a card returning for
+           its next learning step counts each time. The progress bar measures
+           the same thing, so the two always agree. -->
+      <span class="counter muted">
+        <span class="done">{store.sessionStatus.answered}</span> done ·
+        {store.sessionStatus.left} left
+      </span>
+    {:else}
+      <!-- Two destinations: today's work is Home, everything about the cards
+           is Deck. Practice is reached by studying, not as a place. -->
+      <button class="ghost" class:on={store.view === 'deck'} onclick={() => (store.view = 'deck')}>
+        Deck
+      </button>
+      <button class="ghost" class:on={store.view === 'add'} onclick={() => (store.view = 'add')}>
+        Add
+      </button>
+      <button
+        class="ghost"
+        class:on={store.view === 'settings'}
+        onclick={() => (store.view = 'settings')}
+        aria-label="Settings"
+      >
+        ⚙
+      </button>
+    {/if}
   </nav>
 
   <main>
@@ -112,5 +130,15 @@
 
   main {
     padding: 1.25rem 0 4rem;
+  }
+
+  .counter {
+    font-size: 0.85rem;
+    font-variant-numeric: tabular-nums;
+    padding-right: 0.4rem;
+  }
+
+  .counter .done {
+    color: var(--text);
   }
 </style>

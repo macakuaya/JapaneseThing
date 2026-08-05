@@ -15,7 +15,6 @@
 
   interface Props {
     config: SessionConfig
-    title: string
     /** Distinguishes a stored review session from a stored practice one. */
     mode: 'review' | 'practice'
     /** Needed to enforce the daily new-card limit across sessions. */
@@ -23,7 +22,7 @@
     onExit: () => void
   }
 
-  const { config, title, mode, log = [], onExit }: Props = $props()
+  const { config, mode, log = [], onExit }: Props = $props()
 
   interface HistoryStep {
     card: Card
@@ -109,6 +108,16 @@
   // Record the starting queue immediately: quitting before the first answer
   // should still resume, not restart.
   persist()
+
+  // Publish the counter to the app header, which owns the only header on
+  // screen while a session is running. Cleared on the way out so the header
+  // goes back to being navigation.
+  $effect(() => {
+    store.sessionStatus = { answered, left: queue.length }
+    return () => {
+      store.sessionStatus = null
+    }
+  })
   const current = $derived(queue[0] ?? null)
   const done = $derived(current === null)
 
@@ -205,17 +214,6 @@
 <svelte:window onkeydown={onKeydown} />
 
 <section class="session">
-  <header>
-    <button class="ghost" onclick={onExit} aria-label="Leave session">← {title}</button>
-    <span class="spacer"></span>
-    <!-- "Done" counts answers, not distinct cards, so a card that comes back
-         for its next learning step counts each time it is answered. That is
-         what the progress bar measures too, so the two always agree. -->
-    <span class="counter muted">
-      <span class="done">{answered}</span> done · {queue.length} left
-    </span>
-  </header>
-
   <!-- Pinned to the very top of the viewport and full-bleed, above the nav —
        a page-level loading bar rather than a widget inside the card column. -->
   <div
@@ -277,21 +275,6 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
-  }
-
-  header {
-    display: flex;
-    align-items: center;
-  }
-
-  .counter {
-    font-size: 0.85rem;
-    font-variant-numeric: tabular-nums;
-    text-align: right;
-  }
-
-  .done {
-    color: var(--text);
   }
 
   .bar {

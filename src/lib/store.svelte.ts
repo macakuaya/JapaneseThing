@@ -63,6 +63,13 @@ class Store {
   practiceReturnTo = $state<View>('deck')
 
   /**
+   * Published by the running session so the app header can show its counter.
+   * There is one header, and in a session it belongs to the session — a second
+   * bar underneath the first is two headers competing for the same job.
+   */
+  sessionStatus = $state<{ answered: number; left: number } | null>(null)
+
+  /**
    * The Deck view's filter, held here rather than in the component so it
    * survives navigating away. Drilling a subcategory and coming back to "All
    * decks" loses your place in a 202-card list.

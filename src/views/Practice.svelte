@@ -31,4 +31,4 @@
   }
 </script>
 
-<Session {config} title="Practice" mode="practice" {onExit} />
+<Session {config} mode="practice" {onExit} />

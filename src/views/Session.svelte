@@ -28,6 +28,7 @@
     /** null when the card had never been reviewed before this answer. */
     previous: CardState | null
     queue: Card[]
+    index: number
     wasCorrect: boolean
   }
 
@@ -75,7 +76,20 @@
   const initial = initialQueue()
 
   let queue = $state<Card[]>(initial.queue)
-  let revealed = $state(false)
+
+  /**
+   * Where you are looking, which is not the same as what you have answered.
+   * The arrow keys move this cursor through the queue so you can page over the
+   * deck; only grading removes a card and moves the progress bar.
+   */
+  let index = $state(0)
+
+  /**
+   * Revealed cards, by key. Kept as a set rather than a single flag so that
+   * paging away from a card you have already turned over and back again shows
+   * it turned over — hiding it again would be a small lie about what you know.
+   */
+  let revealedKeys = $state(new Set<string>())
   // Undo history is intentionally not persisted: it holds queue snapshots, and
   // being able to undo across an app restart isn't worth storing them.
   let history = $state<HistoryStep[]>([])
@@ -117,8 +131,9 @@
       store.sessionStatus = null
     }
   })
-  const current = $derived(queue[0] ?? null)
-  const done = $derived(current === null)
+  const current = $derived(queue[Math.min(index, queue.length - 1)] ?? null)
+  const done = $derived(queue.length === 0)
+  const revealed = $derived(current ? revealedKeys.has(current.key) : false)
 
   // Cards re-enter the queue during learning steps, so "answered" can exceed
   // the starting count. Progress tracks work done against work remaining.
@@ -127,10 +142,16 @@
   )
 
   function reveal() {
-    if (!revealed && current) {
-      revealed = true
-      now = Date.now()
-    }
+    if (!current || revealed) return
+    revealedKeys = new Set(revealedKeys).add(current.key)
+    now = Date.now()
+  }
+
+  /** Page through the queue without answering anything. */
+  function move(delta: number) {
+    if (queue.length < 2) return
+    index = Math.min(Math.max(index + delta, 0), queue.length - 1)
+    now = Date.now()
   }
 
   function grade(g: Grade) {
@@ -144,20 +165,23 @@
     // Snapshotting the queue array is safe because it is only ever replaced,
     // never mutated in place — so undo gets the exact deck it had before.
     // svelte-ignore state_referenced_locally
-    history = [...history, { card, previous, queue, wasCorrect: g !== 'again' }]
+    history = [...history, { card, previous, queue, index, wasCorrect: g !== 'again' }]
     answered++
     if (g !== 'again') correct++
 
     if (config.writeThrough) {
-      queue = requeue(queue, 0, { ...card, state: nextState }, at)
+      queue = requeue(queue, index, { ...card, state: nextState }, at)
     } else {
       // Practice never reschedules, so a missed card simply comes round again
       // at the back of the deck.
-      const rest = queue.slice(1)
+      const rest = queue.toSpliced(index, 1)
       queue = g === 'again' ? [...rest, card] : rest
     }
 
-    revealed = false
+    // The answered card left the queue, so the cursor now points at whatever
+    // took its place. Clamp for the case where it was the last one.
+    index = Math.min(index, Math.max(0, queue.length - 1))
+    revealedKeys = new Set([...revealedKeys].filter((k) => k !== card.key))
     now = at
     persist()
   }
@@ -167,10 +191,11 @@
     if (!last) return
     if (config.writeThrough) store.ungrade(last.card.key, last.previous)
     queue = last.queue
+    index = last.index
     history = history.slice(0, -1)
     answered--
     if (last.wasCorrect) correct--
-    revealed = true
+    revealedKeys = new Set(revealedKeys).add(last.card.key)
     now = Date.now()
     persist()
   }
@@ -185,16 +210,28 @@
       onExit()
       return
     }
-    // ArrowLeft is what people reach for; u and Backspace stay as aliases.
-    if (event.key === 'ArrowLeft' || event.key === 'u' || event.key === 'Backspace') {
+    // Arrows page through the deck. They neither reveal nor answer: looking
+    // ahead at what is coming should cost nothing.
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault()
+      move(-1)
+      return
+    }
+    if (event.key === 'ArrowRight') {
+      event.preventDefault()
+      move(1)
+      return
+    }
+    // Taking back the last answer is a different act from paging, so it keeps
+    // its own key rather than sharing the left arrow.
+    if (event.key === 'u' || event.key === 'Backspace') {
       event.preventDefault()
       undo()
       return
     }
     if (event.key === ' ' || event.key === 'Enter') {
       event.preventDefault()
-      if (!revealed) reveal()
-      else grade(config.writeThrough ? 'good' : 'good')
+      reveal()
       return
     }
     if (!revealed) return
@@ -243,7 +280,7 @@
       <button class="primary" onclick={onExit}>Done</button>
     </div>
   {:else if current}
-    {#key current.key + answered}
+    {#key current.key + ':' + index + ':' + answered}
       <Flashcard
         card={current}
         {revealed}
@@ -255,7 +292,7 @@
     {/key}
 
     <p class="hint faint">
-      {revealed ? 'number keys to grade' : 'space to flip'} · ← previous · Esc to exit
+      {revealed ? 'number keys to grade' : 'space to reveal'} · ←→ browse the deck · Esc to exit
     </p>
   {/if}
 </section>

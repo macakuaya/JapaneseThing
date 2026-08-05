@@ -168,16 +168,12 @@
     text-align: center;
     font: inherit;
     color: inherit;
-    /* A single hairline: these read as cards because of their shape and the
-       gaps between them, so a drop shadow would only add noise. */
-    box-shadow: inset 0 0 0 1px var(--divider);
-    transition: transform 0.12s ease, background 0.12s ease, box-shadow 0.12s ease;
+    transition: transform 0.12s ease, background 0.12s ease;
   }
 
   .card:hover:not(:disabled) {
     background: var(--surface-2);
     transform: translateY(-3px);
-    box-shadow: inset 0 0 0 1px var(--surface-3);
   }
 
   .card:active:not(:disabled) {
@@ -267,12 +263,17 @@
     transition: width 0.3s ease;
   }
 
+  /* Tucked tight under the bar and aligned to it, so the two read as one
+     object — the bar and the number it belongs to — rather than as a rule
+     with a caption floating beneath it. */
   .count {
     display: block;
-    margin-top: 0.45rem;
-    font-size: 0.8rem;
+    margin-top: 0.3rem;
+    text-align: left;
+    font-size: 0.78rem;
     color: var(--muted);
     font-variant-numeric: tabular-nums;
+    line-height: 1.2;
   }
 
   @media (max-width: 620px) {

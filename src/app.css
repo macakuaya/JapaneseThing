@@ -308,13 +308,18 @@ a {
   animation-timing-function: cubic-bezier(0.2, 0, 0.15, 1);
 }
 
-/* The two snapshots differ wildly in content, so cross-fading them slowly
-   looks like a glitch. Fade fast and let the geometry carry the motion. */
+/*
+ * The two snapshots differ in content, so cross-fade them quickly and let the
+ * geometry carry the motion.
+ *
+ * No height override here. Forcing `height: 100%` stretches each snapshot to
+ * fill the group box, which distorts both faces mid-flight — the card appeared
+ * to squash rather than grow. The deck and the card now share a 3:4 ratio, so
+ * the default scaling is already the right shape.
+ */
 ::view-transition-old(card-morph),
 ::view-transition-new(card-morph) {
-  animation-duration: 140ms;
-  height: 100%;
-  overflow: clip;
+  animation-duration: 160ms;
 }
 
 ::view-transition-old(root),

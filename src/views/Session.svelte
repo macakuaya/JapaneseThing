@@ -1,6 +1,5 @@
 <script lang="ts">
   import Flashcard from '../components/Flashcard.svelte'
-  import Grader from '../components/Grader.svelte'
   import {
     type Card,
     type SessionConfig,
@@ -245,28 +244,19 @@
     </div>
   {:else if current}
     {#key current.key + answered}
-      <Flashcard card={current} {revealed} />
+      <Flashcard
+        card={current}
+        {revealed}
+        writeThrough={config.writeThrough}
+        {now}
+        onReveal={reveal}
+        onGrade={grade}
+      />
     {/key}
 
-    <div class="controls">
-      {#if revealed}
-        <Grader
-          state={current.state}
-          writeThrough={config.writeThrough}
-          {now}
-          onGrade={grade}
-        />
-      {:else}
-        <button class="primary reveal" onclick={reveal}>Show answer</button>
-      {/if}
-
-      <div class="row footer">
-        <span class="spacer"></span>
-        <span class="hint faint">
-          {revealed ? 'number keys to grade' : 'space to reveal'} · ← previous · Esc to exit
-        </span>
-      </div>
-    </div>
+    <p class="hint faint">
+      {revealed ? 'number keys to grade' : 'space to flip'} · ← previous · Esc to exit
+    </p>
   {/if}
 </section>
 
@@ -295,23 +285,10 @@
     transition: width 0.25s ease;
   }
 
-  .controls {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .reveal {
-    width: 100%;
-    padding: 0.85rem;
-  }
-
-  .footer {
-    min-height: 2rem;
-  }
-
   .hint {
+    margin: 0;
     font-size: 0.75rem;
+    text-align: center;
   }
 
   .summary {

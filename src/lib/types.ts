@@ -12,6 +12,12 @@ export type Direction = 'recognition' | 'production'
 export interface CategoryDef {
   id: string
   label: string
+  /**
+   * The category's name in the dataset's target language, shown alongside the
+   * native one. Optional: a dataset that hasn't got them still works, the
+   * cards just carry one name.
+   */
+  targetLabel?: string
   /** Ordered. Empty when the category has no subdivisions. */
   subcategories: string[]
 }

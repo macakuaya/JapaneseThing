@@ -7,6 +7,7 @@
     {
       "id": "gramatica",
       "label": "Gramática",
+      "targetLabel": "文法",
       "subcategories": [
         "N5",
         "N4"
@@ -15,6 +16,7 @@
     {
       "id": "verbos",
       "label": "Verbos",
+      "targetLabel": "動詞",
       "subcategories": [
         "Movimiento / viaje",
         "Cocina",
@@ -31,6 +33,7 @@
     {
       "id": "vocabulario",
       "label": "Vocabulario",
+      "targetLabel": "語彙",
       "subcategories": [
         "Comida y cocina",
         "Casa y objetos cotidianos",
@@ -47,6 +50,7 @@
     {
       "id": "expresiones",
       "label": "Expresiones",
+      "targetLabel": "表現",
       "subcategories": []
     }
   ],

@@ -107,8 +107,6 @@
     onclick={startDaily}
     disabled={ready === 0 && !inProgress}
   >
-    <span class="name">Daily</span>
-
     <div class="body">
       <div class="pair">
         <div class="stat">
@@ -124,6 +122,9 @@
     </div>
 
     <footer>
+      <div class="title">
+        <span class="name">Daily</span>
+      </div>
       <div class="rule"><div class="fill" style:width="{pct(answeredToday, dailyTotal)}%"></div></div>
       <span class="count">{answeredToday} / {dailyTotal || answeredToday}</span>
     </footer>
@@ -135,12 +136,20 @@
       style:view-transition-name={store.morphing === deck.id ? MORPH : 'none'}
       onclick={() => studyDeck(deck.id)}
     >
-      <!-- Centred in the card face, not pinned to the top: the name is the
-           whole content of these, so it sits where the eye lands. -->
-      <div class="body">
-        <span class="name">{deck.label}</span>
-      </div>
+      <div class="body"></div>
+      <!--
+        Name, rule and count are one block in the bottom-left corner, the way
+        a spine carries a title. The Japanese leads and the Spanish glosses it
+        underneath — the same order as the flashcards, so the deck reads as
+        the thing it contains.
+      -->
       <footer>
+        <div class="title">
+          {#if deck.targetLabel}
+            <span class="jp target">{deck.targetLabel}</span>
+          {/if}
+          <span class="name">{deck.label}</span>
+        </div>
         <div class="rule"><div class="fill" style:width="{pct(deck.known, deck.total)}%"></div></div>
         <span class="count">{deck.known} / {deck.total}</span>
       </footer>
@@ -168,7 +177,7 @@
     background: var(--surface);
     border-radius: var(--radius);
     padding: 1.1rem 1rem 0.9rem;
-    text-align: center;
+    text-align: left;
     font: inherit;
     color: inherit;
     transition: transform 0.12s ease, background 0.12s ease;
@@ -188,20 +197,32 @@
     cursor: default;
   }
 
-  .name {
+  .title {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.5rem;
+  }
+
+  .target {
     font-size: 1.05rem;
-    font-weight: 500;
+    line-height: 1.25;
+    color: var(--text);
+  }
+
+  /* The gloss under the Japanese, so it steps back the way it does on a card. */
+  .name {
+    font-size: 0.78rem;
     line-height: 1.3;
+    color: var(--muted);
     overflow-wrap: anywhere;
   }
 
-  /* Daily's name is a header rather than the content, so it stays at the top
-     and steps back to let the two numbers be the thing you read. */
+  /* Daily has no Japanese name — it is the app talking, not the dataset — so
+     its one name takes the leading line rather than the gloss line. */
   .daily .name {
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--muted);
+    font-size: 1.05rem;
+    line-height: 1.25;
+    color: var(--text);
   }
 
   /* Holds the middle open so every footer sits on the same line across the
@@ -214,6 +235,7 @@
     justify-content: center;
     gap: 0.35rem;
     min-height: 0;
+    text-align: center;
   }
 
   .pair {
@@ -272,7 +294,6 @@
   .count {
     display: block;
     margin-top: 0.3rem;
-    text-align: left;
     font-size: 0.78rem;
     color: var(--muted);
     font-variant-numeric: tabular-nums;
@@ -291,6 +312,11 @@
 
     .value {
       font-size: 1.8rem;
+    }
+
+    .target,
+    .daily .name {
+      font-size: 0.95rem;
     }
   }
 </style>

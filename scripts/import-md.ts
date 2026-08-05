@@ -26,11 +26,14 @@ const ROOT = resolve(HERE, '..')
 const SRC = resolve(ROOT, 'japones_organizado.md')
 const OUT = resolve(ROOT, 'src/data/seed.json')
 
-const CATEGORIES: Record<string, { id: string; label: string }> = {
-  'GRAMÁTICA': { id: 'gramatica', label: 'Gramática' },
-  'VERBOS': { id: 'verbos', label: 'Verbos' },
-  'VOCABULARIO': { id: 'vocabulario', label: 'Vocabulario' },
-  'EXPRESIONES': { id: 'expresiones', label: 'Expresiones' },
+// The Japanese names are ours, not the teacher's — the source has Spanish
+// headings only. They live here rather than in the app because which language
+// a deck is named in is a property of the dataset, not of the UI.
+const CATEGORIES: Record<string, { id: string; label: string; targetLabel: string }> = {
+  'GRAMÁTICA': { id: 'gramatica', label: 'Gramática', targetLabel: '文法' },
+  'VERBOS': { id: 'verbos', label: 'Verbos', targetLabel: '動詞' },
+  'VOCABULARIO': { id: 'vocabulario', label: 'Vocabulario', targetLabel: '語彙' },
+  'EXPRESIONES': { id: 'expresiones', label: 'Expresiones', targetLabel: '表現' },
 }
 
 /**
@@ -110,14 +113,14 @@ const warnings: string[] = []
 const supplements: string[] = []
 const tidied: string[] = []
 
-let category: { id: string; label: string } | null = null
+let category: { id: string; label: string; targetLabel: string } | null = null
 let subcategory: string | null = null
 let table: TableKind | null = null
 
-function noteCategory(id: string, label: string, sub: string | null) {
+function noteCategory(id: string, label: string, targetLabel: string, sub: string | null) {
   let def = catIndex.get(id)
   if (!def) {
-    def = { id, label, subcategories: [] }
+    def = { id, label, targetLabel, subcategories: [] }
     catIndex.set(id, def)
     categories.push(def)
   }
@@ -162,7 +165,7 @@ for (let i = 0; i < lines.length; i++) {
     continue
   }
 
-  noteCategory(category.id, category.label, subcategory)
+  noteCategory(category.id, category.label, category.targetLabel, subcategory)
   // A factory, not a shared object: spreading one literal would give every
   // entry from this row the *same* relatedIds array.
   const base = () => ({

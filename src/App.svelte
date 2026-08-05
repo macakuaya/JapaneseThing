@@ -97,18 +97,22 @@
     padding: 0 1rem env(safe-area-inset-bottom);
   }
 
-  /* Sticky over scrolling content — one of the few places a real division
-     exists that fill cannot express, so it keeps its hairline. */
+  /*
+   * Fixed height, not derived from its contents. The session header is a bare
+   * span and the navigation is a row of padded buttons, so letting the content
+   * size the bar moved everything below it every time you started or left a
+   * session.
+   */
   nav {
     display: flex;
     align-items: center;
     gap: 0.25rem;
-    padding: 0.75rem 0;
+    height: 3.5rem;
+    padding: 0;
     position: sticky;
     top: 0;
     background: var(--bg);
     z-index: 10;
-    border-bottom: 1px solid var(--divider);
   }
 
   .brand {

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { ArrowLeft } from '@lucide/svelte'
   import { store } from '../lib/store.svelte.ts'
   import type { FuriganaMode } from '../lib/types.ts'
   import {
@@ -8,12 +7,6 @@
     exportBackup,
     parseBackup,
   } from '../lib/storage.ts'
-
-  interface Props {
-    onExit: () => void
-  }
-
-  const { onExit }: Props = $props()
 
   let message = $state<{ kind: 'ok' | 'error'; text: string } | null>(null)
   let fileInput: HTMLInputElement
@@ -73,12 +66,6 @@
 </script>
 
 <section class="stack">
-  <header class="row">
-    <button class="ghost with-icon" onclick={onExit}>
-      <ArrowLeft size={16} /> Home
-    </button>
-  </header>
-
   <div class="card-surface panel">
     <h2>Daily limits</h2>
     <div class="grid">

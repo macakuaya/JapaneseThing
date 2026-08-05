@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ArrowLeft, Play } from '@lucide/svelte'
+  import { Play } from '@lucide/svelte'
   // The deck: browse it, filter it, drill it, edit it.
   //
   // This was two screens. Browse listed everything with a category dropdown;
@@ -15,12 +15,6 @@
   import { cardFront } from '../lib/text.ts'
   import { MATURITY_LABEL, formatDelay, maturityOf } from '../lib/srs.ts'
   import type { Entry } from '../lib/types.ts'
-
-  interface Props {
-    onExit: () => void
-  }
-
-  const { onExit }: Props = $props()
 
   // Filter lives in the store so it survives leaving and returning.
   const f = store.deckFilter
@@ -96,12 +90,6 @@
 </script>
 
 <section class="stack">
-  <header class="row">
-    <button class="ghost with-icon" onclick={onExit}>
-      <ArrowLeft size={16} /> Home
-    </button>
-  </header>
-
   <input
     type="search"
     placeholder="Search Japanese, Spanish or examples…"

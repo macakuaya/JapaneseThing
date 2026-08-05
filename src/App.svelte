@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { Plus, Search, Settings } from '@lucide/svelte'
+  import { EllipsisVertical, Plus, Search } from '@lucide/svelte'
   import Home from './views/Home.svelte'
   import Review from './views/Review.svelte'
   import Practice from './views/Practice.svelte'
@@ -79,7 +79,7 @@
         title="Settings"
         aria-label="Settings"
       >
-        <Settings size={19} />
+        <EllipsisVertical size={19} />
       </button>
     {/if}
   </nav>
@@ -93,11 +93,11 @@
       <!-- Back to wherever the drill was started from. -->
       <Practice onExit={() => (store.view = store.practiceReturnTo)} />
     {:else if store.view === 'deck'}
-      <Deck onExit={home} />
+      <Deck />
     {:else if store.view === 'add'}
-      <Add onExit={home} />
+      <Add />
     {:else if store.view === 'settings'}
-      <SettingsView onExit={home} />
+      <SettingsView />
     {/if}
   </main>
 

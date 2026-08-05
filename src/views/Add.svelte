@@ -1,13 +1,7 @@
 <script lang="ts">
-  import { ArrowLeft, X } from '@lucide/svelte'
+  import { X } from '@lucide/svelte'
   import { type Draft, draftToEntry, parseBlock } from '../lib/parse.ts'
   import { store } from '../lib/store.svelte.ts'
-
-  interface Props {
-    onExit: () => void
-  }
-
-  const { onExit }: Props = $props()
 
   let text = $state('')
   let drafts = $state<Draft[]>([])
@@ -79,12 +73,6 @@
 </script>
 
 <section class="stack">
-  <header class="row">
-    <button class="ghost with-icon" onclick={onExit}>
-      <ArrowLeft size={16} /> Home
-    </button>
-  </header>
-
   <div class="card-surface panel">
     <h2>Add words</h2>
     <p class="muted intro">

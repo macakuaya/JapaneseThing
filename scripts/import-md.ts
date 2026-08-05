@@ -29,11 +29,13 @@ const OUT = resolve(ROOT, 'src/data/seed.json')
 // The Japanese names are ours, not the teacher's — the source has Spanish
 // headings only. They live here rather than in the app because which language
 // a deck is named in is a property of the dataset, not of the UI.
-const CATEGORIES: Record<string, { id: string; label: string; targetLabel: string }> = {
-  'GRAMÁTICA': { id: 'gramatica', label: 'Gramática', targetLabel: '文法' },
-  'VERBOS': { id: 'verbos', label: 'Verbos', targetLabel: '動詞' },
-  'VOCABULARIO': { id: 'vocabulario', label: 'Vocabulario', targetLabel: '語彙' },
-  'EXPRESIONES': { id: 'expresiones', label: 'Expresiones', targetLabel: '表現' },
+type CategoryNames = { id: string; label: string; targetLabel: string; targetReading: string }
+
+const CATEGORIES: Record<string, CategoryNames> = {
+  'GRAMÁTICA': { id: 'gramatica', label: 'Gramática', targetLabel: '文法', targetReading: 'ぶんぽう' },
+  'VERBOS': { id: 'verbos', label: 'Verbos', targetLabel: '動詞', targetReading: 'どうし' },
+  'VOCABULARIO': { id: 'vocabulario', label: 'Vocabulario', targetLabel: '語彙', targetReading: 'ごい' },
+  'EXPRESIONES': { id: 'expresiones', label: 'Expresiones', targetLabel: '表現', targetReading: 'ひょうげん' },
 }
 
 /**
@@ -113,14 +115,15 @@ const warnings: string[] = []
 const supplements: string[] = []
 const tidied: string[] = []
 
-let category: { id: string; label: string; targetLabel: string } | null = null
+let category: CategoryNames | null = null
 let subcategory: string | null = null
 let table: TableKind | null = null
 
-function noteCategory(id: string, label: string, targetLabel: string, sub: string | null) {
+function noteCategory(names: CategoryNames, sub: string | null) {
+  const { id, label, targetLabel, targetReading } = names
   let def = catIndex.get(id)
   if (!def) {
-    def = { id, label, targetLabel, subcategories: [] }
+    def = { id, label, targetLabel, targetReading, subcategories: [] }
     catIndex.set(id, def)
     categories.push(def)
   }
@@ -165,7 +168,7 @@ for (let i = 0; i < lines.length; i++) {
     continue
   }
 
-  noteCategory(category.id, category.label, category.targetLabel, subcategory)
+  noteCategory(category, subcategory)
   // A factory, not a shared object: spreading one literal would give every
   // entry from this row the *same* relatedIds array.
   const base = () => ({
@@ -342,6 +345,7 @@ const noReading = entries.filter((e) => e.kind === 'word' && !e.kana).length
 const dataset: Dataset = {
   id: 'japones-sensei-ai',
   name: 'Japonés de clase',
+  subject: { target: '日本語', reading: 'にほんご', native: 'Japonés' },
   nativeLang: 'es',
   targetLang: 'ja',
   categories,

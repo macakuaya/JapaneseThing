@@ -87,6 +87,13 @@
 
   const pct = (a: number, b: number) => (b ? (a / b) * 100 : 0)
 
+  /**
+   * `日本語・にほんご`, the same shape as a card front. The dataset names the
+   * whole subject; without one the Daily card falls back to the UI's own word,
+   * which is the only name the app can honestly give it.
+   */
+  const subject = $derived(store.dataset.subject)
+
   const dailyCaption = $derived(
     inProgress
       ? `${inProgress.queue.length} left`
@@ -123,7 +130,14 @@
 
     <footer>
       <div class="title">
-        <span class="name">Daily</span>
+        {#if subject}
+          <span class="jp target">
+            {subject.target}{subject.reading ? `・${subject.reading}` : ''}
+          </span>
+          <span class="name">{subject.native}</span>
+        {:else}
+          <span class="name solo">Daily</span>
+        {/if}
       </div>
       <div class="rule"><div class="fill" style:width="{pct(answeredToday, dailyTotal)}%"></div></div>
       <span class="count">{answeredToday} / {dailyTotal || answeredToday}</span>
@@ -146,9 +160,11 @@
       <footer>
         <div class="title">
           {#if deck.targetLabel}
-            <span class="jp target">{deck.targetLabel}</span>
+            <span class="jp target">
+              {deck.targetLabel}{deck.targetReading ? `・${deck.targetReading}` : ''}
+            </span>
           {/if}
-          <span class="name">{deck.label}</span>
+          <span class="name" class:solo={!deck.targetLabel}>{deck.label}</span>
         </div>
         <div class="rule"><div class="fill" style:width="{pct(deck.known, deck.total)}%"></div></div>
         <span class="count">{deck.known} / {deck.total}</span>
@@ -197,16 +213,23 @@
     cursor: default;
   }
 
+  /* Clips rather than overflows: the names are held on one line, and a very
+     narrow phone should lose the tail of a reading, not push the card wide. */
   .title {
     display: flex;
     flex-direction: column;
     margin-bottom: 0.5rem;
+    min-width: 0;
+    overflow: hidden;
   }
 
+  /* Reading and word on one line, as on a card front. Sized to fit the
+     longest of them — 表現・ひょうげん — inside the narrowest column. */
   .target {
-    font-size: 1.05rem;
+    font-size: clamp(0.82rem, 3.6vw, 1rem);
     line-height: 1.25;
     color: var(--text);
+    white-space: nowrap;
   }
 
   /* The gloss under the Japanese, so it steps back the way it does on a card. */
@@ -217,9 +240,9 @@
     overflow-wrap: anywhere;
   }
 
-  /* Daily has no Japanese name — it is the app talking, not the dataset — so
-     its one name takes the leading line rather than the gloss line. */
-  .daily .name {
+  /* A deck with only one name gives it the leading line rather than the gloss
+     line, so it isn't quietly demoted for lacking a translation. */
+  .name.solo {
     font-size: 1.05rem;
     line-height: 1.25;
     color: var(--text);
@@ -314,8 +337,7 @@
       font-size: 1.8rem;
     }
 
-    .target,
-    .daily .name {
+    .name.solo {
       font-size: 0.95rem;
     }
   }

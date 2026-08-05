@@ -18,6 +18,8 @@ export interface CategoryDef {
    * cards just carry one name.
    */
   targetLabel?: string
+  /** Reading for `targetLabel`, shown after it as `文法・ぶんぽう`. */
+  targetReading?: string
   /** Ordered. Empty when the category has no subdivisions. */
   subcategories: string[]
 }
@@ -61,9 +63,22 @@ export interface PatternEntry extends EntryBase {
 
 export type Entry = WordEntry | PatternEntry
 
+/** A name in both of the dataset's languages, laid out like a card front. */
+export interface BilingualName {
+  target: string
+  reading?: string
+  native: string
+}
+
 export interface Dataset {
   id: string
   name: string
+  /**
+   * What the whole dataset teaches, named the way its categories are. Shown on
+   * the card that studies everything due today, which otherwise has no name of
+   * its own to use.
+   */
+  subject?: BilingualName
   /** BCP-47-ish tags, used for `lang` attributes and font selection. */
   nativeLang: string
   targetLang: string

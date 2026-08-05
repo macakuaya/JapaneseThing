@@ -1,6 +1,11 @@
 {
   "id": "japones-sensei-ai",
   "name": "Japonés de clase",
+  "subject": {
+    "target": "日本語",
+    "reading": "にほんご",
+    "native": "Japonés"
+  },
   "nativeLang": "es",
   "targetLang": "ja",
   "categories": [
@@ -8,6 +13,7 @@
       "id": "gramatica",
       "label": "Gramática",
       "targetLabel": "文法",
+      "targetReading": "ぶんぽう",
       "subcategories": [
         "N5",
         "N4"
@@ -17,6 +23,7 @@
       "id": "verbos",
       "label": "Verbos",
       "targetLabel": "動詞",
+      "targetReading": "どうし",
       "subcategories": [
         "Movimiento / viaje",
         "Cocina",
@@ -34,6 +41,7 @@
       "id": "vocabulario",
       "label": "Vocabulario",
       "targetLabel": "語彙",
+      "targetReading": "ごい",
       "subcategories": [
         "Comida y cocina",
         "Casa y objetos cotidianos",
@@ -51,6 +59,7 @@
       "id": "expresiones",
       "label": "Expresiones",
       "targetLabel": "表現",
+      "targetReading": "ひょうげん",
       "subcategories": []
     }
   ],

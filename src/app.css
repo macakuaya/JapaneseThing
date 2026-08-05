@@ -295,3 +295,37 @@ a {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
+
+/* --- view transitions ---------------------------------------------------- */
+
+/*
+ * A tapped deck grows into the card being studied. The morph is the whole
+ * point, so it runs a little longer than the surrounding cross-fade and eases
+ * out — the shape settling is what should read, not the fade.
+ */
+::view-transition-group(card-morph) {
+  animation-duration: 320ms;
+  animation-timing-function: cubic-bezier(0.2, 0, 0.15, 1);
+}
+
+/* The two snapshots differ wildly in content, so cross-fading them slowly
+   looks like a glitch. Fade fast and let the geometry carry the motion. */
+::view-transition-old(card-morph),
+::view-transition-new(card-morph) {
+  animation-duration: 140ms;
+  height: 100%;
+  overflow: clip;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 180ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

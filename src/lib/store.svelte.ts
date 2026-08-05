@@ -70,6 +70,13 @@ class Store {
   sessionStatus = $state<{ answered: number; left: number } | null>(null)
 
   /**
+   * Which Home card is currently growing into the study view. Only the one
+   * being opened may claim the shared view-transition-name — if several
+   * elements hold it at once the browser matches none of them.
+   */
+  morphing = $state<string | null>(null)
+
+  /**
    * The Deck view's filter, held here rather than in the component so it
    * survives navigating away. Drilling a subcategory and coming back to "All
    * decks" loses your place in a 202-card list.

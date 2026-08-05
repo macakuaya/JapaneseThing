@@ -1,13 +1,15 @@
 <script lang="ts">
-  // Home as a hand of cards: five portrait decks laid out in a row.
+  // Home as a hand of cards: five portrait decks on a grid.
   //
   // Every card is the same size and the same shape, Daily included — it is one
   // of the five, not a banner above them. Tapping a card studies it: Daily
   // starts today's scheduled review, the others drill that deck. So there is
   // no button anywhere on this screen; the cards *are* the buttons.
 
+  import { tick } from 'svelte'
   import { store, type View } from '../lib/store.svelte.ts'
   import { dayStart, formatDelay, maturityOf } from '../lib/srs.ts'
+  import { MORPH, withViewTransition } from '../lib/transition.ts'
   import * as storage from '../lib/storage.ts'
 
   interface Props {
@@ -47,23 +49,38 @@
   )
 
   /**
-   * Picking up a deck means studying it. Opening a list to then press another
-   * button assumes you came here to look; you came here to practise.
+   * Picking up a deck means studying it — opening a list to then press another
+   * button assumes you came here to look, and you came here to practise. The
+   * Deck view is still where you browse, search and edit.
    *
-   * The Deck view is still where you go to browse, search or edit — it just
-   * isn't in the way of the common case any more.
+   * Claim the shared transition name for the tapped card, let that land in the
+   * DOM, then swap views inside a transition — the browser matches the card
+   * against the flashcard and grows one into the other.
+   *
+   * The name has to be applied *before* the transition starts, because the
+   * "before" snapshot is taken the moment startViewTransition is called.
    */
-  function studyDeck(id: string) {
-    store.startPractice(
-      {
-        categories: [id],
-        subcategories: [],
-        limit: store.deckFilter.limit,
-        writeThrough: false,
-      },
-      'home',
-    )
+  async function open(id: string, go: () => void) {
+    store.morphing = id
+    await tick()
+    await withViewTransition(go)
+    store.morphing = null
   }
+
+  const studyDeck = (id: string) =>
+    open(id, () =>
+      store.startPractice(
+        {
+          categories: [id],
+          subcategories: [],
+          limit: store.deckFilter.limit,
+          writeThrough: false,
+        },
+        'home',
+      ),
+    )
+
+  const startDaily = () => open('daily', () => onNavigate('review'))
 
   const pct = (a: number, b: number) => (b ? (a / b) * 100 : 0)
 
@@ -83,7 +100,8 @@
   <button
     class="card daily"
     class:spent={ready === 0 && !inProgress}
-    onclick={() => onNavigate('review')}
+    style:view-transition-name={store.morphing === 'daily' ? MORPH : 'none'}
+    onclick={startDaily}
     disabled={ready === 0 && !inProgress}
   >
     <span class="name">Daily</span>
@@ -109,7 +127,11 @@
   </button>
 
   {#each decks as deck (deck.id)}
-    <button class="card" onclick={() => studyDeck(deck.id)}>
+    <button
+      class="card"
+      style:view-transition-name={store.morphing === deck.id ? MORPH : 'none'}
+      onclick={() => studyDeck(deck.id)}
+    >
       <!-- Centred in the card face, not pinned to the top: the name is the
            whole content of these, so it sits where the eye lands. -->
       <div class="body">
@@ -125,15 +147,14 @@
 
 <style>
   /*
-   * Five across on a wide screen; a horizontal scroll on a narrow one. Five
-   * portrait cards squeezed into a phone width would be thumbnails, and
-   * wrapping them into a grid loses the "hand of cards" read entirely.
+   * Three across, wrapping to two on a phone. Everything stays on screen —
+   * a sideways scroll hides cards behind an edge, and a deck you can't see is
+   * a deck you don't study.
    */
   .hand {
     display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(0, 1fr);
-    gap: 0.7rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
     padding-bottom: 0.5rem;
   }
 
@@ -143,7 +164,7 @@
     aspect-ratio: 3 / 4;
     background: var(--surface);
     border-radius: var(--radius);
-    padding: 0.85rem 0.75rem 0.7rem;
+    padding: 1.1rem 1rem 0.9rem;
     text-align: center;
     font: inherit;
     color: inherit;
@@ -169,7 +190,7 @@
   }
 
   .name {
-    font-size: 0.9rem;
+    font-size: 1.05rem;
     font-weight: 500;
     line-height: 1.3;
     overflow-wrap: anywhere;
@@ -178,7 +199,7 @@
   /* Daily's name is a header rather than the content, so it stays at the top
      and steps back to let the two numbers be the thing you read. */
   .daily .name {
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--muted);
@@ -198,7 +219,7 @@
 
   .pair {
     display: flex;
-    gap: 0.9rem;
+    gap: 1.4rem;
   }
 
   .stat {
@@ -208,18 +229,18 @@
   }
 
   .value {
-    font-size: 1.55rem;
+    font-size: 2.2rem;
     font-variant-numeric: tabular-nums;
   }
 
   .tag {
-    font-size: 0.62rem;
+    font-size: 0.68rem;
     color: var(--faint);
     margin-top: 0.2rem;
   }
 
   .caption {
-    font-size: 0.66rem;
+    font-size: 0.72rem;
     color: var(--muted);
   }
 
@@ -248,25 +269,24 @@
 
   .count {
     display: block;
-    margin-top: 0.4rem;
-    font-size: 0.72rem;
+    margin-top: 0.45rem;
+    font-size: 0.8rem;
     color: var(--muted);
     font-variant-numeric: tabular-nums;
   }
 
   @media (max-width: 620px) {
     .hand {
-      grid-auto-columns: 42vw;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      /* Bleed to the screen edges so the row reads as scrollable. */
-      margin: 0 -1rem;
-      padding: 0 1rem 0.75rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
     }
 
     .card {
-      scroll-snap-align: start;
+      padding: 0.8rem 0.7rem 0.65rem;
+    }
+
+    .value {
+      font-size: 1.8rem;
     }
   }
 </style>

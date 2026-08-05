@@ -140,7 +140,10 @@
 </article>
 
 <style>
+  /* The other half of the morph: the Home card that was tapped carries this
+     same name, so the browser treats the two as one element growing. */
   .flashcard {
+    view-transition-name: card-morph;
     position: relative;
     padding: 2rem 1.25rem;
     text-align: center;

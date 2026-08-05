@@ -11,26 +11,43 @@
  * against the one below it without help.
  */
 
+/*
+ * Graphite, and close to monochrome.
+ *
+ * The greys are deliberately neutral — no blue in them — so the app reads as
+ * paper and ink rather than as a screen. The accent is near-white rather than
+ * a colour, which means the primary action is the brightest thing on screen
+ * without competing with anything.
+ *
+ * The four grade colours are the one exception. Again/Hard/Good/Easy have to
+ * be told apart at a glance, so they keep their hue, but at low saturation so
+ * they read as tinted grey rather than as a palette.
+ */
+
 :root {
-  --bg: #0e1014;
-  --surface: #191d25;
-  --surface-2: #242a35;
-  --surface-3: #2f3644;
+  --bg: #1a1a1c;
+  --surface: #232326;
+  --surface-2: #2c2c30;
+  --surface-3: #38383d;
+
+  /* A stacked card sits on these, darkest at the back. */
+  --stack-1: #202023;
+  --stack-2: #1d1d20;
 
   /* Spent sparingly — see the note above. */
-  --divider: #262c37;
+  --divider: #303034;
 
-  --text: #e7e9ef;
-  --muted: #98a0b0;
-  --faint: #666e7e;
+  --text: #ececee;
+  --muted: #a0a0a7;
+  --faint: #6e6e76;
 
-  --accent: #7aa2f7;
-  --on-accent: #0b0e14;
+  --accent: #e9e9ec;
+  --on-accent: #1a1a1c;
 
-  --again: #f2777a;
-  --hard: #e0a45e;
-  --good: #7fc98a;
-  --easy: #6bb6d6;
+  --again: #d18d8d;
+  --hard: #cbab84;
+  --good: #9ec2a4;
+  --easy: #9bb6c4;
 
   --radius: 14px;
   --radius-sm: 9px;
@@ -42,27 +59,32 @@
 
 @media (prefers-color-scheme: light) {
   :root {
-    --bg: #f2f4f7;
+    --bg: #f2f2f3;
     --surface: #ffffff;
-    --surface-2: #eaedf3;
-    --surface-3: #dde2ea;
+    --surface-2: #e9e9eb;
+    --surface-3: #dcdcdf;
 
-    --divider: #e7eaf0;
+    --stack-1: #e4e4e6;
+    --stack-2: #d8d8da;
 
-    --text: #171a21;
-    --muted: #5a6271;
-    --faint: #8d95a4;
+    --divider: #e6e6e8;
 
-    --accent: #3763c8;
+    --text: #1a1a1c;
+    --muted: #5f5f66;
+    --faint: #90909a;
+
+    /* Mirrored: the accent is near-black here, so the primary action is still
+       the highest-contrast thing on the page. */
+    --accent: #1f1f22;
     --on-accent: #ffffff;
 
-    --again: #c94a4d;
-    --hard: #a96a17;
-    --good: #34804a;
-    --easy: #2a708e;
+    --again: #a85757;
+    --hard: #8a6a33;
+    --good: #4a7a56;
+    --easy: #4a6d80;
 
     /* White on light grey is a weak fill contrast, so elevation carries it. */
-    --elevation: 0 1px 2px rgba(16, 20, 30, 0.05), 0 4px 12px rgba(16, 20, 30, 0.05);
+    --elevation: 0 1px 2px rgba(20, 20, 22, 0.05), 0 4px 12px rgba(20, 20, 22, 0.05);
 
     color-scheme: light;
   }

@@ -156,7 +156,27 @@
     now = Date.now()
   }
 
+  /**
+   * How long the pressed button stays lit before the next card replaces it.
+   * Short enough to feel like the button responding rather than the app
+   * hesitating — but it is a real delay on every answer, so it is one number
+   * in one place.
+   */
+  const FLASH_MS = 150
+
+  let pressed = $state<Grade | null>(null)
+
+  /** Light the button, then commit. Also swallows a second press mid-flash. */
   function grade(g: Grade) {
+    if (pressed || !current || !revealed) return
+    pressed = g
+    setTimeout(() => {
+      pressed = null
+      commit(g)
+    }, FLASH_MS)
+  }
+
+  function commit(g: Grade) {
     const card = current
     if (!card || !revealed) return
 
@@ -190,7 +210,7 @@
 
   function undo() {
     const last = history.at(-1)
-    if (!last) return
+    if (!last || pressed) return
     if (config.writeThrough) store.ungrade(last.card.key, last.previous)
     queue = last.queue
     index = last.index
@@ -316,6 +336,7 @@
           {revealed}
           writeThrough={config.writeThrough}
           {now}
+          {pressed}
           onReveal={reveal}
           onGrade={grade}
         />

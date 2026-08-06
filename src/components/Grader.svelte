@@ -7,10 +7,15 @@
     /** Scheduling mode shows four buttons; practice shows a simple pass/fail. */
     writeThrough: boolean
     now: number
+    /**
+     * The grade being committed right now, shown filled. Owned by the session
+     * rather than here so a number key lights the same button a click does.
+     */
+    pressed?: Grade | null
     onGrade: (grade: Grade) => void
   }
 
-  const { state, writeThrough, now, onGrade }: Props = $props()
+  const { state, writeThrough, now, pressed = null, onGrade }: Props = $props()
 
   const preview = $derived(writeThrough ? previewIntervals(state, now) : null)
 
@@ -33,7 +38,7 @@
 
 <div class="grader" class:two={!writeThrough}>
   {#each buttons as b (b.grade)}
-    <button class={b.grade} onclick={() => onGrade(b.grade)}>
+    <button class={b.grade} class:on={pressed === b.grade} onclick={() => onGrade(b.grade)}>
       <span class="label">{b.label}</span>
       <span class="sub">{preview ? preview[b.grade] : b.key}</span>
     </button>
@@ -51,6 +56,15 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
+  /*
+   * The colour is feedback, not decoration.
+   *
+   * A tinted label sat there permanently and so said nothing about what you
+   * had just done; the answer registered with no acknowledgement at all. Now
+   * the four buttons rest identical and the one you choose floods with its
+   * grade's colour for a moment before the next card arrives — the press is
+   * confirmed by the thing you pressed.
+   */
   button {
     display: flex;
     flex-direction: column;
@@ -59,8 +73,17 @@
     padding: 0.7rem 0.3rem;
   }
 
-  /* Not decoration: the label colour IS the grade, so it carries meaning that
-     no fill or spacing conveys. Tinting the text beats an outline. */
+  /*
+   * Faster than the hold that follows it, so the button arrives at full colour
+   * and stays there for a beat. A fade that is still running when the card
+   * changes reads as a smear rather than as an answer being taken.
+   */
+  button,
+  .label,
+  .sub {
+    transition: background 90ms ease-out, color 90ms ease-out;
+  }
+
   .label {
     font-weight: 600;
     font-size: 0.92rem;
@@ -72,16 +95,52 @@
     font-variant-numeric: tabular-nums;
   }
 
-  .again .label {
-    color: var(--again);
+  /* Hovering hints at the colour the press will bring, without the resting
+     state having to carry it. */
+  .again:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--again) 20%, var(--surface-2));
   }
-  .hard .label {
-    color: var(--hard);
+  .hard:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--hard) 20%, var(--surface-2));
   }
-  .good .label {
-    color: var(--good);
+  .good:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--good) 20%, var(--surface-2));
   }
-  .easy .label {
-    color: var(--easy);
+  .easy:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--easy) 20%, var(--surface-2));
+  }
+
+  /* Pressed wins over hover — the mouse is still on the button it just hit. */
+  .again.on,
+  .again.on:hover {
+    background: var(--again);
+  }
+  .hard.on,
+  .hard.on:hover {
+    background: var(--hard);
+  }
+  .good.on,
+  .good.on:hover {
+    background: var(--good);
+  }
+  .easy.on,
+  .easy.on:hover {
+    background: var(--easy);
+  }
+
+  /* The grade colours are pale in the dark theme and deep in the light one, so
+     the text on top has to flip with them. --on-accent already does exactly
+     that, which is why it isn't spelled as a literal here. */
+  .on .label,
+  .on .sub {
+    color: var(--on-accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    button,
+    .label,
+    .sub {
+      transition: none;
+    }
   }
 </style>

@@ -21,11 +21,14 @@
     /** Grading mode: four scheduling buttons, or a simple pass/fail. */
     writeThrough: boolean
     now: number
+    /** The grade being committed, lit on its button until the card changes. */
+    pressed?: Grade | null
     onReveal: () => void
     onGrade: (grade: Grade) => void
   }
 
-  const { card, revealed, writeThrough, now, onReveal, onGrade }: Props = $props()
+  const { card, revealed, writeThrough, now, pressed = null, onReveal, onGrade }: Props =
+    $props()
 
   const entry = $derived(card.entry)
 
@@ -141,7 +144,7 @@
         <!-- Grading sits on the card: seeing the answer and judging it are one
              action, in one place. -->
         <div class="grading">
-          <Grader state={card.state} {writeThrough} {now} {onGrade} />
+          <Grader state={card.state} {writeThrough} {now} {pressed} {onGrade} />
         </div>
       {/if}
     </div>

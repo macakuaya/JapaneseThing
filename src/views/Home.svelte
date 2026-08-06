@@ -104,12 +104,11 @@
           <span class="jp target">
             {subject.target}{subject.reading ? `・${subject.reading}` : ''}
           </span>
-          <span class="name">{subject.native}</span>
+          <span class="name">{subject.native} <span class="count">{allCards}</span></span>
         {:else}
-          <span class="name solo">Daily</span>
+          <span class="name solo">Daily <span class="count">{allCards}</span></span>
         {/if}
       </div>
-      <span class="count">{allCards} cards</span>
     </footer>
   </button>
 
@@ -121,10 +120,9 @@
     >
       <div class="body"></div>
       <!--
-        Name and size are one block in the bottom-left corner, the way a spine
-        carries a title. The Japanese leads and the Spanish glosses it
-        underneath — the same order as the flashcards, so the deck reads as
-        the thing it contains.
+        Two lines in the bottom-left corner, the way a spine carries a title.
+        The Japanese leads and the Spanish glosses it underneath — the same
+        order as the flashcards, so the deck reads as the thing it contains.
       -->
       <footer>
         <div class="title">
@@ -133,9 +131,10 @@
               {deck.targetLabel}{deck.targetReading ? `・${deck.targetReading}` : ''}
             </span>
           {/if}
-          <span class="name" class:solo={!deck.targetLabel}>{deck.label}</span>
+          <span class="name" class:solo={!deck.targetLabel}>
+            {deck.label} <span class="count">{deck.total}</span>
+          </span>
         </div>
-        <span class="count">{deck.total} cards</span>
       </footer>
     </button>
   {/each}
@@ -205,7 +204,6 @@
   .title {
     display: flex;
     flex-direction: column;
-    margin-bottom: 0.15rem;
     min-width: 0;
     overflow: hidden;
   }
@@ -277,16 +275,14 @@
   }
 
   /*
-   * How big the deck is, not how much of it is done. There is no completion
-   * to chart here: the deck grows every week, so a bar creeping toward a full
-   * line would be measuring the wrong thing and would never arrive.
+   * How big the deck is, not how much of it is done — the deck grows every
+   * week, so there is no completion to chart. It rides on the gloss line as an
+   * annotation rather than taking a line of its own, which is all it is worth.
    */
   .count {
-    display: block;
-    font-size: 0.78rem;
     color: var(--faint);
     font-variant-numeric: tabular-nums;
-    line-height: 1.2;
+    font-size: 0.78rem;
   }
 
   @media (max-width: 620px) {

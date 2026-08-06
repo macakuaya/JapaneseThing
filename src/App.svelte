@@ -7,6 +7,7 @@
   import Deck from './views/Deck.svelte'
   import Add from './views/Add.svelte'
   import SettingsView from './views/Settings.svelte'
+  import Panzer from './components/Panzer.svelte'
   import Tooltip from './components/Tooltip.svelte'
   import { store, type View } from './lib/store.svelte.ts'
 
@@ -40,6 +41,7 @@
   <nav>
     <button class="brand" onclick={home} aria-label="Home">
       <span class="jp">語</span>
+      <Panzer />
     </button>
     <span class="spacer"></span>
 
@@ -140,6 +142,9 @@
   /* No padding of its own: the glyph starts exactly at the shell's inset, so
      its distance from the left edge matches its distance from the top. */
   .brand {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.4rem;
     border: none;
     background: none;
     padding: 0;
@@ -149,6 +154,17 @@
 
   .brand:hover {
     background: none;
+    color: var(--accent);
+  }
+
+  /* Quiet enough to be found rather than presented, and it wakes up with the
+     rest of the brand on hover — currentColor does that on its own. */
+  .brand :global(.panzer) {
+    color: var(--faint);
+    transition: color 0.15s ease;
+  }
+
+  .brand:hover :global(.panzer) {
     color: var(--accent);
   }
 

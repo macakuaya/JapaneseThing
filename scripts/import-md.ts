@@ -36,6 +36,9 @@ const CATEGORIES: Record<string, CategoryNames> = {
   'VERBOS': { id: 'verbos', label: 'Verbos', targetLabel: '動詞', targetReading: 'どうし' },
   'VOCABULARIO': { id: 'vocabulario', label: 'Vocabulario', targetLabel: '語彙', targetReading: 'ごい' },
   'EXPRESIONES': { id: 'expresiones', label: 'Expresiones', targetLabel: '表現', targetReading: 'ひょうげん' },
+  // Declared but not yet taught. It has no rows in the source, and the deck it
+  // produces is empty on purpose — see the pre-registration below.
+  'KANJI': { id: 'kanji', label: 'Kanji', targetLabel: '漢字', targetReading: 'かんじ' },
 }
 
 /**
@@ -133,6 +136,17 @@ function noteCategory(names: CategoryNames, sub: string | null) {
 function push(entry: Entry) {
   entries.push(entry)
 }
+
+/*
+ * Every declared category exists, in declaration order, whether or not the
+ * source has rows for it.
+ *
+ * Registering them only as entries are met meant a category with nothing in it
+ * yet simply didn't exist, and the order depended on which heading the parser
+ * happened to reach first. Declaring them up front makes both properties come
+ * from the table above, where they are readable.
+ */
+for (const names of Object.values(CATEGORIES)) noteCategory(names, null)
 
 for (let i = 0; i < lines.length; i++) {
   const line = lines[i]

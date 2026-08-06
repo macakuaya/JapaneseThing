@@ -61,6 +61,13 @@
       "targetLabel": "表現",
       "targetReading": "ひょうげん",
       "subcategories": []
+    },
+    {
+      "id": "kanji",
+      "label": "Kanji",
+      "targetLabel": "漢字",
+      "targetReading": "かんじ",
+      "subcategories": []
     }
   ],
   "entries": [

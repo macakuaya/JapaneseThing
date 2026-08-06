@@ -1,8 +1,8 @@
 <script lang="ts">
-  // Home as a hand of cards: five portrait decks on a grid.
+  // Home as a hand of cards: 日本語 plus every category, on a grid.
   //
-  // Every card is the same size and the same shape, Daily included — it is one
-  // of the five, not a banner above them. Tapping a card studies it: Daily
+  // Every card is the same size and the same shape, 日本語 included — it is one
+  // of the hand, not a banner above them. Tapping a card studies it: 日本語
   // starts today's scheduled review, the others drill that deck. So there is
   // no button anywhere on this screen; the cards *are* the buttons.
 
@@ -113,10 +113,15 @@
   </button>
 
   {#each decks as deck (deck.id)}
+    <!-- A deck declared but not yet filled shows its name and nothing to do:
+         tapping it would open a session with an empty queue, which reads as a
+         fault rather than as "there is nothing in here yet". -->
     <button
       class="card"
+      class:spent={deck.total === 0}
       style:view-transition-name={store.morphing === deck.id ? MORPH : 'none'}
       onclick={() => studyDeck(deck.id)}
+      disabled={deck.total === 0}
     >
       <div class="body"></div>
       <!--

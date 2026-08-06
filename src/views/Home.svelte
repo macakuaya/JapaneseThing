@@ -94,15 +94,6 @@
    */
   const subject = $derived(store.dataset.subject)
 
-  const dailyCaption = $derived(
-    inProgress
-      ? `${inProgress.queue.length} left`
-      : ready > 0
-        ? 'tap to start'
-        : counts.later > 0 && counts.nextAt
-          ? `back in ${formatDelay(counts.nextAt - store.now)}`
-          : 'all caught up',
-  )
 </script>
 
 <section class="hand">
@@ -114,19 +105,7 @@
     onclick={startDaily}
     disabled={ready === 0 && !inProgress}
   >
-    <div class="body">
-      <div class="pair">
-        <div class="stat">
-          <span class="value">{counts.due}</span>
-          <span class="tag">review</span>
-        </div>
-        <div class="stat">
-          <span class="value">{counts.fresh}</span>
-          <span class="tag">new</span>
-        </div>
-      </div>
-      <span class="caption">{dailyCaption}</span>
-    </div>
+    <div class="body"></div>
 
     <footer>
       <div class="title">
@@ -173,6 +152,24 @@
   {/each}
 </section>
 
+<!--
+  Today's state, on the bottom edge where the session keeps its hint — so the
+  line you read before opening a card and the line you read inside one sit in
+  the same place. It is not on the 日本語 card because those numbers describe
+  the day, not that deck: the four category decks feed the same queue.
+-->
+<p class="status faint">
+  {#if inProgress}
+    <span class="n">{inProgress.queue.length}</span> left in today's review
+  {:else if ready > 0}
+    <span class="n">{counts.due}</span> review · <span class="n">{counts.fresh}</span> new
+  {:else if counts.later > 0 && counts.nextAt}
+    nothing due · back in {formatDelay(counts.nextAt - store.now)}
+  {:else}
+    all caught up
+  {/if}
+</p>
+
 <style>
   /*
    * Three across, wrapping to two on a phone. Everything stays on screen —
@@ -183,7 +180,8 @@
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1rem;
-    padding-bottom: 0.5rem;
+    /* Clears the fixed status line below. */
+    padding-bottom: 2.5rem;
   }
 
   .card {
@@ -261,35 +259,28 @@
     text-align: center;
   }
 
-  .pair {
-    display: flex;
-    gap: 1.4rem;
+  /* A deck with nothing to study can't be tapped, so it shouldn't look as
+     ready as the ones that can. */
+  .spent .title {
+    opacity: 0.45;
   }
 
-  .stat {
-    display: flex;
-    flex-direction: column;
-    line-height: 1;
+  /* Same edge, same size, same alignment as the session's hint. */
+  .status {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+    z-index: 2;
+    margin: 0;
+    font-size: 0.75rem;
+    text-align: center;
+    pointer-events: none;
   }
 
-  .value {
-    font-size: 2.2rem;
+  .status .n {
+    color: var(--text);
     font-variant-numeric: tabular-nums;
-  }
-
-  .tag {
-    font-size: 0.68rem;
-    color: var(--faint);
-    margin-top: 0.2rem;
-  }
-
-  .caption {
-    font-size: 0.72rem;
-    color: var(--muted);
-  }
-
-  .spent .value {
-    color: var(--faint);
   }
 
   /* The rule under which the count sits doubles as the progress track, so the
@@ -331,10 +322,6 @@
 
     .card {
       padding: 0.8rem 0.7rem 0.65rem;
-    }
-
-    .value {
-      font-size: 1.8rem;
     }
 
     .name.solo {

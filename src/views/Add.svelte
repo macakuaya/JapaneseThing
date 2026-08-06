@@ -122,6 +122,23 @@ Chat log:
 〜たびに cada vez que`
 </script>
 
+<!--
+  Subcategories are whatever the entries say they are — `subcategoriesOf` reads
+  them off the deck, so one saved card is enough to make a new one exist. The
+  only thing stopping you inventing one was the control: a <select> can offer
+  the topics the class file happened to contain and nothing else, which is why
+  there was nowhere to put an adjective.
+
+  A datalist per category turns each field into "pick one, or type a new one".
+-->
+{#each store.dataset.categories as cat (cat.id)}
+  <datalist id="subs-{cat.id}">
+    {#each subsFor(cat.id) as sub (sub)}
+      <option value={sub}></option>
+    {/each}
+  </datalist>
+{/each}
+
 <section class="stack">
   <div class="card-surface panel">
     <div class="row wrap head">
@@ -160,12 +177,12 @@ Chat log:
       </div>
       <div class="field">
         <label for="sub">Default subcategory</label>
-        <select id="sub" bind:value={defaultSubcategory}>
-          <option value="">— none —</option>
-          {#each subsFor(defaultCategory) as sub (sub)}
-            <option value={sub}>{sub}</option>
-          {/each}
-        </select>
+        <input
+          id="sub"
+          list="subs-{defaultCategory}"
+          bind:value={defaultSubcategory}
+          placeholder="none — or type a new one"
+        />
       </div>
       <span class="spacer"></span>
       <button class="primary" onclick={parse} disabled={!text.trim()}>Parse</button>
@@ -284,12 +301,13 @@ Chat log:
                   <option value={cat.id}>{cat.label}</option>
                 {/each}
               </select>
-              <select id="s-{i}" class="sub" bind:value={draft.subcategory}>
-                <option value="">— none —</option>
-                {#each subsFor(draft.category) as sub (sub)}
-                  <option value={sub}>{sub}</option>
-                {/each}
-              </select>
+              <input
+                id="s-{i}"
+                class="sub"
+                list="subs-{draft.category}"
+                bind:value={draft.subcategory}
+                placeholder="subcategoría"
+              />
             </div>
 
             <div class="cell drop">

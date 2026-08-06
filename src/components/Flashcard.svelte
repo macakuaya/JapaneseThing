@@ -6,7 +6,7 @@
   // The dividing rule is always there, so the space the answer will occupy is
   // visible before it arrives and nothing shifts when it does.
 
-  import { ArrowLeftRight, Pencil } from '@lucide/svelte'
+  import { ArrowLeftRight } from '@lucide/svelte'
   import type { Card } from '../lib/session.ts'
   import type { Grade, WordEntry } from '../lib/types.ts'
   import { cardFront, splitSlashLines } from '../lib/text.ts'
@@ -23,16 +23,26 @@
     now: number
     /** The grade being committed, lit on its button until the card changes. */
     pressed?: Grade | null
+    /** Owned by the session, because the control that opens it is the header's. */
+    editing?: boolean
+    onEditDone?: () => void
     onReveal: () => void
     onGrade: (grade: Grade) => void
   }
 
-  const { card, revealed, writeThrough, now, pressed = null, onReveal, onGrade }: Props =
-    $props()
+  const {
+    card,
+    revealed,
+    writeThrough,
+    now,
+    pressed = null,
+    editing = false,
+    onEditDone = () => {},
+    onReveal,
+    onGrade,
+  }: Props = $props()
 
   const entry = $derived(card.entry)
-
-  let editing = $state(false)
 
   const showFurigana = $derived(
     store.settings.furigana === 'always' ||
@@ -62,17 +72,12 @@
 
 <article class="card" class:editing>
   {#if editing}
-    <EntryEditor {entry} onDone={() => (editing = false)} />
+    <!-- Same box, same size, same place: the card doesn't become a different
+         object to be corrected, it just shows its own fields. -->
+    <div class="editing-pane">
+      <EntryEditor {entry} onDone={onEditDone} />
+    </div>
   {:else}
-    <button
-      class="pen ghost icon"
-      onclick={() => (editing = true)}
-      title="Edit this card"
-      aria-label="Edit this card"
-    >
-      <Pencil size={15} />
-    </button>
-
     {#if !revealed}
       <!-- The whole face is the target. No label and no hover: an empty half
            under a question is already an invitation, and a button drawn inside
@@ -174,10 +179,19 @@
     view-transition-name: card-morph;
   }
 
+  /* Keeps the card's proportions rather than growing to fit the form, so
+     opening the editor changes what the card shows and nothing else. */
   .card.editing {
-    aspect-ratio: auto;
     text-align: left;
     padding: 1rem;
+    overflow: hidden;
+  }
+
+  .editing-pane {
+    height: 100%;
+    overflow-y: auto;
+    /* Room for the focus ring on the last field, which a flush edge clips. */
+    padding: 2px;
   }
 
   /* Equal halves, split by the rule. Both are always present, so revealing
@@ -281,18 +295,4 @@
     padding-top: 0.8rem;
   }
 
-  .pen {
-    position: absolute;
-    top: 0.3rem;
-    right: 0.3rem;
-    z-index: 1;
-    padding: 0.4rem;
-    color: var(--faint);
-    opacity: 0.5;
-  }
-
-  .pen:hover {
-    opacity: 1;
-    color: var(--text);
-  }
 </style>

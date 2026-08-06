@@ -70,6 +70,13 @@ class Store {
   sessionActive = $state(false)
 
   /**
+   * Whether that session is showing its editor. It lives here because the
+   * control that opens it is in the header and the thing it opens is in the
+   * card — one flag between them beats passing a callback up and a state down.
+   */
+  sessionEditing = $state(false)
+
+  /**
    * Which Home card is currently growing into the study view. Only the one
    * being opened may claim the shared view-transition-name — if several
    * elements hold it at once the browser matches none of them.

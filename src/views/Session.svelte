@@ -130,7 +130,16 @@
     store.sessionActive = true
     return () => {
       store.sessionActive = false
+      store.sessionEditing = false
     }
+  })
+
+  // A different card means the editor was for the previous one. Closing it is
+  // the only honest thing to do — leaving it open would show one card's fields
+  // over another card's question.
+  $effect(() => {
+    void current?.key
+    store.sessionEditing = false
   })
   const current = $derived(queue[Math.min(index, queue.length - 1)] ?? null)
   const done = $derived(queue.length === 0)
@@ -241,6 +250,9 @@
    * backdrop behind them.
    */
   function onWindowClick(event: MouseEvent) {
+    // With the editor open, an off-card click is far more likely to be a miss
+    // than a request to throw away what you were typing.
+    if (store.sessionEditing) return
     const target = event.target as HTMLElement | null
     if (!target || !target.isConnected) return
     if (target.closest('.card, nav, .summary, .panel')) return
@@ -251,6 +263,16 @@
     if (event.metaKey || event.ctrlKey || event.altKey) return
     const target = event.target as HTMLElement | null
     if (target && /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)) return
+
+    // While the editor is open it owns the keyboard: Escape closes it rather
+    // than leaving the session, and nothing else reaches the card underneath.
+    if (store.sessionEditing) {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        store.sessionEditing = false
+      }
+      return
+    }
 
     if (event.key === 'Escape') {
       event.preventDefault()
@@ -336,6 +358,8 @@
           writeThrough={config.writeThrough}
           {now}
           {pressed}
+          editing={store.sessionEditing}
+          onEditDone={() => (store.sessionEditing = false)}
           onReveal={reveal}
           onGrade={grade}
         />

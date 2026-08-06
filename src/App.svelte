@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { EllipsisVertical, Plus, Search } from '@lucide/svelte'
+  import { EllipsisVertical, Pencil, Plus, Search } from '@lucide/svelte'
   import Home from './views/Home.svelte'
   import Review from './views/Review.svelte'
   import Practice from './views/Practice.svelte'
@@ -45,7 +45,20 @@
     </button>
     <span class="spacer"></span>
 
-    {#if !store.sessionActive}
+    {#if store.sessionActive}
+      <!-- Where the kebab sits everywhere else. Editing the card you are
+           looking at is the one thing worth reaching for mid-session, and off
+           the card it stops competing with the card's own surface. -->
+      <button
+        class="ghost icon"
+        class:on={store.sessionEditing}
+        onclick={() => (store.sessionEditing = !store.sessionEditing)}
+        title="Edit this card"
+        aria-label="Edit this card"
+      >
+        <Pencil size={19} />
+      </button>
+    {:else}
       <!-- Two destinations: today's work is Home, everything about the cards
            is Deck. Practice is reached by studying, not as a place. -->
       <button

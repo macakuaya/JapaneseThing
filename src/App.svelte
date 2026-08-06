@@ -143,7 +143,7 @@
      its distance from the left edge matches its distance from the top. */
   .brand {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     gap: 0.4rem;
     border: none;
     background: none;
@@ -157,15 +157,19 @@
     color: var(--accent);
   }
 
-  /* Quiet enough to be found rather than presented, and it wakes up with the
-     rest of the brand on hover — currentColor does that on its own. */
+  /*
+   * Only there when you go looking. It keeps its space while hidden, so
+   * finding it doesn't shove the header around, and it takes the brand's own
+   * colour through currentColor rather than declaring one of its own.
+   */
   .brand :global(.panzer) {
-    color: var(--faint);
-    transition: color 0.15s ease;
+    opacity: 0;
+    transition: opacity 0.18s ease;
   }
 
-  .brand:hover :global(.panzer) {
-    color: var(--accent);
+  .brand:hover :global(.panzer),
+  .brand:focus-visible :global(.panzer) {
+    opacity: 1;
   }
 
   nav button.on {

@@ -45,8 +45,5 @@
   .panzer {
     height: 1.05rem;
     width: auto;
-    /* Optical, not geometric: the drawing's mass sits low, so aligning its box
-       to the kanji's box leaves it looking like it is falling off. */
-    margin-bottom: -0.1rem;
   }
 </style>

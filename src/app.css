@@ -329,6 +329,31 @@ a {
   background: color-mix(in srgb, var(--again) 16%, transparent);
 }
 
+/*
+ * A page's one-line status, floated on the bottom edge.
+ *
+ * Home and a running session both use it, and they have to agree exactly —
+ * defined twice, the line would jump the moment you opened a card. It is
+ * fixed rather than in flow so it holds the edge the way 語 holds the top one.
+ */
+.page-status {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  z-index: 2;
+  margin: 0;
+  font-size: 0.75rem;
+  text-align: center;
+  color: var(--faint);
+  pointer-events: none;
+}
+
+.page-status .n {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
 /* Wide content scrolls inside its own box; the page never scrolls sideways. */
 .scroll-x {
   overflow-x: auto;

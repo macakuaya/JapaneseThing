@@ -124,13 +124,12 @@
   // should still resume, not restart.
   persist()
 
-  // Publish the counter to the app header, which owns the only header on
-  // screen while a session is running. Cleared on the way out so the header
-  // goes back to being navigation.
+  // Tell the header to stand down to just 語 while this runs, and to go back
+  // to being navigation on the way out.
   $effect(() => {
-    store.sessionStatus = { answered, left: queue.length }
+    store.sessionActive = true
     return () => {
-      store.sessionStatus = null
+      store.sessionActive = false
     }
   })
   const current = $derived(queue[Math.min(index, queue.length - 1)] ?? null)
@@ -343,8 +342,14 @@
       {/key}
     </div>
 
-    <p class="hint faint">
-      {revealed ? 'number keys to grade' : 'space to reveal'} · ←→ browse the deck · Esc to exit
+    <!--
+      Where Home keeps its counts, saying the same kind of thing: what is left
+      of the work in front of you. "Done" counts answers rather than distinct
+      cards, so a card coming back for its next learning step counts each time
+      — the progress bar measures the same, so the two never disagree.
+    -->
+    <p class="page-status">
+      <span class="n">{answered}</span> done · <span class="n">{queue.length}</span> left
     </p>
   {/if}
 </section>
@@ -392,19 +397,6 @@
     transition: width 0.25s ease;
   }
 
-  /* Floats on the bottom edge, the mirror of 語 on the top one. */
-  .hint {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: calc(1rem + env(safe-area-inset-bottom));
-    z-index: 2;
-    margin: 0;
-    font-size: 0.75rem;
-    text-align: center;
-    pointer-events: none;
-  }
-
   .summary {
     margin: auto 0;
     position: relative;
@@ -429,11 +421,5 @@
   .summary button {
     margin-top: 1rem;
     min-width: 140px;
-  }
-
-  @media (max-width: 480px) {
-    .hint {
-      display: none;
-    }
   }
 </style>

@@ -45,15 +45,7 @@
     </button>
     <span class="spacer"></span>
 
-    {#if store.sessionStatus}
-      <!-- "Done" counts answers, not distinct cards, so a card returning for
-           its next learning step counts each time. The progress bar measures
-           the same thing, so the two always agree. -->
-      <span class="counter muted">
-        <span class="done">{store.sessionStatus.answered}</span> done ·
-        {store.sessionStatus.left} left
-      </span>
-    {:else}
+    {#if !store.sessionActive}
       <!-- Two destinations: today's work is Home, everything about the cards
            is Deck. Practice is reached by studying, not as a place. -->
       <button
@@ -184,13 +176,4 @@
     padding: 1.25rem 0 1rem;
   }
 
-  .counter {
-    font-size: 0.85rem;
-    font-variant-numeric: tabular-nums;
-    line-height: 1.35;
-  }
-
-  .counter .done {
-    color: var(--text);
-  }
 </style>

@@ -63,11 +63,11 @@ class Store {
   practiceReturnTo = $state<View>('deck')
 
   /**
-   * Published by the running session so the app header can show its counter.
-   * There is one header, and in a session it belongs to the session — a second
-   * bar underneath the first is two headers competing for the same job.
+   * Whether a session is running. The header reads it to stand down to just
+   * 語: navigating elsewhere mid-card is not the thing to make easy, and the
+   * session's own counter lives on the bottom edge with Home's.
    */
-  sessionStatus = $state<{ answered: number; left: number } | null>(null)
+  sessionActive = $state(false)
 
   /**
    * Which Home card is currently growing into the study view. Only the one

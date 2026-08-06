@@ -141,12 +141,13 @@
 </section>
 
 <!--
-  Today's state, on the bottom edge where the session keeps its hint — so the
-  line you read before opening a card and the line you read inside one sit in
-  the same place. It is not on the 日本語 card because those numbers describe
-  the day, not that deck: the four category decks feed the same queue.
+  Today's state, on the bottom edge where a session keeps its own count — so
+  the line you read before opening a card and the line you read inside one sit
+  in the same place and say the same kind of thing. It is not on the 日本語
+  card because those numbers describe the day, not that deck: the four
+  category decks all feed the same queue.
 -->
-<p class="status faint">
+<p class="page-status">
   {#if inProgress}
     <span class="n">{inProgress.queue.length}</span> left in today's review
   {:else if ready > 0}
@@ -250,24 +251,6 @@
      ready as the ones that can. */
   .spent .title {
     opacity: 0.45;
-  }
-
-  /* Same edge, same size, same alignment as the session's hint. */
-  .status {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: calc(1rem + env(safe-area-inset-bottom));
-    z-index: 2;
-    margin: 0;
-    font-size: 0.75rem;
-    text-align: center;
-    pointer-events: none;
-  }
-
-  .status .n {
-    color: var(--text);
-    font-variant-numeric: tabular-nums;
   }
 
   footer {

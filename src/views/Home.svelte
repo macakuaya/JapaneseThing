@@ -8,7 +8,7 @@
 
   import { tick } from 'svelte'
   import { store, type View } from '../lib/store.svelte.ts'
-  import { dayStart, formatDelay, maturityOf } from '../lib/srs.ts'
+  import { dayStart, formatDelay } from '../lib/srs.ts'
   import { MORPH, withViewTransition } from '../lib/transition.ts'
   import * as storage from '../lib/storage.ts'
 
@@ -31,22 +31,15 @@
     return saved.queue.length ? saved : null
   })
 
-  /** Daily's own progress: how much of today's workload is behind you. */
-  const answeredToday = $derived(
-    store.log.filter((l) => l.at >= dayStart(store.now, store.settings.dayStartHour)).length,
-  )
-  const dailyTotal = $derived(answeredToday + ready)
-
   const decks = $derived(
-    store.dataset.categories.map((cat) => {
-      const cards = store.cards.filter((c) => c.entry.category === cat.id)
-      const known = cards.filter((c) => {
-        const m = maturityOf(c.state, store.settings)
-        return m === 'young' || m === 'mature'
-      }).length
-      return { ...cat, total: cards.length, known }
-    }),
+    store.dataset.categories.map((cat) => ({
+      ...cat,
+      total: store.cards.filter((c) => c.entry.category === cat.id).length,
+    })),
   )
+
+  /** Every card in the dataset — the size of the deck 日本語 stands for. */
+  const allCards = $derived(store.cards.length)
 
   /**
    * Picking up a deck means studying it — opening a list to then press another
@@ -85,8 +78,6 @@
 
   const startDaily = () => open('daily', () => onNavigate('review'))
 
-  const pct = (a: number, b: number) => (b ? (a / b) * 100 : 0)
-
   /**
    * `日本語・にほんご`, the same shape as a card front. The dataset names the
    * whole subject; without one the Daily card falls back to the UI's own word,
@@ -118,8 +109,7 @@
           <span class="name solo">Daily</span>
         {/if}
       </div>
-      <div class="rule"><div class="fill" style:width="{pct(answeredToday, dailyTotal)}%"></div></div>
-      <span class="count">{answeredToday} / {dailyTotal || answeredToday}</span>
+      <span class="count">{allCards} cards</span>
     </footer>
   </button>
 
@@ -131,8 +121,8 @@
     >
       <div class="body"></div>
       <!--
-        Name, rule and count are one block in the bottom-left corner, the way
-        a spine carries a title. The Japanese leads and the Spanish glosses it
+        Name and size are one block in the bottom-left corner, the way a spine
+        carries a title. The Japanese leads and the Spanish glosses it
         underneath — the same order as the flashcards, so the deck reads as
         the thing it contains.
       -->
@@ -145,8 +135,7 @@
           {/if}
           <span class="name" class:solo={!deck.targetLabel}>{deck.label}</span>
         </div>
-        <div class="rule"><div class="fill" style:width="{pct(deck.known, deck.total)}%"></div></div>
-        <span class="count">{deck.known} / {deck.total}</span>
+        <span class="count">{deck.total} cards</span>
       </footer>
     </button>
   {/each}
@@ -216,7 +205,7 @@
   .title {
     display: flex;
     flex-direction: column;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.15rem;
     min-width: 0;
     overflow: hidden;
   }
@@ -283,33 +272,19 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* The rule under which the count sits doubles as the progress track, so the
-     line in the sketch earns its place instead of being decoration. */
   footer {
     margin-top: auto;
   }
 
-  .rule {
-    height: 2px;
-    background: var(--surface-3);
-    border-radius: 999px;
-    overflow: hidden;
-  }
-
-  .fill {
-    height: 100%;
-    background: var(--accent);
-    transition: width 0.3s ease;
-  }
-
-  /* Tucked tight under the bar and aligned to it, so the two read as one
-     object — the bar and the number it belongs to — rather than as a rule
-     with a caption floating beneath it. */
+  /*
+   * How big the deck is, not how much of it is done. There is no completion
+   * to chart here: the deck grows every week, so a bar creeping toward a full
+   * line would be measuring the wrong thing and would never arrive.
+   */
   .count {
     display: block;
-    margin-top: 0.3rem;
     font-size: 0.78rem;
-    color: var(--muted);
+    color: var(--faint);
     font-variant-numeric: tabular-nums;
     line-height: 1.2;
   }

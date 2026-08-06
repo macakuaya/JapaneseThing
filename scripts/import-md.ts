@@ -11,6 +11,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
+import { installDeck, installDict, readingFor } from '../src/lib/dict.ts'
 import {
   hasKanji,
   makeId,
@@ -50,41 +51,74 @@ const CATEGORIES: Record<string, CategoryNames> = {
 const MANUAL_LINKS: string[][] = [['気になる', '気になります']]
 
 /**
- * The trans/intrans table omits the reading for seven writings that every
- * other table supplies. These are the standard dictionary readings, filled in
- * here so those cards match the kanji・kana format instead of showing bare
- * kanji. Kept as an explicit table — the importer never guesses a reading.
+ * Overrides for the trans/intrans table, whose rows omit the reading.
+ *
+ * It held seven readings written out by hand; the dictionary now supplies all
+ * seven, and the import says so if a row here becomes redundant. What remains
+ * is the extension point for a reading the dictionary gets wrong.
  */
 const SUPPLIED_READINGS: Record<string, string> = {
-  変わる: 'かわる',
-  変える: 'かえる',
-  増える: 'ふえる',
-  減る: 'へる',
-  落ちる: 'おちる',
-  回る: 'まわる',
-  回す: 'まわす',
+  // Empty, and that is the point: all seven readings that used to live here
+  // are ones the dictionary now supplies. The table stays as the place to put
+  // a reading the dictionary gets wrong.
 }
 
 /*
- * Readings for the patterns that contain kanji.
+ * Overrides for readings the bundled dictionary gets wrong or declines.
  *
- * The pattern tables have no reading column — the teacher writes 落ち着く and
- * expects you to know it — so a card front was bare kanji with no way in. As
- * with SUPPLIED_READINGS these are added data, listed one by one rather than
- * derived, and the import fails if a kanji-bearing pattern is missing from
- * here so a new batch can't quietly ship an unreadable card.
+ * These used to be the only source, hand-written one by one. The dictionary is
+ * now asked first — it is the same JMdict the app uses for furigana, so a
+ * reading it produces here is one the app already trusts elsewhere — and this
+ * table exists for the residue.
+ *
+ * Rules enforced below: an override that the dictionary *agrees* with is
+ * reported as redundant, so the table can't silently accumulate rows that no
+ * longer earn their place; and a kanji-bearing pattern with neither a
+ * dictionary reading nor an override fails the import.
  */
 const PATTERN_READINGS: Record<string, string> = {
-  '〜と言います': '〜といいます',
-  '〜と言われています': '〜といわれています',
-  '〜ように見えました': '〜ようにみえました',
+  // 様態 is a grammar term, not vocabulary; the dictionary declines it.
   '〜そうです（様態）': '〜そうです（ようたい）',
-  '少しずつ／〜ずつ': 'すこしずつ／〜ずつ',
-  '〜同士（で）': '〜どうし（で）',
-  気になります: 'きになります',
-  気に入る: 'きにいる',
-  落ち着く: 'おちつく',
-  ぐっと来ます: 'ぐっときます',
+}
+
+/*
+ * The same dictionary the app uses for furigana, loaded straight off disk
+ * instead of over the network. Asking it here means a reading printed on a
+ * card front is one the app would have produced anyway — the two can't drift.
+ */
+const dictWords = JSON.parse(readFileSync(resolve(ROOT, 'public/dict/words.json'), 'utf8'))
+const dictKanji = JSON.parse(readFileSync(resolve(ROOT, 'public/dict/kanji.json'), 'utf8'))
+installDict(dictWords.words, dictKanji.kanji)
+
+const fromDict: string[] = []
+const redundantOverrides: string[] = []
+
+/**
+ * A reading for a phrase: the dictionary's, unless an override says otherwise.
+ *
+ * An override that merely repeats what the dictionary already says is reported
+ * so it can be deleted — otherwise the tables keep every row they ever had and
+ * stop meaning "these are the hard ones".
+ */
+function resolveReading(
+  text: string,
+  overrides: Record<string, string>,
+  where: string,
+): string | null {
+  const override = overrides[text]
+  const derived = readingFor(text)
+
+  if (override && derived) {
+    if (override === derived) redundantOverrides.push(`${text} → ${override}`)
+    else errors.push(`Reading disagreement for ${text} (${where}): table ${override}, dictionary ${derived}`)
+    return override
+  }
+  if (override) return override
+  if (derived) {
+    fromDict.push(`${text} → ${derived}`)
+    return derived
+  }
+  return null
 }
 
 type TableKind = 'pattern' | 'word' | 'pair'
@@ -225,19 +259,11 @@ for (let i = 0; i < lines.length; i++) {
     const pattern = normalizePattern(rawPattern)
     if (pattern !== rawPattern) tidied.push(`${rawPattern} → ${pattern}`)
 
-    // Kanji with no reading is a card you can look at but not say.
-    const reading = PATTERN_READINGS[pattern]
-    if (hasKanji(pattern)) {
-      if (reading) supplements.push(`${pattern} → ${reading}`)
-      else errors.push(`Pattern with kanji and no reading: ${pattern} (line ${i + 1})`)
-    }
-
     push({
       ...base(),
       kind: 'pattern',
       id: makeId(category.id, pattern),
       pattern,
-      ...(reading ? { reading } : {}),
       meaning,
       example: splitExample(example),
       ...(category.id === 'gramatica' && subcategory ? { level: subcategory } : {}),
@@ -297,15 +323,10 @@ for (let i = 0; i < lines.length; i++) {
   for (const half of halves) {
     let reading = parseReading(half.raw)
     if (!reading) {
-      const supplied = SUPPLIED_READINGS[half.raw]
-      if (supplied) {
-        reading = { kanji: half.raw, kana: supplied }
-        supplements.push(`${half.raw} → ${supplied}`)
-      } else {
-        // Not in the source and not in the table above. Keep the writing and
-        // leave the reading empty rather than inventing one.
-        warnings.push(`No reading for ${half.raw} (line ${i + 1})`)
-      }
+      const supplied = resolveReading(half.raw, SUPPLIED_READINGS, `line ${i + 1}`)
+      if (supplied) reading = { kanji: half.raw, kana: supplied }
+      // resolveReading has already recorded why, if it couldn't.
+      else warnings.push(`No reading for ${half.raw} (line ${i + 1})`)
     }
     const kanji = reading ? reading.kanji : half.raw
     const kana = reading ? reading.kana : ''
@@ -393,6 +414,20 @@ for (const e of entries) {
   if (!e.meaning.trim()) errors.push(`Empty meaning for ${e.id}`)
 }
 
+/*
+ * Readings for patterns, after parsing rather than during it: installDeck
+ * biases lookup toward the teacher's own words, and the deck doesn't exist
+ * until every row has been read.
+ */
+installDeck(entries)
+for (const e of entries) {
+  if (e.kind !== 'pattern' || !hasKanji(e.pattern)) continue
+  const reading = resolveReading(e.pattern, PATTERN_READINGS, 'pattern')
+  if (reading) e.reading = reading
+  // Kanji you can't read is not a degraded card, it is an unusable one.
+  else errors.push(`Pattern with kanji and no reading: ${e.pattern}`)
+}
+
 const noExample = entries.filter((e) => !e.example).length
 const noReading = entries.filter((e) => e.kind === 'word' && !e.kana).length
 
@@ -427,6 +462,18 @@ console.log(`  without reading: ${noReading}`)
 if (tidied.length) {
   console.log(`\n  ${tidied.length} pattern(s) reformatted:`)
   for (const t of tidied) console.log(`    - ${t}`)
+}
+
+if (fromDict.length) {
+  console.log(`\n  ${fromDict.length} reading(s) taken from the bundled dictionary:`)
+  for (const r of fromDict) console.log(`    - ${r}`)
+}
+
+if (redundantOverrides.length) {
+  console.log(
+    `\n  ${redundantOverrides.length} override(s) the dictionary already agrees with — delete them:`,
+  )
+  for (const r of redundantOverrides) console.log(`    - ${r}`)
 }
 
 if (supplements.length) {

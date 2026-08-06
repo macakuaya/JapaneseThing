@@ -9,6 +9,7 @@ import {
   isWorthExplaining,
   kanjiInfo,
   lookupWord,
+  readingFor,
   readingOf,
   segment,
 } from './dict.ts'
@@ -376,5 +377,62 @@ describe('hit shape', () => {
     expect(hit.word.k).toContain('涼しい')
     expect(hit.word.r).toContain('すずしい')
     expect(hit.word.s[0].p).toBe('adj-i')
+  })
+})
+
+
+/*
+ * 来 is the one kanji whose reading changes as its verb inflects — く, き, こ.
+ * The generic splice assumed it didn't, which is correct for every other verb
+ * and gave くました, くて and くます on three of the deck's own sentences.
+ */
+describe('来る, the irregular the splice got wrong', () => {
+  const reading = (surface: string) => {
+    const token = segment(surface).find((t) => t.text.startsWith('来'))
+    return token ? readingOf(token) : null
+  }
+
+  it('reads 来ます as きます, not くます', () => {
+    expect(reading('来ます')).toBe('きます')
+  })
+
+  it('reads 来ました as きました', () => {
+    expect(reading('来ました')).toBe('きました')
+  })
+
+  it('reads 来て as きて', () => {
+    expect(reading('来て')).toBe('きて')
+  })
+
+  it('still reads the plain form as くる', () => {
+    expect(reading('来る')).toBe('くる')
+  })
+
+  it('refuses a tail it has no rule for rather than guessing', () => {
+    // 来れる, the colloquial potential. Not listed, so no reading — a blank is
+    // recoverable and a wrong ruby is not.
+    const token = segment('来れる').find((t) => t.text.startsWith('来'))
+    if (token && token.text === '来れる') expect(readingOf(token)).toBe(null)
+  })
+})
+
+describe('readingFor, a reading for a whole phrase', () => {
+  it('reads a phrase the teacher left bare', () => {
+    expect(readingFor('落ち着く')).toBe('おちつく')
+    expect(readingFor('気に入る')).toBe('きにいる')
+  })
+
+  it('keeps kana and punctuation between the kanji', () => {
+    expect(readingFor('〜同士（で）')).toBe('〜どうし（で）')
+  })
+
+  it('has nothing to say about a phrase with no kanji', () => {
+    expect(readingFor('〜たびに')).toBe(null)
+  })
+
+  it('refuses the whole phrase when one token refuses', () => {
+    // Half a reading looks like a finished one. 様態 is a grammar term the
+    // dictionary does not carry, so the phrase gets nothing at all.
+    expect(readingFor('〜そうです（様態）')).toBe(null)
   })
 })

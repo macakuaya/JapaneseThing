@@ -1,7 +1,8 @@
 <script lang="ts">
   import { X } from '@lucide/svelte'
-  import { type Draft, draftToEntry, parseBlock } from '../lib/parse.ts'
+  import { type Draft, draftToEntry, fillReadings, parseBlock } from '../lib/parse.ts'
   import { store } from '../lib/store.svelte.ts'
+  import { hasKanji } from '../lib/text.ts'
 
   let text = $state('')
   let drafts = $state<Draft[]>([])
@@ -19,12 +20,18 @@
   // useless, so saving waits until the meanings are filled in.
   const missingMeaning = $derived(selected.filter((d) => !d.meaning.trim()).length)
 
-  function parse() {
+  async function parse() {
     drafts = parseBlock(text, {
       category: defaultCategory,
       subcategory: defaultSubcategory,
     })
     saved = null
+
+    // The teacher rarely writes the reading, so the dictionary fills what it
+    // can. Shown first and filled after, so a slow dictionary delays the
+    // readings rather than the whole table.
+    await store.ensureDict()
+    drafts = fillReadings(drafts)
   }
 
   function blankRow() {
@@ -36,6 +43,7 @@
         kanji: '',
         kana: '',
         pattern: '',
+        reading: '',
         meaning: '',
         note: '',
         exampleTarget: '',
@@ -170,9 +178,18 @@
 
             <div class="grid">
               {#if draft.kind === 'pattern'}
-                <div class="cell wide">
+                <div class="cell">
                   <label for="p-{i}">Pattern</label>
                   <input id="p-{i}" class="jp" bind:value={draft.pattern} />
+                </div>
+                <div class="cell">
+                  <label for="pr-{i}">Reading</label>
+                  <input
+                    id="pr-{i}"
+                    class="jp"
+                    bind:value={draft.reading}
+                    placeholder={hasKanji(draft.pattern) ? 'required' : 'optional'}
+                  />
                 </div>
               {:else}
                 <div class="cell">

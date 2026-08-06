@@ -169,13 +169,13 @@
       "kind": "pattern",
       "id": "0whhpdd",
       "pattern": "〜と言います",
-      "reading": "〜といいます",
       "meaning": "se llama ~",
       "example": {
         "target": "この魚は鮭と言います。",
         "native": "A este pescado se le llama salmón."
       },
-      "level": "N5"
+      "level": "N5",
+      "reading": "〜といいます"
     },
     {
       "category": "gramatica",
@@ -260,13 +260,13 @@
       "kind": "pattern",
       "id": "197fi4a",
       "pattern": "〜と言われています",
-      "reading": "〜といわれています",
       "meaning": "se dice que ~",
       "example": {
         "target": "このお寺は古いと言われています。",
         "native": "Se dice que este templo es antiguo."
       },
-      "level": "N4"
+      "level": "N4",
+      "reading": "〜といわれています"
     },
     {
       "category": "gramatica",
@@ -276,13 +276,13 @@
       "kind": "pattern",
       "id": "06czohm",
       "pattern": "〜ように見えました",
-      "reading": "〜ようにみえました",
       "meaning": "parecía que ~",
       "example": {
         "target": "彼は疲れているように見えました。",
         "native": "Parecía que él estaba cansado."
       },
-      "level": "N4"
+      "level": "N4",
+      "reading": "〜ようにみえました"
     },
     {
       "category": "gramatica",
@@ -292,13 +292,13 @@
       "kind": "pattern",
       "id": "0jigqaj",
       "pattern": "〜そうです（様態）",
-      "reading": "〜そうです（ようたい）",
       "meaning": "parece que ~ (apariencia)",
       "example": {
         "target": "このケーキはおいしそうです。",
         "native": "Esta tarta parece rica."
       },
-      "level": "N4"
+      "level": "N4",
+      "reading": "〜そうです（ようたい）"
     },
     {
       "category": "gramatica",
@@ -548,13 +548,13 @@
       "kind": "pattern",
       "id": "1m1tmwv",
       "pattern": "少しずつ／〜ずつ",
-      "reading": "すこしずつ／〜ずつ",
       "meaning": "poco a poco / de ~ en ~",
       "example": {
         "target": "物が少しずつ変わります。",
         "native": "Las cosas cambian poco a poco."
       },
-      "level": "N4"
+      "level": "N4",
+      "reading": "すこしずつ／〜ずつ"
     },
     {
       "category": "gramatica",
@@ -609,13 +609,13 @@
       "kind": "pattern",
       "id": "156vfrb",
       "pattern": "〜同士（で）",
-      "reading": "〜どうし（で）",
       "meaning": "entre/mutuamente (mismo tipo)",
       "example": {
         "target": "友達同士で話します。",
         "native": "Hablamos entre amigos."
       },
-      "level": "N4"
+      "level": "N4",
+      "reading": "〜どうし（で）"
     },
     {
       "category": "verbos",
@@ -3470,12 +3470,12 @@
       "kind": "pattern",
       "id": "1iv84ct",
       "pattern": "気になります",
-      "reading": "きになります",
       "meaning": "me preocupa / me llama la atención",
       "example": {
         "target": "明日のテストが気になります。",
         "native": "Me preocupa el examen de mañana."
-      }
+      },
+      "reading": "きになります"
     },
     {
       "category": "expresiones",
@@ -3487,12 +3487,12 @@
       "kind": "pattern",
       "id": "18rmfdu",
       "pattern": "気に入る",
-      "reading": "きにいる",
       "meaning": "gustar, quedar prendado/a",
       "example": {
         "target": "このデザインが気に入りました。",
         "native": "Me encantó este diseño."
-      }
+      },
+      "reading": "きにいる"
     },
     {
       "category": "expresiones",
@@ -3504,12 +3504,12 @@
       "kind": "pattern",
       "id": "05ztrm5",
       "pattern": "落ち着く",
-      "reading": "おちつく",
       "meaning": "calmarse / sentirse a gusto (lugar tranquilo)",
       "example": {
         "target": "このカフェは落ち着きます。",
         "native": "Este café da tranquilidad."
-      }
+      },
+      "reading": "おちつく"
     },
     {
       "category": "expresiones",
@@ -3561,12 +3561,12 @@
       "kind": "pattern",
       "id": "0q4o3ld",
       "pattern": "ぐっと来ます",
-      "reading": "ぐっときます",
       "meaning": "conmover, tocar el corazón",
       "example": {
         "target": "その歌はぐっと来ます。",
         "native": "Esa canción me llega al corazón."
-      }
+      },
+      "reading": "ぐっときます"
     }
   ]
 }

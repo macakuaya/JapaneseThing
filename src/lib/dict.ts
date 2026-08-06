@@ -654,6 +654,52 @@ const AMBIGUOUS_READINGS = new Set([
 ])
 
 /**
+ * A reading for a whole phrase, assembled from its tokens.
+ *
+ * Every kanji-bearing token has to resolve or the whole phrase refuses. A
+ * half-read phrase is worse than none: ぐっとくます looks like an answer, and
+ * a reading you can't tell is wrong is one you memorise.
+ *
+ * Kana and punctuation pass through unchanged, so 〜同士（で）comes back as
+ * 〜どうし（で）with its own furniture intact.
+ */
+export function readingFor(text: string): string | null {
+  if (!/[㐀-鿿]/.test(text)) return null
+  let out = ''
+  for (const token of segment(text)) {
+    if (!/[㐀-鿿]/.test(token.text)) {
+      out += token.text
+      continue
+    }
+    const reading = readingOf(token)
+    if (!reading) return null
+    out += reading
+  }
+  return out || null
+}
+
+/**
+ * 来 reads く, き or こ depending on what follows it — the one kanji in the
+ * language whose reading changes as its verb inflects. (する is the other
+ * irregular, but it is written in kana, so it never reaches this code.)
+ *
+ * Splicing the dictionary reading くる onto an inflected surface, which is
+ * correct for 食べる → 食べます → たべます, produced くました for 来ました,
+ * くて for 来て and くます for 来ます: three example sentences carried wrong
+ * furigana over the commonest irregular verb there is.
+ *
+ * Keyed on the first kana of the tail, and refusing anything unlisted rather
+ * than falling back to a guess.
+ */
+function kuruStem(tail: string): string | null {
+  // 来ます 来ました 来ません 来て 来た 来たい 来ちゃう
+  if (/^[まてたち]/.test(tail)) return 'き'
+  // 来ない 来ん 来られる 来させる 来よう 来い
+  if (/^[なんらさよい]/.test(tail)) return 'こ'
+  return null
+}
+
+/**
  * The reading of a matched token, for furigana over a sentence.
  * Returns null when the token is kana already or has no reliable reading.
  */
@@ -703,6 +749,14 @@ export function readingOf(token: Token): string | null {
     const stem = base.replace(/[ぁ-ゟ]+$/, '')
     if (!surface.startsWith(stem)) return null
     const tail = surface.slice(stem.length)
+
+    // 来る first: the splice below assumes a kanji's reading survives
+    // inflection, which holds for every verb but this one.
+    if (base === '来る') {
+      const kuru = kuruStem(tail)
+      return kuru ? kuru + tail : null
+    }
+
     const readingStem = reading.replace(new RegExp(`${base.slice(stem.length)}$`), '')
     return readingStem + tail
   }

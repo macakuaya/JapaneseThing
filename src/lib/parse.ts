@@ -5,6 +5,7 @@
 // seeing it first — the Add view shows every draft in an editable table.
 
 import type { Entry } from './types.ts'
+import { readingFor } from './dict.ts'
 import {
   firstLatinWordIndex,
   hasJapanese,
@@ -27,6 +28,8 @@ export interface Draft {
   kanji: string
   kana: string
   pattern: string
+  /** Kana for a pattern containing kanji. Words carry theirs in `kana`. */
+  reading: string
   meaning: string
   /** Extra Japanese the teacher appended: です, する, a katakana synonym. */
   note: string
@@ -74,6 +77,7 @@ function emptyDraft(raw: string, defaults: ParseDefaults): Draft {
     kanji: '',
     kana: '',
     pattern: '',
+    reading: '',
     meaning: '',
     note: '',
     exampleTarget: '',
@@ -346,6 +350,37 @@ export function parseBlock(text: string, defaults: ParseDefaults): Draft[] {
 
 // ---------------------------------------------------------------------------
 
+/**
+ * Fill in the readings the teacher didn't write, from the bundled dictionary.
+ *
+ * The teacher usually sends 落ち着く with no reading, because in class you can
+ * just ask. Pasted straight in, that becomes a card you can look at and not
+ * say — which is the one thing a flashcard must never be.
+ *
+ * Kept out of parseBlock because the dictionary loads asynchronously and
+ * parsing has to work the instant you press the button, with or without it.
+ * Every filled row is flagged, because this is a guess made on the user's
+ * behalf and the review table is where guesses get checked.
+ */
+export function fillReadings(drafts: Draft[]): Draft[] {
+  return drafts.map((d) => {
+    if (d.kind === 'pattern') {
+      if (d.reading || !hasKanji(d.pattern)) return d
+      const reading = readingFor(d.pattern)
+      return reading ? { ...d, reading, issues: [...d.issues, 'reading from dictionary'] } : d
+    }
+
+    if (d.kana || !d.kanji) return d
+    const reading = readingFor(d.kanji)
+    if (!reading) return d
+    return {
+      ...d,
+      kana: reading,
+      issues: [...d.issues.filter((i) => i !== 'no reading'), 'reading from dictionary'],
+    }
+  })
+}
+
 export function draftToEntry(d: Draft): Entry {
   const base = {
     category: d.category,
@@ -361,7 +396,14 @@ export function draftToEntry(d: Draft): Entry {
 
   if (d.kind === 'pattern') {
     const pattern = d.pattern.trim()
-    return { ...base, kind: 'pattern', id: makeId(d.category, pattern), pattern }
+    const reading = d.reading.trim()
+    return {
+      ...base,
+      kind: 'pattern',
+      id: makeId(d.category, pattern),
+      pattern,
+      ...(reading ? { reading } : {}),
+    }
   }
 
   const kanji = d.kanji.trim() || null

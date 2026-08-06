@@ -34,7 +34,7 @@ shorter, unrelated word. That's how 降り became "bajada" and 言われて beca
 | A2 | Bare masu-stem before an auxiliary (降り+はじめる) | **FIXED** |
 | A3 | Godan passive/causative (言わ+れる) | **FIXED** — grid generated from the kana rows |
 | A4 | する-compounds: 勉強させられた, 発表される | SUSPECTED |
-| A5 | 来る's three stems: 来た/来ます/来ない (き/こ) | SUSPECTED |
+| A5 | 来る's three stems: 来た/来ます/来ない (き/こ) | **FIXED — was real, and live**: 来ました/来て/来ます rendered くました/くて/くます on three deck sentences. The splice assumed a kanji's reading survives inflection; true of every verb but this one |
 | A6 | Adjective chains: 高くなかった, 高くなさそう | SUSPECTED |
 | A7 | Contractions in speech: 食べてる, 読んじゃった, なきゃ | SUSPECTED |
 | A8 | Honorifics: いらっしゃいます, おっしゃる | SUSPECTED |
@@ -115,10 +115,11 @@ is baked into the data rather than computed live.
 |---|---|---|
 | E1 | Slash split destroying gender glosses (`el/la menor`) | **FIXED** — only separator slashes |
 | E2 | Trans/intrans pair meanings mis-split | PARTLY — `cambiar (algo cambia/algo se cambia)` is shared by both halves |
-| E3 | Seven readings supplied by hand in `import-md.ts` | **VERIFY BY EYE** — they're standard, but they are added data |
+| E3 | Seven readings supplied by hand in `import-md.ts` | **RESOLVED** — the dictionary supplies all seven; the table is empty and the import reports any override it agrees with, so dead rows can't accumulate |
 | E4 | Examples where both halves share one sentence (こわれる/こわす) | KNOWN — the transitive half shows the intransitive example |
 | E5 | Cross-category links found by exact string match only | KNOWN — near-matches need the manual list |
 | E6 | Paste parser guessing a wrong subcategory | LOW RISK — defaults to last used, user reviews |
+| E9 | A pasted card with kanji and no reading (the teacher rarely writes one) | **FIXED** — the Add view fills from the dictionary and flags the row `reading from dictionary`, because it is a guess made on the user's behalf |
 | E8 | Patterns had no reading field at all, so 10 kanji-bearing ones (落ち着く, 〜と言います, 〜同士（で）…) shipped as bare kanji | **FIXED** — `PatternEntry.reading`, supplied by table; the import now *fails* rather than warns if a kanji pattern has none |
 | E7 | A kana-only verb repeated in the kanji column (びっくりする, わかる, もらう…) rendered `びっくりする・びっくりする` on 12 cards | **FIXED** — the kanji field is now kept only if it actually contains kanji, checked in `dataset.test.ts` against the shipped deck |
 
@@ -169,6 +170,11 @@ anything added later:
 2. **Refuse rather than guess.** Where the app can't tell (a true tie, an
    ambiguous reading), show nothing. A blank is a small cost; a confident wrong
    answer gets memorised.
+
+   This applies to *parts* as well as wholes: `readingFor` refuses an entire
+   phrase when one token refuses, because ぐっとくます looks finished and
+   ぐっと\_\_ます does not. A partial answer is a wrong answer wearing the
+   costume of a right one.
 
 And the escape hatch, since neither is sufficient: **the pen icon on every
 card.** No heuristic gets everything, so fixing one has to be one click away.

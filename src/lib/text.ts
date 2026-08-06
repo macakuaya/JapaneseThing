@@ -187,6 +187,9 @@ export function cardFront(entry: Entry): string {
 
   const kana = entry.kana
   if (!entry.kanji) return kana
+  // Belt and braces for the importer's rule: a writing identical to its
+  // reading is one word, not two, and must never render as `X・X`.
+  if (entry.kanji === kana) return kana
 
   const writings = entry.variants.length > 1 ? entry.variants : [entry.kanji]
   const readings = splitVariants(kana)
@@ -215,7 +218,7 @@ export function cardTarget(entry: Entry): string {
  * two entries collide.
  */
 export function makeId(category: string, primary: string, role?: string): string {
-  const input = `${category} ${primary} ${role ?? ''}`
+  const input = `${category}\0${primary}\0${role ?? ''}`
   let h = 0x811c9dc5
   for (let i = 0; i < input.length; i++) {
     h ^= input.charCodeAt(i)

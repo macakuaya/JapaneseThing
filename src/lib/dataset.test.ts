@@ -6,6 +6,7 @@
 // created a second card for the same word. These assert the merge substitutes.
 
 import { describe, expect, it } from 'vitest'
+import { cardFront, hasKanji } from './text.ts'
 import type { Entry } from './types.ts'
 
 const word = (id: string, meaning: string, source: 'seed' | 'user' = 'seed'): Entry => ({
@@ -71,5 +72,43 @@ describe('merging user edits into the seed deck', () => {
     const out = merge(real.entries, [edited])
     expect(out).toHaveLength(real.entries.length)
     expect(new Set(out.map((e) => e.id)).size).toBe(out.length)
+  })
+})
+
+/*
+ * Sweeps the shipped deck for fronts that say the same thing twice.
+ *
+ * びっくりする arrived with its own writing repeated as its reading, so the
+ * front rendered びっくりする・びっくりする. Nothing was wrong with the code
+ * that built it — the rule was simply "kanji column means kanji", and the
+ * teacher's tables don't always honour that. Checking the output rather than
+ * the rule catches whatever shape the next one takes.
+ */
+describe('the shipped deck', () => {
+  it('has no word whose writing is its own reading', async () => {
+    const real = (await import('../data/seed.json')).default as { entries: Entry[] }
+    const doubled = real.entries.filter(
+      (e) => e.kind === 'word' && e.kanji !== null && e.kanji === e.kana,
+    )
+    expect(doubled.map((e) => e.id)).toEqual([])
+  })
+
+  it('stores no kanji field that contains no kanji', async () => {
+    const real = (await import('../data/seed.json')).default as { entries: Entry[] }
+    const kanaOnly = real.entries.filter(
+      (e) => e.kind === 'word' && e.kanji !== null && !hasKanji(e.kanji),
+    )
+    expect(kanaOnly.map((e) => `${e.id} ${e.kind === 'word' ? e.kanji : ''}`)).toEqual([])
+  })
+
+  it('never renders a front with a repeated half', async () => {
+    const real = (await import('../data/seed.json')).default as { entries: Entry[] }
+    const repeated = real.entries
+      .map((e) => cardFront(e))
+      .filter((front) => {
+        const halves = front.split('・').map((h) => h.trim())
+        return halves.length > 1 && new Set(halves).size !== halves.length
+      })
+    expect(repeated).toEqual([])
   })
 })

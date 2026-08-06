@@ -12,6 +12,7 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import {
+  hasKanji,
   makeId,
   normalizePattern,
   parseReading,
@@ -215,16 +216,24 @@ for (let i = 0; i < lines.length; i++) {
 
   if (table === 'word') {
     const [kanjiCell, kanaCell, meaning, example] = cells
-    const kanji = stripPlaceholder(kanjiCell)
+    const writing = stripPlaceholder(kanjiCell)
     const kana = stripPlaceholder(kanaCell) ?? ''
     if (!kana || !meaning) {
       warnings.push(`Skipped incomplete row at line ${i + 1}`)
       continue
     }
+    // A writing with no kanji in it is not a kanji spelling, whatever column
+    // it arrived in. びっくりする sits in the first column with びっくりする
+    // repeated as its reading, and taking that at face value renders the card
+    // front as びっくりする・びっくりする.
+    const kanji = writing && hasKanji(writing) ? writing : null
     push({
       ...base(),
       kind: 'word',
-      id: makeId(category.id, kanji ?? kana),
+      // Keyed on the writing, not on what survives the check above, so
+      // tightening that check can never renumber an entry and lose its
+      // scheduling.
+      id: makeId(category.id, writing ?? kana),
       kanji,
       kana,
       variants: kanji ? splitVariants(kanji) : [],
@@ -288,7 +297,7 @@ for (let i = 0; i < lines.length; i++) {
       ...base(),
       kind: 'word',
       id,
-      kanji: kanji && kanji !== kana ? kanji : null,
+      kanji: kanji && hasKanji(kanji) ? kanji : null,
       kana: kana || (kanji ?? ''),
       variants: [],
       role: half.role,

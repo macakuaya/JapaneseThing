@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { EllipsisVertical, Pencil, Plus, Search } from '@lucide/svelte'
+  import { EllipsisVertical, Plus, Search } from '@lucide/svelte'
   import Home from './views/Home.svelte'
   import Review from './views/Review.svelte'
   import Practice from './views/Practice.svelte'
@@ -46,9 +46,11 @@
     <span class="spacer"></span>
 
     {#if store.sessionActive}
-      <!-- Where the kebab sits everywhere else. Editing the card you are
-           looking at is the one thing worth reaching for mid-session, and off
-           the card it stops competing with the card's own surface. -->
+      <!--
+        The same kebab that sits here everywhere else, so the corner glyph
+        never changes between views — only what it opens does. In a session
+        the one thing worth reaching for is the card in front of you.
+      -->
       <button
         class="ghost icon"
         class:on={store.sessionEditing}
@@ -56,7 +58,7 @@
         title="Edit this card"
         aria-label="Edit this card"
       >
-        <Pencil size={19} />
+        <EllipsisVertical size={19} />
       </button>
     {:else}
       <!-- Two destinations: today's work is Home, everything about the cards

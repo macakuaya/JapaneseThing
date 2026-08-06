@@ -800,11 +800,9 @@
       "relatedIds": [],
       "kind": "word",
       "id": "1a0nc1p",
-      "kanji": "むく",
+      "kanji": null,
       "kana": "むく",
-      "variants": [
-        "むく"
-      ],
+      "variants": [],
       "meaning": "pelar",
       "example": {
         "target": "りんごの皮をむきます。",
@@ -872,11 +870,9 @@
       "relatedIds": [],
       "kind": "word",
       "id": "0kxcguk",
-      "kanji": "はく",
+      "kanji": null,
       "kana": "はく",
-      "variants": [
-        "はく"
-      ],
+      "variants": [],
       "meaning": "ponerse (pantalones, zapatos)",
       "example": {
         "target": "靴をはきます。",
@@ -890,11 +886,9 @@
       "relatedIds": [],
       "kind": "word",
       "id": "1jm9nxs",
-      "kanji": "かぶる",
+      "kanji": null,
       "kana": "かぶる",
-      "variants": [
-        "かぶる"
-      ],
+      "variants": [],
       "meaning": "ponerse (sombrero, gorro)",
       "example": {
         "target": "帽子をかぶります。",
@@ -908,11 +902,9 @@
       "relatedIds": [],
       "kind": "word",
       "id": "0yw65lh",
-      "kanji": "はめる",
+      "kanji": null,
       "kana": "はめる",
-      "variants": [
-        "はめる"
-      ],
+      "variants": [],
       "meaning": "ponerse (guantes, anillo)",
       "example": {
         "target": "手袋をはめます。",
@@ -926,11 +918,9 @@
       "relatedIds": [],
       "kind": "word",
       "id": "0po8ura",
-      "kanji": "つける",
+      "kanji": null,
       "kana": "つける",
-      "variants": [
-        "つける"
-      ],
+      "variants": [],
       "meaning": "ponerse (accesorios)",
       "example": {
         "target": "ネクタイをつけます。",
@@ -962,11 +952,9 @@
       "relatedIds": [],
       "kind": "word",
       "id": "1blor1d",
-      "kanji": "あげる",
+      "kanji": null,
       "kana": "あげる",
-      "variants": [
-        "あげる"
-      ],
+      "variants": [],
       "meaning": "dar (a otra persona)",
       "example": {
         "target": "友達に本をあげました。",
@@ -980,11 +968,9 @@
       "relatedIds": [],
       "kind": "word",
       "id": "14zqcp2",
-      "kanji": "くれる",
+      "kanji": null,
       "kana": "くれる",
-      "variants": [
-        "くれる"
-      ],
+      "variants": [],
       "meaning": "dar (a mí/mi grupo)",
       "example": {
         "target": "友達が本をくれました。",
@@ -998,11 +984,9 @@
       "relatedIds": [],
       "kind": "word",
       "id": "14y3j0p",
-      "kanji": "もらう",
+      "kanji": null,
       "kana": "もらう",
-      "variants": [
-        "もらう"
-      ],
+      "variants": [],
       "meaning": "recibir",
       "example": {
         "target": "友達に本をもらいました。",
@@ -1366,11 +1350,9 @@
       "relatedIds": [],
       "kind": "word",
       "id": "1rs09kz",
-      "kanji": "びっくりする",
+      "kanji": null,
       "kana": "びっくりする",
-      "variants": [
-        "びっくりする"
-      ],
+      "variants": [],
       "meaning": "sorprenderse (informal)",
       "example": {
         "target": "音にびっくりしました。",
@@ -1384,11 +1366,9 @@
       "relatedIds": [],
       "kind": "word",
       "id": "0bhn08f",
-      "kanji": "うんざりする",
+      "kanji": null,
       "kana": "うんざりする",
-      "variants": [
-        "うんざりする"
-      ],
+      "variants": [],
       "meaning": "estar harto/a",
       "example": {
         "target": "暑さにうんざりしています。",
@@ -1767,11 +1747,9 @@
       "relatedIds": [],
       "kind": "word",
       "id": "1q8rp8r",
-      "kanji": "わかる",
+      "kanji": null,
       "kana": "わかる",
-      "variants": [
-        "わかる"
-      ],
+      "variants": [],
       "meaning": "entender",
       "example": {
         "target": "質問がわかりません。",
@@ -1821,11 +1799,9 @@
       "relatedIds": [],
       "kind": "word",
       "id": "0432tz8",
-      "kanji": "たたむ",
+      "kanji": null,
       "kana": "たたむ",
-      "variants": [
-        "たたむ"
-      ],
+      "variants": [],
       "meaning": "doblar (ropa, papel)",
       "example": {
         "target": "服をたたみます。",

@@ -5,6 +5,11 @@
 #
 # BASE_PATH must match the repo name, because Pages serves a project site from
 # https://<user>.github.io/<repo>/ rather than from the domain root.
+#
+# Action versions are kept current deliberately: the older majors bundled a
+# Node 20 runtime, which the runners now refuse and silently force onto Node
+# 24. That worked, but it meant every run was executing something other than
+# what the action was tested against.
 
 name: Deploy to GitHub Pages
 
@@ -28,13 +33,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Node 24 ships npm 11, matching the toolchain the lockfile was written
       # with. On npm 10 the same lockfile fails `npm ci` with "Missing:
       # picomatch from lock file", because the two versions resolve that
       # transitive dependency differently.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -49,8 +54,8 @@ jobs:
         env:
           BASE_PATH: /${{ github.event.repository.name }}/
 
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
 
@@ -62,4 +67,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

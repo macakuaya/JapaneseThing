@@ -7,6 +7,7 @@
   // during review, not only from Browse.
 
   import { store } from '../lib/store.svelte.ts'
+  import { hasKanji } from '../lib/text.ts'
   import type { Entry } from '../lib/types.ts'
 
   interface Props {
@@ -24,6 +25,8 @@
   let kana = $state(entry.kind === 'word' ? entry.kana : '')
   /* svelte-ignore state_referenced_locally */
   let pattern = $state(entry.kind === 'pattern' ? entry.pattern : '')
+  /* svelte-ignore state_referenced_locally */
+  let reading = $state(entry.kind === 'pattern' ? (entry.reading ?? '') : '')
   /* svelte-ignore state_referenced_locally */
   let meaning = $state(entry.meaning)
   /* svelte-ignore state_referenced_locally */
@@ -49,7 +52,13 @@
     }
     const patch =
       entry.kind === 'pattern'
-        ? { ...shared, pattern: pattern.trim() }
+        ? {
+            ...shared,
+            pattern: pattern.trim(),
+            // Undefined rather than '' so a pattern with nothing to read has
+            // no reading at all, the way a kana-only word has no kanji.
+            reading: reading.trim() || undefined,
+          }
         : {
             ...shared,
             // A word written only in kana keeps kanji null rather than ''.
@@ -78,6 +87,15 @@
       <div class="wide">
         <label for="e-pattern">Pattern</label>
         <input id="e-pattern" class="jp" bind:value={pattern} />
+      </div>
+      <div class="wide">
+        <label for="e-reading">Reading</label>
+        <input
+          id="e-reading"
+          class="jp"
+          bind:value={reading}
+          placeholder={hasKanji(pattern) ? 'required — the pattern has kanji' : 'optional'}
+        />
       </div>
     {:else}
       <div>

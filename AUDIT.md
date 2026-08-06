@@ -119,11 +119,13 @@ is baked into the data rather than computed live.
 | E4 | Examples where both halves share one sentence (こわれる/こわす) | KNOWN — the transitive half shows the intransitive example |
 | E5 | Cross-category links found by exact string match only | KNOWN — near-matches need the manual list |
 | E6 | Paste parser guessing a wrong subcategory | LOW RISK — defaults to last used, user reviews |
+| E8 | Patterns had no reading field at all, so 10 kanji-bearing ones (落ち着く, 〜と言います, 〜同士（で）…) shipped as bare kanji | **FIXED** — `PatternEntry.reading`, supplied by table; the import now *fails* rather than warns if a kanji pattern has none |
 | E7 | A kana-only verb repeated in the kanji column (びっくりする, わかる, もらう…) rendered `びっくりする・びっくりする` on 12 cards | **FIXED** — the kanji field is now kept only if it actually contains kanji, checked in `dataset.test.ts` against the shipped deck |
 
 **How to check:** re-run `npm run import` and read the warning block; then spot-
 check the 15 pair entries in Browse, which is where the shape is unusual.
-`npm test` sweeps every shipped front for a repeated half.
+`npm test` sweeps every shipped front for a repeated half, and every card
+carrying kanji for a kana reading to go with it.
 
 **The lesson from E7:** the rule was "the first column is the kanji", and the
 teacher's tables don't always honour it. Trusting the column rather than the

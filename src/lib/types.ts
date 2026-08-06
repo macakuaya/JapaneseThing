@@ -57,6 +57,12 @@ export interface WordEntry extends EntryBase {
 export interface PatternEntry extends EntryBase {
   kind: 'pattern'
   pattern: string
+  /**
+   * Kana for a pattern that contains kanji, shown after it exactly as a word's
+   * reading is: 落ち着く・おちつく. A pattern written entirely in kana has
+   * nothing to add and leaves this unset.
+   */
+  reading?: string
   /** Grammar only: 'N5' | 'N4' | ... */
   level?: string
 }

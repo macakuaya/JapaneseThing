@@ -65,6 +65,28 @@ const SUPPLIED_READINGS: Record<string, string> = {
   回す: 'まわす',
 }
 
+/*
+ * Readings for the patterns that contain kanji.
+ *
+ * The pattern tables have no reading column — the teacher writes 落ち着く and
+ * expects you to know it — so a card front was bare kanji with no way in. As
+ * with SUPPLIED_READINGS these are added data, listed one by one rather than
+ * derived, and the import fails if a kanji-bearing pattern is missing from
+ * here so a new batch can't quietly ship an unreadable card.
+ */
+const PATTERN_READINGS: Record<string, string> = {
+  '〜と言います': '〜といいます',
+  '〜と言われています': '〜といわれています',
+  '〜ように見えました': '〜ようにみえました',
+  '〜そうです（様態）': '〜そうです（ようたい）',
+  '少しずつ／〜ずつ': 'すこしずつ／〜ずつ',
+  '〜同士（で）': '〜どうし（で）',
+  気になります: 'きになります',
+  気に入る: 'きにいる',
+  落ち着く: 'おちつく',
+  ぐっと来ます: 'ぐっときます',
+}
+
 type TableKind = 'pattern' | 'word' | 'pair'
 
 function headerKind(cells: string[]): TableKind | null {
@@ -202,11 +224,20 @@ for (let i = 0; i < lines.length; i++) {
     // Verbo (ます形) ＋ はじめる → Vます＋はじめる
     const pattern = normalizePattern(rawPattern)
     if (pattern !== rawPattern) tidied.push(`${rawPattern} → ${pattern}`)
+
+    // Kanji with no reading is a card you can look at but not say.
+    const reading = PATTERN_READINGS[pattern]
+    if (hasKanji(pattern)) {
+      if (reading) supplements.push(`${pattern} → ${reading}`)
+      else errors.push(`Pattern with kanji and no reading: ${pattern} (line ${i + 1})`)
+    }
+
     push({
       ...base(),
       kind: 'pattern',
       id: makeId(category.id, pattern),
       pattern,
+      ...(reading ? { reading } : {}),
       meaning,
       example: splitExample(example),
       ...(category.id === 'gramatica' && subcategory ? { level: subcategory } : {}),

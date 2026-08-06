@@ -6,7 +6,7 @@
 // created a second card for the same word. These assert the merge substitutes.
 
 import { describe, expect, it } from 'vitest'
-import { cardFront, hasKanji } from './text.ts'
+import { cardFront, hasKanji, isAllKana } from './text.ts'
 import type { Entry } from './types.ts'
 
 const word = (id: string, meaning: string, source: 'seed' | 'user' = 'seed'): Entry => ({
@@ -99,6 +99,24 @@ describe('the shipped deck', () => {
       (e) => e.kind === 'word' && e.kanji !== null && !hasKanji(e.kanji),
     )
     expect(kanaOnly.map((e) => `${e.id} ${e.kind === 'word' ? e.kanji : ''}`)).toEqual([])
+  })
+
+  it('gives every kanji-bearing pattern a kana reading', async () => {
+    // 落ち着く shipped as bare kanji because patterns had no reading field at
+    // all — a card you can look at and not say.
+    const real = (await import('../data/seed.json')).default as { entries: Entry[] }
+    const unreadable = real.entries.filter(
+      (e) => e.kind === 'pattern' && hasKanji(e.pattern) && !e.reading,
+    )
+    expect(unreadable.map((e) => (e.kind === 'pattern' ? e.pattern : ''))).toEqual([])
+  })
+
+  it('gives every kanji-bearing word a kana reading', async () => {
+    const real = (await import('../data/seed.json')).default as { entries: Entry[] }
+    const unreadable = real.entries.filter(
+      (e) => e.kind === 'word' && e.kanji !== null && !isAllKana(e.kana),
+    )
+    expect(unreadable.map((e) => e.id)).toEqual([])
   })
 
   it('never renders a front with a repeated half', async () => {

@@ -169,6 +169,7 @@
       "kind": "pattern",
       "id": "0whhpdd",
       "pattern": "〜と言います",
+      "reading": "〜といいます",
       "meaning": "se llama ~",
       "example": {
         "target": "この魚は鮭と言います。",
@@ -259,6 +260,7 @@
       "kind": "pattern",
       "id": "197fi4a",
       "pattern": "〜と言われています",
+      "reading": "〜といわれています",
       "meaning": "se dice que ~",
       "example": {
         "target": "このお寺は古いと言われています。",
@@ -274,6 +276,7 @@
       "kind": "pattern",
       "id": "06czohm",
       "pattern": "〜ように見えました",
+      "reading": "〜ようにみえました",
       "meaning": "parecía que ~",
       "example": {
         "target": "彼は疲れているように見えました。",
@@ -289,6 +292,7 @@
       "kind": "pattern",
       "id": "0jigqaj",
       "pattern": "〜そうです（様態）",
+      "reading": "〜そうです（ようたい）",
       "meaning": "parece que ~ (apariencia)",
       "example": {
         "target": "このケーキはおいしそうです。",
@@ -544,6 +548,7 @@
       "kind": "pattern",
       "id": "1m1tmwv",
       "pattern": "少しずつ／〜ずつ",
+      "reading": "すこしずつ／〜ずつ",
       "meaning": "poco a poco / de ~ en ~",
       "example": {
         "target": "物が少しずつ変わります。",
@@ -604,6 +609,7 @@
       "kind": "pattern",
       "id": "156vfrb",
       "pattern": "〜同士（で）",
+      "reading": "〜どうし（で）",
       "meaning": "entre/mutuamente (mismo tipo)",
       "example": {
         "target": "友達同士で話します。",
@@ -3464,6 +3470,7 @@
       "kind": "pattern",
       "id": "1iv84ct",
       "pattern": "気になります",
+      "reading": "きになります",
       "meaning": "me preocupa / me llama la atención",
       "example": {
         "target": "明日のテストが気になります。",
@@ -3480,6 +3487,7 @@
       "kind": "pattern",
       "id": "18rmfdu",
       "pattern": "気に入る",
+      "reading": "きにいる",
       "meaning": "gustar, quedar prendado/a",
       "example": {
         "target": "このデザインが気に入りました。",
@@ -3496,6 +3504,7 @@
       "kind": "pattern",
       "id": "05ztrm5",
       "pattern": "落ち着く",
+      "reading": "おちつく",
       "meaning": "calmarse / sentirse a gusto (lugar tranquilo)",
       "example": {
         "target": "このカフェは落ち着きます。",
@@ -3552,6 +3561,7 @@
       "kind": "pattern",
       "id": "0q4o3ld",
       "pattern": "ぐっと来ます",
+      "reading": "ぐっときます",
       "meaning": "conmover, tocar el corazón",
       "example": {
         "target": "その歌はぐっと来ます。",

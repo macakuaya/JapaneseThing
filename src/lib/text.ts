@@ -183,7 +183,11 @@ export function splitSlashLines(s: string): string[] {
  * appended once.
  */
 export function cardFront(entry: Entry): string {
-  if (entry.kind === 'pattern') return entry.pattern
+  if (entry.kind === 'pattern') {
+    return entry.reading && entry.reading !== entry.pattern
+      ? `${entry.pattern}・${entry.reading}`
+      : entry.pattern
+  }
 
   const kana = entry.kana
   if (!entry.kanji) return kana

@@ -354,3 +354,65 @@ describe('draftToEntry', () => {
     expect(draftToEntry(one('にんにく = ajo')).example).toBeNull()
   })
 })
+
+
+/*
+ * The tables Claude hands back from a chat log, which is how the week's words
+ * actually arrive. Same shape as the class file, so the parser should read
+ * both without being told which it is looking at.
+ */
+describe('a pasted table', () => {
+  const VOCAB = `| 漢字 | かな | Traducción | Frase de ejemplo |
+|---|---|---|---|
+| 蒸し暑い | むしあつい | bochornoso | 今日はとても蒸し暑いですね。(Hoy hace mucho bochorno.) |
+| — | うちわ | abanico plano | お祭りでうちわをもらいました。(Me dieron un abanico.) |`
+
+  const GRAMMAR = `| Patrón | Significado | Frase de ejemplo |
+|---|---|---|
+| 〜てもいいですか | ¿puedo ~? | ここに座ってもいいですか。(¿Puedo sentarme aquí?) |`
+
+  it('skips the header row instead of making a card of it', () => {
+    // `漢字 | かな | Traducción` parsed as a confident word meaning
+    // "Traducción". Only the Latin spellings were listed, so a table written
+    // the way the class file writes it went straight through.
+    const rows = parseBlock(VOCAB, { category: 'vocabulario', subcategory: '' })
+    expect(rows).toHaveLength(2)
+    expect(rows.map((r) => r.kanji)).toEqual(['蒸し暑い', ''])
+  })
+
+  it('reads the vocabulary shape whole', () => {
+    const [first] = parseBlock(VOCAB, { category: 'vocabulario', subcategory: '' })
+    expect(first).toMatchObject({
+      kind: 'word',
+      kanji: '蒸し暑い',
+      kana: 'むしあつい',
+      meaning: 'bochornoso',
+      exampleTarget: '今日はとても蒸し暑いですね。',
+      exampleNative: 'Hoy hace mucho bochorno.',
+    })
+  })
+
+  it('takes — as "no kanji", not as the writing', () => {
+    const [, second] = parseBlock(VOCAB, { category: 'vocabulario', subcategory: '' })
+    expect(second).toMatchObject({ kanji: '', kana: 'うちわ' })
+  })
+
+  it('reads the grammar shape as a pattern', () => {
+    const rows = parseBlock(GRAMMAR, { category: 'gramatica', subcategory: '' })
+    expect(rows).toHaveLength(1)
+    expect(rows[0]).toMatchObject({
+      kind: 'pattern',
+      pattern: '〜てもいいですか',
+      meaning: '¿puedo ~?',
+      exampleTarget: 'ここに座ってもいいですか。',
+    })
+  })
+
+  it('reads both tables from one paste', () => {
+    const rows = parseBlock(`${VOCAB}\n\n${GRAMMAR}`, {
+      category: 'vocabulario',
+      subcategory: '',
+    })
+    expect(rows.map((r) => r.kind)).toEqual(['word', 'word', 'pattern'])
+  })
+})

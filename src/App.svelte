@@ -7,7 +7,6 @@
   import Deck from './views/Deck.svelte'
   import Add from './views/Add.svelte'
   import SettingsView from './views/Settings.svelte'
-  import Panzer from './components/Panzer.svelte'
   import Tooltip from './components/Tooltip.svelte'
   import { store, type View } from './lib/store.svelte.ts'
 
@@ -39,9 +38,8 @@
     already gets you home. Everywhere else it is navigation.
   -->
   <nav>
-    <button class="brand" onclick={home} aria-label="Home">
+    <button class="brand" onclick={home} aria-label="Home" title="Home">
       <span class="jp">語</span>
-      <Panzer />
     </button>
     <span class="spacer"></span>
 
@@ -151,7 +149,6 @@
   .brand {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
     border: none;
     background: none;
     padding: 0;
@@ -162,21 +159,6 @@
   .brand:hover {
     background: none;
     color: var(--accent);
-  }
-
-  /*
-   * Only there when you go looking. It keeps its space while hidden, so
-   * finding it doesn't shove the header around, and it takes the brand's own
-   * colour through currentColor rather than declaring one of its own.
-   */
-  .brand :global(.panzer) {
-    opacity: 0;
-    transition: opacity 0.18s ease;
-  }
-
-  .brand:hover :global(.panzer),
-  .brand:focus-visible :global(.panzer) {
-    opacity: 1;
   }
 
   nav button.on {

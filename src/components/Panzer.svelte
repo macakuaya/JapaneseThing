@@ -6,9 +6,10 @@
   // theme. Drawn with currentColor it inherits whatever colour the thing
   // around it is using, and follows the theme for free.
   //
-  // Purely decorative, so it is hidden from screen readers — announcing "dog"
-  // next to the home button would make it a thing to deal with rather than a
-  // thing to notice.
+  // Not rendered anywhere at the moment. Kept because he is going somewhere
+  // later, and because the useful part is the conversion to currentColor —
+  // the original had stroke="white" baked in and would vanish in the light
+  // theme. Hidden from screen readers wherever he lands: he is decoration.
 </script>
 
 <svg
@@ -43,7 +44,7 @@
 
 <style>
   .panzer {
-    height: 1.05rem;
+    height: 1.35rem;
     width: auto;
   }
 </style>

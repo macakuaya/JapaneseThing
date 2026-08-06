@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { X } from '@lucide/svelte'
+  import { Check, Copy, X } from '@lucide/svelte'
   import { type Draft, draftToEntry, fillReadings, parseBlock } from '../lib/parse.ts'
   import { store } from '../lib/store.svelte.ts'
   import { hasKanji } from '../lib/text.ts'
@@ -74,6 +74,48 @@
     if (!drafts.length) text = ''
   }
 
+  /*
+   * The prompt for the step that happens outside this app.
+   *
+   * The teacher doesn't send finished cards — you talk, she writes fragments,
+   * and turning that into rows by hand is the chore that killed Anki. Claude
+   * does that part well already; what it needs is to be told the exact shape
+   * this parser reads best, which is the shape the class file is already in.
+   *
+   * So the loop is two copies: chat → here → back. Nothing in the app calls a
+   * model, and nothing needs a key.
+   */
+  const CLAUDE_PROMPT = `Here is a chat log from my Japanese class. Pull out everything the teacher taught — vocabulary, verbs, expressions and grammar patterns — and give it back as Markdown tables and nothing else.
+
+Vocabulary, verbs and expressions:
+
+| 漢字 | かな | Traducción | Frase de ejemplo |
+|---|---|---|---|
+
+Grammar patterns:
+
+| Patrón | Significado | Frase de ejemplo |
+|---|---|---|
+
+Rules:
+- 漢字 is the written form. Write — when the word has no kanji.
+- かな is the full reading, in hiragana.
+- Traducción is in Spanish.
+- Frase de ejemplo is one Japanese sentence followed by its Spanish translation in parentheses: 日本語の文。(La traducción.)
+- If the teacher gave no example, write a short natural one at the same level.
+- One row per word. No commentary and no headings other than the tables.
+
+Chat log:
+`
+
+  let copied = $state(false)
+
+  async function copyPrompt() {
+    await navigator.clipboard.writeText(CLAUDE_PROMPT)
+    copied = true
+    setTimeout(() => (copied = false), 2000)
+  }
+
   const EXAMPLE_PASTE = `にんにく = ajo
 酢（す）vinagre  酢を入れます。(Añado vinagre.)
 蒸す（むす）cocinar al vapor
@@ -82,10 +124,17 @@
 
 <section class="stack">
   <div class="card-surface panel">
-    <h2>Add words</h2>
+    <div class="row wrap head">
+      <h2>Add words</h2>
+      <span class="spacer"></span>
+      <button class="ghost tiny with-icon" onclick={copyPrompt}>
+        {#if copied}<Check size={14} />Copied{:else}<Copy size={14} />Copy Claude prompt{/if}
+      </button>
+    </div>
     <p class="muted intro">
-      Paste whatever the teacher sent. The parser guesses the fields and flags what it is
-      unsure about — nothing is saved until you press Save.
+      Paste whatever the teacher sent — raw messages, or a table. The parser guesses the
+      fields, fills readings from the dictionary and flags what it is unsure about. Nothing
+      is saved until you press Save.
     </p>
 
     <textarea
@@ -132,7 +181,13 @@
   {/if}
 
   {#if drafts.length}
-    <div class="card-surface panel">
+    <!--
+      Wider than the reading column the rest of the app is held to. A line of
+      prose wants 760px; a six-column table does not, and the alternative was
+      a sideways scrollbar inside the panel. Only this panel breaks out — the
+      header and the paste box stay put, so nothing jumps when you press Parse.
+    -->
+    <div class="card-surface panel results">
       <div class="row wrap head">
         <h3>{drafts.length} parsed</h3>
         {#if problems > 0}
@@ -149,10 +204,29 @@
         {/if}
       </div>
 
-      <div class="drafts">
+      <!--
+        A table, because that is the shape the data already has: the teacher's
+        file, Claude's output and this list are all 漢字 / かな / traducción /
+        ejemplo. Two columns of labelled boxes per card made you read each row
+        as a form instead of scanning a column.
+
+        Below 900px it stacks into one column per field — a five-column table
+        on a phone is a table you scroll sideways and stop reading.
+      -->
+      <div class="table" role="group" aria-label="Parsed entries">
+        <div class="head-row">
+          <span></span>
+          <span class="jp">漢字 / Patrón</span>
+          <span class="jp">かな</span>
+          <span>Traducción</span>
+          <span>Frase de ejemplo</span>
+          <span>Categoría</span>
+          <span></span>
+        </div>
+
         {#each drafts as draft, i (i)}
           <div class="draft" class:low={draft.confidence === 'low'} class:off={!draft.include}>
-            <div class="row top">
+            <div class="cell pick">
               <input
                 type="checkbox"
                 bind:checked={draft.include}
@@ -160,15 +234,65 @@
                 class="tick"
               />
               <span class="conf {draft.confidence}" title="parser confidence"></span>
-              {#if draft.raw}
-                <code class="raw faint" title={draft.raw}>{draft.raw}</code>
+            </div>
+
+            <div class="cell">
+              <label for="w-{i}">{draft.kind === 'pattern' ? 'Patrón' : '漢字'}</label>
+              {#if draft.kind === 'pattern'}
+                <input id="w-{i}" class="jp" bind:value={draft.pattern} />
               {:else}
-                <code class="raw faint">manual entry</code>
+                <input id="w-{i}" class="jp" bind:value={draft.kanji} placeholder="—" />
               {/if}
-              <span class="spacer"></span>
-              {#each draft.issues as issue (issue)}
-                <span class="issue">{issue}</span>
-              {/each}
+            </div>
+
+            <div class="cell">
+              <label for="r-{i}">かな</label>
+              {#if draft.kind === 'pattern'}
+                <input
+                  id="r-{i}"
+                  class="jp"
+                  bind:value={draft.reading}
+                  placeholder={hasKanji(draft.pattern) ? 'required' : '—'}
+                />
+              {:else}
+                <input id="r-{i}" class="jp" bind:value={draft.kana} />
+              {/if}
+            </div>
+
+            <div class="cell">
+              <label for="m-{i}">Traducción</label>
+              <input
+                id="m-{i}"
+                bind:value={draft.meaning}
+                class:missing={draft.include && !draft.meaning.trim()}
+                placeholder="required"
+              />
+              <input id="n-{i}" class="jp sub" bind:value={draft.note} placeholder="note" />
+            </div>
+
+            <!-- Sentence over translation, the way the card shows them. -->
+            <div class="cell">
+              <label for="ex-{i}">Frase de ejemplo</label>
+              <input id="ex-{i}" class="jp" bind:value={draft.exampleTarget} placeholder="—" />
+              <input id="ent-{i}" class="sub" bind:value={draft.exampleNative} placeholder="—" />
+            </div>
+
+            <div class="cell">
+              <label for="c-{i}">Categoría</label>
+              <select id="c-{i}" bind:value={draft.category}>
+                {#each store.dataset.categories as cat (cat.id)}
+                  <option value={cat.id}>{cat.label}</option>
+                {/each}
+              </select>
+              <select id="s-{i}" class="sub" bind:value={draft.subcategory}>
+                <option value="">— none —</option>
+                {#each subsFor(draft.category) as sub (sub)}
+                  <option value={sub}>{sub}</option>
+                {/each}
+              </select>
+            </div>
+
+            <div class="cell drop">
               <button
                 class="ghost tiny"
                 onclick={() => (drafts = drafts.toSpliced(i, 1))}
@@ -176,73 +300,16 @@
               >
             </div>
 
-            <div class="grid">
-              {#if draft.kind === 'pattern'}
-                <div class="cell">
-                  <label for="p-{i}">Pattern</label>
-                  <input id="p-{i}" class="jp" bind:value={draft.pattern} />
-                </div>
-                <div class="cell">
-                  <label for="pr-{i}">Reading</label>
-                  <input
-                    id="pr-{i}"
-                    class="jp"
-                    bind:value={draft.reading}
-                    placeholder={hasKanji(draft.pattern) ? 'required' : 'optional'}
-                  />
-                </div>
-              {:else}
-                <div class="cell">
-                  <label for="k-{i}">Kanji</label>
-                  <input id="k-{i}" class="jp" bind:value={draft.kanji} />
-                </div>
-                <div class="cell">
-                  <label for="r-{i}">Kana</label>
-                  <input id="r-{i}" class="jp" bind:value={draft.kana} />
-                </div>
-              {/if}
-
-              <div class="cell">
-                <label for="m-{i}">Meaning</label>
-                <input
-                  id="m-{i}"
-                  bind:value={draft.meaning}
-                  class:missing={draft.include && !draft.meaning.trim()}
-                  placeholder="required"
-                />
+            {#if draft.issues.length || draft.raw}
+              <div class="cell notes">
+                {#each draft.issues as issue (issue)}
+                  <span class="issue">{issue}</span>
+                {/each}
+                {#if draft.raw}
+                  <code class="raw faint" title={draft.raw}>{draft.raw}</code>
+                {/if}
               </div>
-              <div class="cell">
-                <label for="n-{i}">Note</label>
-                <input id="n-{i}" class="jp" bind:value={draft.note} placeholder="optional" />
-              </div>
-
-              <div class="cell wide">
-                <label for="ex-{i}">Example</label>
-                <input id="ex-{i}" class="jp" bind:value={draft.exampleTarget} />
-              </div>
-              <div class="cell wide">
-                <label for="ent-{i}">Example translation</label>
-                <input id="ent-{i}" bind:value={draft.exampleNative} />
-              </div>
-
-              <div class="cell">
-                <label for="c-{i}">Category</label>
-                <select id="c-{i}" bind:value={draft.category}>
-                  {#each store.dataset.categories as cat (cat.id)}
-                    <option value={cat.id}>{cat.label}</option>
-                  {/each}
-                </select>
-              </div>
-              <div class="cell">
-                <label for="s-{i}">Subcategory</label>
-                <select id="s-{i}" bind:value={draft.subcategory}>
-                  <option value="">— none —</option>
-                  {#each subsFor(draft.category) as sub (sub)}
-                    <option value={sub}>{sub}</option>
-                  {/each}
-                </select>
-              </div>
-            </div>
+            {/if}
           </div>
         {/each}
       </div>
@@ -317,32 +384,94 @@
     gap: 0.5rem;
   }
 
-  .drafts {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+  /*
+   * One grid for the whole table, with each row's cells joining it through
+   * `display: contents`. Declaring the columns once is what keeps them lined
+   * up down the page — per-row grids drift as soon as one row's content is
+   * wider than another's.
+   */
+  .results {
+    width: min(1080px, calc(100vw - 2rem));
+    margin-inline: calc((100% - min(1080px, 100vw - 2rem)) / 2);
   }
 
-  /* An inset well on the panel: the darker fill separates each draft from its
-     neighbours without ringing every one of them in an outline. */
+  .table {
+    display: grid;
+    grid-template-columns:
+      2.2rem minmax(7rem, 1fr) minmax(6rem, 0.85fr) minmax(8.5rem, 1.1fr)
+      minmax(11rem, 1.6fr) minmax(7.5rem, 0.85fr) 2rem;
+    gap: 0.35rem 0.5rem;
+    align-items: start;
+  }
+
+  .head-row {
+    display: contents;
+  }
+
+  .head-row > span {
+    font-size: 0.72rem;
+    color: var(--faint);
+    letter-spacing: 0.03em;
+    padding-bottom: 0.15rem;
+  }
+
   .draft {
-    border-radius: 10px;
-    padding: 0.7rem 0.8rem;
-    background: var(--bg);
+    display: contents;
   }
 
-  /* A tint says "look at this one" more quietly than a coloured outline. */
-  .draft.low {
-    background: color-mix(in srgb, var(--again) 8%, var(--bg));
+  /* With the row itself painting nothing, "look at this one" has to be said by
+     the cells. Quieter than ringing the row in an outline, and it survives the
+     stacked layout below unchanged. */
+  .draft.low > .cell {
+    background: color-mix(in srgb, var(--again) 8%, transparent);
   }
 
-  .draft.off {
+  .draft.off > .cell {
     opacity: 0.45;
   }
 
-  .top {
-    gap: 0.5rem;
-    margin-bottom: 0.6rem;
+  .cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+    border-radius: 6px;
+  }
+
+  /* The header row names the columns, so repeating the name in every cell is
+     noise — until the table stacks, where the header is gone. */
+  .cell label {
+    display: none;
+    margin: 0;
+  }
+
+  .cell.pick {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.35rem;
+    padding-top: 0.5rem;
+  }
+
+  .cell.drop {
+    padding-top: 0.15rem;
+  }
+
+  /* Second line of a cell: the note under a meaning, the translation under a
+     sentence, the subcategory under a category. Quieter than the first. */
+  .cell .sub {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .cell.notes {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0 0 0.5rem 2.2rem;
+    border-bottom: 1px solid var(--divider);
+    margin-bottom: 0.25rem;
   }
 
   .tick {
@@ -367,12 +496,16 @@
     background: var(--again);
   }
 
+  /* Ellipsised, never wrapped, and never a reason for the page to grow: the
+     original line is a reference, not content. */
   .raw {
     font-size: 0.74rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 45%;
+    min-width: 0;
+    max-width: 100%;
+    flex: 0 1 auto;
   }
 
   .issue {
@@ -381,14 +514,72 @@
     white-space: nowrap;
   }
 
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.5rem;
-  }
+  /*
+   * A five-column table on a phone is a table you scroll sideways and stop
+   * reading. Below this it becomes one field per line, labels back on, each
+   * row an inset block so the boundary between entries stays obvious.
+   */
+  @media (max-width: 900px) {
+    .table {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      /* The grid rule's `start` would size each row to its content here, and
+         one long raw-text line then widens the page. */
+      align-items: stretch;
+    }
 
-  .cell.wide {
-    grid-column: 1 / -1;
+    .head-row {
+      display: none;
+    }
+
+    .draft {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      border-radius: 10px;
+      padding: 0.7rem 0.8rem;
+      background: var(--bg);
+      min-width: 0;
+    }
+
+    .draft.low {
+      background: color-mix(in srgb, var(--again) 8%, var(--bg));
+    }
+
+    .draft.low > .cell {
+      background: none;
+    }
+
+    .draft.off {
+      opacity: 0.45;
+    }
+
+    .draft.off > .cell {
+      opacity: 1;
+    }
+
+    .cell label {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--faint);
+    }
+
+    .cell.notes {
+      padding: 0;
+      border: none;
+      margin: 0;
+    }
+
+    .cell.pick,
+    .cell.drop {
+      padding: 0;
+    }
+
+    .results {
+      width: auto;
+      margin-inline: 0;
+    }
   }
 
   .tiny {

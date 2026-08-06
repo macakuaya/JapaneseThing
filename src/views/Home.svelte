@@ -174,6 +174,11 @@
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1rem;
+    /* Centred in what's left below the header, matching the card in a session.
+       `auto` margins rather than fixed centring, because six cards two-up on a
+       phone are taller than the screen and must be allowed to run past it
+       rather than being clipped around a midpoint. */
+    margin: auto 0;
     /* Clears the fixed status line below. */
     padding-bottom: 2.5rem;
   }

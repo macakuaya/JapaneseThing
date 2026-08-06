@@ -111,6 +111,34 @@ function clean(line: string): string {
     .trim()
 }
 
+/*
+ * Column headings, in both scripts.
+ *
+ * A pasted table brings its own header, and `漢字 | かな | Traducción` parsed
+ * as a perfectly confident card meaning "Traducción". Only Latin spellings
+ * were listed, so a table written the way the teacher's own file writes it —
+ * with Japanese headings — slipped straight through.
+ */
+const HEADER_CELLS = new Set([
+  'kanji',
+  '漢字',
+  'kana',
+  'かな',
+  'palabra',
+  'verbo',
+  'patrón',
+  'patron',
+  'expresión',
+  'expresion',
+  'intransitivo',
+  'transitivo',
+])
+
+function isHeaderRow(cells: string[]): boolean {
+  const first = cells[0]?.trim().toLowerCase() ?? ''
+  return HEADER_CELLS.has(first)
+}
+
 function fromCells(cells: string[], defaults: ParseDefaults, raw: string): Draft {
   const d = emptyDraft(raw, defaults)
   d.confidence = 'high'
@@ -244,7 +272,7 @@ function parseLine(raw: string, defaults: ParseDefaults): Draft | null {
       .slice(1, trimmed.endsWith('|') ? -1 : undefined)
       .split('|')
       .map((c) => c.trim())
-    if (cells[0]?.toLowerCase() === 'kanji' || cells[0]?.toLowerCase() === 'patrón') return null
+    if (isHeaderRow(cells)) return null
     return fromCells(cells, defaults, raw)
   }
 

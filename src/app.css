@@ -347,6 +347,17 @@ a {
   aspect-ratio: 3 / 4;
   background: var(--surface);
   border-radius: var(--radius);
+
+  /*
+   * aspect-ratio only states a *preferred* height. The card is a flex item, so
+   * its automatic minimum is its own content, and content taller than 3:4 wins
+   * — the kanji card grew from 520px to 556px the moment it was revealed and
+   * jumped 18px up the screen to stay centred. min-height: 0 is what makes the
+   * ratio binding; overflow keeps anything that doesn't fit inside the corners
+   * rather than hanging over them.
+   */
+  min-height: 0;
+  overflow: hidden;
 }
 
 /*

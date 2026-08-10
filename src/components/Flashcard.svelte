@@ -148,9 +148,6 @@
               </div>
             {/if}
 
-            {#if entry.strokes}
-              <p class="strokes faint">{entry.strokes} 画</p>
-            {/if}
           {:else if card.direction === 'recognition'}
             <p class="meaning">
               {#each splitSlashLines(entry.meaning) as line (line)}
@@ -278,10 +275,12 @@
     flex: 1 1 auto;
   }
 
+  /* No rule between the halves. The empty space below the question already
+     says an answer belongs there, and a border earns its place only where
+     fill and spacing can't do the job. */
   .question {
     font-size: clamp(1.35rem, 5.5vw, 1.9rem);
     overflow-wrap: anywhere;
-    border-bottom: 1px solid var(--divider);
     padding-bottom: 0.7rem;
   }
 
@@ -292,8 +291,15 @@
     line-height: 1;
   }
 
+  /* The one card that fills its two thirds exactly. Tightened until the
+     translation's last line clears the grading buttons without scrolling —
+     you should be able to read a kanji card without moving it. */
   .card.kanji .told {
-    gap: 0.55rem;
+    gap: 0.4rem;
+  }
+
+  .card.kanji .vocab {
+    font-size: 0.82rem;
   }
 
   /* Meanings are prose, not display text — don't blow them up like kanji. */
@@ -423,11 +429,6 @@
     display: flex;
     justify-content: center;
     gap: 0.4rem;
-  }
-
-  .strokes {
-    margin: 0;
-    font-size: 0.7rem;
   }
 
   .grading {

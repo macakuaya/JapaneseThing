@@ -60,6 +60,7 @@ Both candidates are real words; the scorer has to choose. This produced
 | B5 | Deck entries with slash variants never matched | **FIXED** — was a real bug: 入れる／淹れる, 飛ぶ／飛ばす, 嘔吐する／吐く, 集める／集まる, 湿気／湿度 were indexed whole, so five deck words were invisible to lookup |
 | B6 | Genuine polysemy the deck can't settle (つけます: ponerse vs encender) | **SURFACED** — the tooltip lists competing senses rather than picking silently |
 | B7 | Counters read wrongly: 一人, 二日, 三本 | PARTLY — a few are on the ambiguous list |
+| B9 | An entry with several writings and several readings printed reading #1 regardless of which writing matched — いい天気 got よい | **FIXED** — the writing's own kana pick the reading (`pickReading`) |
 | B8 | Names matching common nouns | SUSPECTED |
 
 **How to check:** for a word, print `lookupWord(w)` with scores and see whether
@@ -78,6 +79,7 @@ Longest-match has no grammar. It can swallow a particle or split a compound.
 | C2 | **Particles glued to fragments** — ものがいい → もの\|がい\|と, glossing がい as 害 "daño"; 健康のために → のた as 乗る | **FIXED** — the big one. Only kanji-bearing or deck words are glossed at all |
 | C3 | Compound missing from the dictionary, split into single kanji (出汁 → 出 "flujo" + 汁 "jugo") | **FIXED** — a lone kanji flanked by kanji is not glossed |
 | C4 | Long verb chains: 食べてしまいました as one token | BENIGN — resolves correctly |
+| C6 | A particle swallowed by a longer entry: 今日は matches the greeting こんにちは, so 今日 read こんにち in any sentence starting 今日は… | **FIXED** — 今日は added to the ambiguous list, so it refuses rather than guesses. The general shape (X+は being its own entry) is still open |
 | C5 | Numbers + counters: ３年, 一週間 | SUSPECTED |
 
 **How to check:** `segment(sentence).map(t => t.text)` over every example

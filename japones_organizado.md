@@ -333,6 +333,17 @@
 
 ---
 
+## 5. KANJI
+
+Un carácter por fila. Las lecturas van separadas por `・`; el vocabulario se
+escribe `palabra・lectura・significado`, separando cada entrada con `／`.
+
+| Carácter | Onyomi | Kunyomi | Significado | Vocabulario | Ejemplo | Trazos |
+|---|---|---|---|---|---|---|
+| 日 | ニチ・ジツ | ひ・び・か | día, sol, Japón | 日本・にほん・Japón ／ 今日・きょう・hoy ／ 毎日・まいにち・todos los días ／ 日曜日・にちようび・domingo | 今日はいい天気ですね。(Hoy hace buen tiempo.) | 4 |
+
+---
+
 ## 📊 Resumen
 
 - **Gramática:** ~30 patrones con ejemplo, repartidos N5–N4
@@ -340,6 +351,8 @@
 - **Vocabulario:** ~90 palabras con kanji, kana y ejemplo, en 8 subcategorías
 - **Expresiones:** 9 frases hechas con ejemplo
 
-**Pendiente:** el archivo de kanji sueltos que vas a pasar aparte.
+- **Kanji:** 1 carácter con lecturas, vocabulario y ejemplo
+
+**Pendiente:** el resto del archivo de kanji sueltos.
 
 ¿Reviso algo más antes de seguir, o quieres que ajuste algo de lo que ya está?

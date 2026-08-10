@@ -3567,6 +3567,52 @@
         "native": "Esa canción me llega al corazón."
       },
       "reading": "ぐっときます"
+    },
+    {
+      "category": "kanji",
+      "subcategory": null,
+      "source": "seed",
+      "relatedIds": [],
+      "kind": "kanji",
+      "id": "0meko7l",
+      "character": "日",
+      "on": [
+        "ニチ",
+        "ジツ"
+      ],
+      "kun": [
+        "ひ",
+        "び",
+        "か"
+      ],
+      "strokes": 4,
+      "vocabulary": [
+        {
+          "word": "日本",
+          "reading": "にほん",
+          "meaning": "Japón"
+        },
+        {
+          "word": "今日",
+          "reading": "きょう",
+          "meaning": "hoy"
+        },
+        {
+          "word": "毎日",
+          "reading": "まいにち",
+          "meaning": "todos los días"
+        },
+        {
+          "word": "日曜日",
+          "reading": "にちようび",
+          "meaning": "domingo"
+        }
+      ],
+      "meaning": "día, sol, Japón",
+      "example": {
+        "target": "今日はいい天気ですね。",
+        "native": "Hoy hace buen tiempo."
+      }
     }
   ]
 }

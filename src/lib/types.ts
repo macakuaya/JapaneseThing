@@ -67,7 +67,33 @@ export interface PatternEntry extends EntryBase {
   level?: string
 }
 
-export type Entry = WordEntry | PatternEntry
+/** One word built from a kanji, shown as 会社・かいしゃ・empresa. */
+export interface KanjiVocab {
+  word: string
+  reading: string
+  meaning: string
+}
+
+/**
+ * A single character, taught as a character.
+ *
+ * Not a WordEntry with extra fields: a kanji is asked in the other direction —
+ * you are shown the shape and have to produce its readings and sense — and it
+ * carries several readings rather than one, which a word's single `kana` has
+ * nowhere to put.
+ */
+export interface KanjiEntry extends EntryBase {
+  kind: 'kanji'
+  character: string
+  /** on'yomi, katakana, as KANJIDIC writes them. */
+  on: string[]
+  /** kun'yomi, hiragana; a `.` marks where okurigana begins. */
+  kun: string[]
+  strokes?: number
+  vocabulary: KanjiVocab[]
+}
+
+export type Entry = WordEntry | PatternEntry | KanjiEntry
 
 /** A name in both of the dataset's languages, laid out like a card front. */
 export interface BilingualName {

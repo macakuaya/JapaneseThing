@@ -54,9 +54,11 @@
   const frontIsJapanese = $derived(card.direction === 'recognition')
 
   /** What this card teaches; those words get no tooltip in the example. */
-  const taught = $derived(
-    entry.kind === 'pattern' ? entry.pattern : `${entry.kanji ?? ''}${entry.kana}`,
-  )
+  const taught = $derived.by(() => {
+    if (entry.kind === 'pattern') return entry.pattern
+    if (entry.kind === 'kanji') return entry.character
+    return `${entry.kanji ?? ''}${entry.kana}`
+  })
 
   /** The other half of a transitive/intransitive pair. */
   const partners = $derived.by(() => {
@@ -70,7 +72,7 @@
   })
 </script>
 
-<article class="card card-shape" class:editing>
+<article class="card card-shape" class:editing class:kanji={entry.kind === 'kanji'}>
   {#if editing}
     <!-- Same box, same size, same place: the card doesn't become a different
          object to be corrected, it just shows its own fields. -->
@@ -85,7 +87,7 @@
       <button class="tap" onclick={onReveal} aria-label="Show answer"></button>
     {/if}
 
-    <div class="half question" class:jp={frontIsJapanese}>
+    <div class="half question" class:jp={frontIsJapanese} class:glyph={entry.kind === 'kanji'}>
       {#each splitSlashLines(front) as line (line)}
         <div class="line">{line}</div>
       {/each}
@@ -94,7 +96,62 @@
     <div class="half answer">
       {#if revealed}
         <div class="told">
-          {#if card.direction === 'recognition'}
+          {#if entry.kind === 'kanji'}
+            <!--
+              Everything a kanji card owes you, in the order you want it: what
+              it means, how it is read, where you have met it, and one sentence.
+              The reference layout gave each of those a heading of its own,
+              which on a card this size is mostly headings.
+            -->
+            <p class="meaning">{entry.meaning}</p>
+
+            <div class="yomi">
+              {#if entry.on.length}
+                <div class="yomi-row">
+                  <span class="tag jp">音</span>
+                  <span class="jp reading">{entry.on.join('・')}</span>
+                </div>
+              {/if}
+              {#if entry.kun.length}
+                <div class="yomi-row">
+                  <span class="tag jp">訓</span>
+                  <span class="jp reading">{entry.kun.join('・')}</span>
+                </div>
+              {/if}
+            </div>
+
+            {#if entry.vocabulary.length}
+              <ul class="vocab">
+                {#each entry.vocabulary as v (v.word)}
+                  <li>
+                    <span class="jp">{v.word}・{v.reading}</span>
+                    <span class="muted">{v.meaning}</span>
+                  </li>
+                {/each}
+              </ul>
+            {/if}
+
+            {#if entry.example}
+              <div class="example">
+                <p class="jp">
+                  <JapaneseText
+                    text={entry.example.target}
+                    furigana={showFurigana}
+                    {interactive}
+                    categoryHint={entry.category}
+                    {taught}
+                  />
+                </p>
+                {#if entry.example.native}
+                  <p class="muted">{entry.example.native}</p>
+                {/if}
+              </div>
+            {/if}
+
+            {#if entry.strokes}
+              <p class="strokes faint">{entry.strokes} 画</p>
+            {/if}
+          {:else if card.direction === 'recognition'}
             <p class="meaning">
               {#each splitSlashLines(entry.meaning) as line (line)}
                 <span class="line">{line}</span>
@@ -108,11 +165,12 @@
             </p>
           {/if}
 
-          {#if entry.note}
-            <p class="note">{entry.note}</p>
-          {/if}
+          {#if entry.kind !== 'kanji'}
+            {#if entry.note}
+              <p class="note">{entry.note}</p>
+            {/if}
 
-          {#if entry.example}
+            {#if entry.example}
             <div class="example">
               <p class="jp">
                 {#each splitSlashLines(entry.example.target) as line (line)}
@@ -137,13 +195,14 @@
             </div>
           {/if}
 
-          {#each partners as partner (partner.id)}
-            <p class="partner faint">
-              <ArrowLeftRight size={13} />
-              {partner.note ?? 'par'}:
-              <span class="jp">{cardFront(partner)}</span> — {partner.meaning}
-            </p>
-          {/each}
+            {#each partners as partner (partner.id)}
+              <p class="partner faint">
+                <ArrowLeftRight size={13} />
+                {partner.note ?? 'par'}:
+                <span class="jp">{cardFront(partner)}</span> — {partner.meaning}
+              </p>
+            {/each}
+          {/if}
         </div>
 
         <!-- Grading sits on the card: seeing the answer and judging it are one
@@ -207,6 +266,32 @@
     padding-bottom: 1rem;
   }
 
+  /* One character, so it can be as large as its share allows — the shape is
+     the whole question, and small type hides the strokes you need to read. */
+  .question.glyph {
+    font-size: clamp(3.5rem, 17vw, 5.5rem);
+    line-height: 1;
+  }
+
+  /*
+   * A kanji card is not split down the middle. One character needs a third of
+   * the face; its answer carries a meaning, two sets of readings, the words it
+   * builds and a sentence, and wants every line it can get.
+   */
+  .card.kanji .question {
+    flex: 0 0 34%;
+    padding-bottom: 0.6rem;
+  }
+
+  .card.kanji .answer {
+    flex: 1 1 auto;
+    padding-top: 0.6rem;
+  }
+
+  .card.kanji .told {
+    gap: 0.55rem;
+  }
+
   /* Meanings are prose, not display text — don't blow them up like kanji. */
   .question:not(.jp) {
     font-size: clamp(1.05rem, 4vw, 1.35rem);
@@ -239,13 +324,19 @@
 
   /* --- the answer ------------------------------------------------------ */
 
+  /*
+   * `safe center` rather than `center`: a centred flex column that overflows
+   * spills equally off both ends, so the first line becomes unreachable — the
+   * kanji card opened with its meaning already scrolled off the top. `safe`
+   * falls back to flex-start the moment the content doesn't fit.
+   */
   .told {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: safe center;
     gap: 0.8rem;
     width: 100%;
   }
@@ -282,6 +373,57 @@
   .partner {
     margin: 0;
     font-size: 0.78rem;
+  }
+
+  /* --- kanji ------------------------------------------------------------ */
+
+  .yomi {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    align-items: center;
+  }
+
+  .yomi-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+  }
+
+  /* 音 and 訓 rather than "Onyomi" and "Kunyomi": two characters say it, and
+     the words were longer than the readings they labelled. */
+  .tag {
+    font-size: 0.68rem;
+    color: var(--on-accent);
+    background: var(--faint);
+    border-radius: 4px;
+    padding: 0.05rem 0.25rem;
+    line-height: 1.3;
+  }
+
+  .reading {
+    font-size: 0.95rem;
+  }
+
+  .vocab {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    font-size: 0.85rem;
+  }
+
+  .vocab li {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+  }
+
+  .strokes {
+    margin: 0;
+    font-size: 0.7rem;
   }
 
   .grading {

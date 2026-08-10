@@ -15,6 +15,7 @@ import { installDeck, installDict, readingFor } from '../src/lib/dict.ts'
 import {
   hasKanji,
   makeId,
+  splitSlashLines,
   normalizePattern,
   parseReading,
   splitExample,
@@ -121,13 +122,16 @@ function resolveReading(
   return null
 }
 
-type TableKind = 'pattern' | 'word' | 'pair'
+type TableKind = 'pattern' | 'word' | 'pair' | 'kanji'
 
 function headerKind(cells: string[]): TableKind | null {
   const first = cells[0]?.toLowerCase()
   if (first === 'patrón' || first === 'expresión') return 'pattern'
   if (first === 'kanji') return 'word'
   if (first === 'intransitivo') return 'pair'
+  // Deliberately not 漢字: that is the *word* tables' first column, and the two
+  // would be indistinguishable from their headers alone.
+  if (first === 'carácter' || first === 'caracter') return 'kanji'
   return null
 }
 
@@ -271,6 +275,47 @@ for (let i = 0; i < lines.length; i++) {
     continue
   }
 
+  if (table === 'kanji') {
+    const [charCell, onCell, kunCell, meaning, vocabCell, example, strokeCell] = cells
+    const character = (stripPlaceholder(charCell) ?? '').trim()
+    if (!character || !meaning) {
+      warnings.push(`Skipped incomplete kanji row at line ${i + 1}`)
+      continue
+    }
+    if ([...character].length !== 1) {
+      errors.push(`Kanji row is not a single character: ${character} (line ${i + 1})`)
+      continue
+    }
+
+    const readings = (cell: string | undefined) =>
+      (stripPlaceholder(cell) ?? '')
+        .split(/[・､、]/)
+        .map((r) => r.trim())
+        .filter(Boolean)
+
+    // palabra・lectura・significado, several separated by ／
+    const vocabulary = splitSlashLines(stripPlaceholder(vocabCell) ?? '')
+      .map((chunk) => chunk.split('・').map((f) => f.trim()))
+      .filter((f) => f.length >= 3 && f[0])
+      .map(([word, reading, ...rest]) => ({ word, reading, meaning: rest.join('・') }))
+
+    const strokes = Number(stripPlaceholder(strokeCell) ?? '')
+
+    push({
+      ...base(),
+      kind: 'kanji',
+      id: makeId(category.id, character),
+      character,
+      on: readings(onCell),
+      kun: readings(kunCell),
+      ...(Number.isFinite(strokes) && strokes > 0 ? { strokes } : {}),
+      vocabulary,
+      meaning,
+      example: splitExample(example),
+    })
+    continue
+  }
+
   if (table === 'word') {
     const [kanjiCell, kanaCell, meaning, example] = cells
     const writing = stripPlaceholder(kanjiCell)
@@ -373,7 +418,8 @@ for (let i = 0; i < lines.length; i++) {
 
 const byTarget = new Map<string, Entry[]>()
 for (const e of entries) {
-  const key = e.kind === 'pattern' ? e.pattern : (e.kanji ?? e.kana)
+  const key =
+    e.kind === 'pattern' ? e.pattern : e.kind === 'kanji' ? e.character : (e.kanji ?? e.kana)
   if (!byTarget.has(key)) byTarget.set(key, [])
   byTarget.get(key)!.push(e)
 }
@@ -407,7 +453,8 @@ const seen = new Map<string, Entry>()
 for (const e of entries) {
   const prev = seen.get(e.id)
   if (prev) {
-    const show = (x: Entry) => (x.kind === 'pattern' ? x.pattern : (x.kanji ?? x.kana))
+    const show = (x: Entry) =>
+      x.kind === 'pattern' ? x.pattern : x.kind === 'kanji' ? x.character : (x.kanji ?? x.kana)
     errors.push(`Duplicate id ${e.id}: "${show(prev)}" and "${show(e)}"`)
   }
   seen.set(e.id, e)

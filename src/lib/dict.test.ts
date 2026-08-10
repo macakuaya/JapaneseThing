@@ -436,3 +436,33 @@ describe('readingFor, a reading for a whole phrase', () => {
     expect(readingFor('〜そうです（様態）')).toBe(null)
   })
 })
+
+
+/*
+ * Two ways to print a reading that is real but not the one on the page. Both
+ * turned up on one new sentence — 今日はいい天気ですね。— which is a fair
+ * indication of how ordinary the shapes are.
+ */
+describe('the reading that belongs to the surface, not to the entry', () => {
+  const rubyOver = (sentence: string, head: string) => {
+    const token = segment(sentence).find((t) => t.text.startsWith(head))
+    return token ? readingOf(token) : undefined
+  }
+
+  it('picks the reading matching the writing that matched', () => {
+    // 良い天気 / よい天気 / いい天気 are one entry reading よいてんき or
+    // いいてんき, with nothing linking the two lists. Taking the first put
+    // よい over いい.
+    expect(rubyOver('今日はいい天気ですね。', 'いい')).toBe('いいてんきです')
+  })
+
+  it('leaves a single-reading entry alone', () => {
+    expect(rubyOver('毎日日本語を勉強します。', '毎日')).toBe('まいにち')
+  })
+
+  it('refuses 今日は rather than reading it as the greeting', () => {
+    // こんにちは is a dictionary entry, so longest match swallows the particle
+    // and every sentence opening 今日は… got こんにち over 今日.
+    expect(rubyOver('今日はいい天気ですね。', '今日')).toBe(null)
+  })
+})

@@ -651,6 +651,11 @@ const AMBIGUOUS_READINGS = new Set([
   '大人', // おとな (adult) vs だいにん
   '今日', // きょう (today) vs こんにち (nowadays)
   '一人', // ひとり vs いちにん
+  // The greeting 今日は (こんにちは) is a dictionary entry in its own right, so
+  // longest match swallows the particle and 今日 comes out こんにち in any
+  // sentence beginning 今日は…. Listing 今日 alone doesn't cover it: the base
+  // being tested is the longer string.
+  '今日は',
 ])
 
 /**
@@ -676,6 +681,37 @@ export function readingFor(text: string): string | null {
     out += reading
   }
   return out || null
+}
+
+/**
+ * Which of an entry's readings belongs to the writing that actually matched.
+ *
+ * JMdict files 良い天気, よい天気 and いい天気 under one entry with readings
+ * よいてんき and いいてんき, and the trimmed dictionary keeps no mapping
+ * between the two lists. Taking the first reading put よい over いい — a real
+ * reading of that entry, and the wrong one for the word on the page.
+ *
+ * The writing's own kana are the evidence: いい天気 begins いい, so the reading
+ * beginning いい is the one that belongs to it. Where the writing offers no
+ * kana to go on, the first reading stands — the trimmed dictionary already
+ * orders them commonest-first.
+ */
+function pickReading(word: DictWord, base: string): string {
+  const readings = word.r ?? []
+  if (readings.length < 2) return readings[0] ?? ''
+
+  const lead = base.match(/^[ぁ-ゟァ-ヿー]+/)?.[0]
+  const tail = base.match(/[ぁ-ゟァ-ヿー]+$/)?.[0]
+  if (!lead && !tail) return readings[0] ?? ''
+
+  const fits = (r: string) => {
+    const h = toHiragana(r)
+    if (lead && !h.startsWith(toHiragana(lead))) return false
+    if (tail && !h.endsWith(toHiragana(tail))) return false
+    return true
+  }
+
+  return readings.find(fits) ?? readings[0] ?? ''
 }
 
 /**
@@ -736,9 +772,8 @@ export function readingOf(token: Token): string | null {
   // Printed as stored, never normalised. Hiragana-ising the whole reading
   // rewrote 赤ピーマン's あかピーマン into あかぴーまん — harmless only because
   // alignment compares case-normalised, and wrong the moment a katakana run
-  // lands in a ruby. toHiragana stays for comparisons above; the ordering in
-  // the trimmed dictionary already puts the common reading first.
-  const reading = word.r[0] ?? ''
+  // lands in a ruby. toHiragana stays for comparisons.
+  const reading = pickReading(word, base)
   if (!reading) return null
 
   // The dictionary reading describes the *base* form. If the surface was

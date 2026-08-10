@@ -188,6 +188,9 @@ export function cardFront(entry: Entry): string {
       ? `${entry.pattern}・${entry.reading}`
       : entry.pattern
   }
+  // A kanji card asks the character alone — its readings are the answer, so
+  // printing them on the front would be printing the answer on the front.
+  if (entry.kind === 'kanji') return entry.character
 
   const kana = entry.kana
   if (!entry.kanji) return kana
@@ -206,7 +209,9 @@ export function cardFront(entry: Entry): string {
 
 /** The target-language string a card asks the user to produce. */
 export function cardTarget(entry: Entry): string {
-  return entry.kind === 'pattern' ? entry.pattern : (entry.kanji ?? entry.kana)
+  if (entry.kind === 'pattern') return entry.pattern
+  if (entry.kind === 'kanji') return entry.character
+  return entry.kanji ?? entry.kana
 }
 
 // ---------------------------------------------------------------------------

@@ -342,6 +342,22 @@
     <div class="fill" style:width="{progress}%"></div>
   </div>
 
+  <!--
+    What the run did to your schedule, on the bottom edge with every other
+    status line. "Scheduling updated / nothing scheduled" was Anki's word for
+    it, sitting on the card as the smallest text on screen — and it was the
+    one fact that actually mattered: whether the answers count.
+  -->
+  {#if done && startedWith > 0}
+    <p class="page-status">
+      {#if config.writeThrough}
+        Answers counted — these cards come back on their new dates
+      {:else}
+        Practice only — your review dates are unchanged
+      {/if}
+    </p>
+  {/if}
+
   {#if done}
     <!--
       The deck doesn't end by swapping the card for a panel; the last card
@@ -358,15 +374,10 @@
           <h2>{startedWith === 0 ? 'Nothing to review' : 'Session complete'}</h2>
           {#if startedWith === 0}
             <p class="muted">
-              No cards are due right now. Try free practice if you want to drill something
-              specific.
+              No cards are due right now. Try a deck if you want to drill something specific.
             </p>
           {:else}
             <p class="score">{correct} / {answered}</p>
-            <p class="muted">
-              {answered} answer{answered === 1 ? '' : 's'}
-              {config.writeThrough ? '· scheduling updated' : '· nothing scheduled'}
-            </p>
           {/if}
           <button class="primary" onclick={dismiss}>Done</button>
         </div>

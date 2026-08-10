@@ -138,7 +138,7 @@
     {:else}
       <label class="check faint">
         <input type="checkbox" bind:checked={f.countToward} />
-        count toward scheduling
+        count toward review dates
       </label>
     {/if}
   </div>

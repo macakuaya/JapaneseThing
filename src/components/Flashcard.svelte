@@ -248,10 +248,18 @@
     padding: 2px;
   }
 
-  /* Equal halves, split by the rule. Both are always present, so revealing
-     the answer changes nothing about where anything sits. */
+  /*
+   * A third for the question, two thirds for the answer.
+   *
+   * They used to be equal halves, which flattered the question: it is one
+   * word or one pattern, while the answer carries a meaning, a sentence and
+   * its translation. Splitting down the middle left the top half half-empty
+   * and the bottom half scrolling.
+   *
+   * Both are always present, so revealing the answer still changes nothing
+   * about where anything sits.
+   */
   .half {
-    flex: 1 1 50%;
     min-height: 0;
     display: flex;
     flex-direction: column;
@@ -260,10 +268,21 @@
   }
 
   .question {
+    flex: 0 0 34%;
+    /* A long pattern scrolls inside its third rather than pushing the rule
+       down and taking room from the answer. */
+    overflow-y: auto;
+  }
+
+  .answer {
+    flex: 1 1 auto;
+  }
+
+  .question {
     font-size: clamp(1.35rem, 5.5vw, 1.9rem);
     overflow-wrap: anywhere;
     border-bottom: 1px solid var(--divider);
-    padding-bottom: 1rem;
+    padding-bottom: 0.7rem;
   }
 
   /* One character, so it can be as large as its share allows — the shape is
@@ -271,21 +290,6 @@
   .question.glyph {
     font-size: clamp(3.5rem, 17vw, 5.5rem);
     line-height: 1;
-  }
-
-  /*
-   * A kanji card is not split down the middle. One character needs a third of
-   * the face; its answer carries a meaning, two sets of readings, the words it
-   * builds and a sentence, and wants every line it can get.
-   */
-  .card.kanji .question {
-    flex: 0 0 34%;
-    padding-bottom: 0.6rem;
-  }
-
-  .card.kanji .answer {
-    flex: 1 1 auto;
-    padding-top: 0.6rem;
   }
 
   .card.kanji .told {
@@ -298,7 +302,7 @@
   }
 
   .answer {
-    padding-top: 1rem;
+    padding-top: 0.7rem;
     justify-content: space-between;
   }
 

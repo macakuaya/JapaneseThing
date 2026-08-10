@@ -70,7 +70,7 @@
   })
 </script>
 
-<article class="card" class:editing>
+<article class="card card-shape" class:editing>
   {#if editing}
     <!-- Same box, same size, same place: the card doesn't become a different
          object to be corrected, it just shows its own fields. -->
@@ -162,18 +162,13 @@
    * is recognisably the same object. Capped in width because a 3:4 card at the
    * full column width would be taller than the screen.
    */
+  /* Geometry comes from .card-shape in app.css, shared with the session
+     summary so the two can never drift apart again. */
   .card {
     position: relative;
     display: flex;
     flex-direction: column;
-    /* Third term keeps the card clear of the floating header and hint on a
-       short screen. Clamping the *width* rather than the height means the 3:4
-       proportion holds — and the morph out of a deck depends on it holding. */
-    width: min(390px, 100%, calc((100dvh - 8rem) * 3 / 4));
-    aspect-ratio: 3 / 4;
     margin: 0 auto;
-    background: var(--surface);
-    border-radius: var(--radius);
     padding: 1.3rem 1.15rem;
     text-align: center;
     view-transition-name: card-morph;

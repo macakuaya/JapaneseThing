@@ -330,6 +330,26 @@ a {
 }
 
 /*
+ * The one card shape.
+ *
+ * A flashcard and the summary that ends a session are the same object at two
+ * moments, so the geometry is declared once here rather than twice in two
+ * components. Declared twice, the summary drifted into a wide box floating in
+ * the flow while the card was a portrait rectangle in the middle of the
+ * screen — two unrelated things, which is exactly how it read.
+ *
+ * The viewport term keeps a 3:4 card clear of the floating header and hint on
+ * a short screen; clamping the width rather than the height is what preserves
+ * the ratio, and the deck-to-card morph depends on that ratio holding.
+ */
+.card-shape {
+  width: min(390px, 100%, calc((100dvh - 8rem) * 3 / 4));
+  aspect-ratio: 3 / 4;
+  background: var(--surface);
+  border-radius: var(--radius);
+}
+
+/*
  * A page's one-line status, floated on the bottom edge.
  *
  * Home and a running session both use it, and they have to agree exactly —

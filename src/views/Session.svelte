@@ -10,6 +10,7 @@
   } from '../lib/session.ts'
   import { dayStart } from '../lib/srs.ts'
   import { store } from '../lib/store.svelte.ts'
+  import { cardFront } from '../lib/text.ts'
   import { withViewTransition } from '../lib/transition.ts'
   import * as storage from '../lib/storage.ts'
   import type { CardState, Grade, ReviewLogEntry } from '../lib/types.ts'
@@ -174,6 +175,14 @@
 
   let pressed = $state<Grade | null>(null)
 
+  /**
+   * The card that emptied the deck, kept so the summary can be its other side.
+   * Without it the run would end on a card vanishing and a differently shaped
+   * panel appearing somewhere else on the page.
+   */
+  let lastFront = $state<string | null>(null)
+
+
   /** Light the button, then commit. Also swallows a second press mid-flash. */
   function grade(g: Grade) {
     if (pressed || !current || !revealed) return
@@ -211,6 +220,7 @@
     // The answered card left the queue, so the cursor now points at whatever
     // took its place. Clamp for the case where it was the last one.
     index = Math.min(index, Math.max(0, queue.length - 1))
+    if (!queue.length) lastFront = cardFront(card.entry)
     revealedKeys = new Set([...revealedKeys].filter((k) => k !== card.key))
     now = at
     persist()
@@ -333,20 +343,34 @@
   </div>
 
   {#if done}
-    <div class="summary card-surface">
-      <h2>{startedWith === 0 ? 'Nothing to review' : 'Session complete'}</h2>
-      {#if startedWith === 0}
-        <p class="muted">
-          No cards are due right now. Try free practice if you want to drill something specific.
-        </p>
-      {:else}
-        <p class="score">{correct} / {answered}</p>
-        <p class="muted">
-          {answered} answer{answered === 1 ? '' : 's'}
-          {config.writeThrough ? '· scheduling updated' : '· nothing scheduled'}
-        </p>
-      {/if}
-      <button class="primary" onclick={dismiss}>Done</button>
+    <!--
+      The deck doesn't end by swapping the card for a panel; the last card
+      turns over and the tally is on its back. Same shape, same place, so the
+      end of a run belongs to the deck rather than interrupting it.
+    -->
+    <div class="stage">
+      <div class="flip card-shape" class:instant={!lastFront}>
+        <div class="face front jp">
+          {#if lastFront}{lastFront}{/if}
+        </div>
+
+        <div class="face back summary">
+          <h2>{startedWith === 0 ? 'Nothing to review' : 'Session complete'}</h2>
+          {#if startedWith === 0}
+            <p class="muted">
+              No cards are due right now. Try free practice if you want to drill something
+              specific.
+            </p>
+          {:else}
+            <p class="score">{correct} / {answered}</p>
+            <p class="muted">
+              {answered} answer{answered === 1 ? '' : 's'}
+              {config.writeThrough ? '· scheduling updated' : '· nothing scheduled'}
+            </p>
+          {/if}
+          <button class="primary" onclick={dismiss}>Done</button>
+        </div>
+      </div>
     </div>
   {:else if current}
     <!-- Takes all the room between header and hint, and centres the card in it. -->
@@ -421,20 +445,71 @@
     transition: width 0.25s ease;
   }
 
-  .summary {
-    margin: auto 0;
+  /*
+   * Two faces of one card. preserve-3d is what makes the back genuinely the
+   * far side rather than a second element fading in over the first.
+   *
+   * An animation, not a transition. A transition needs the element laid out
+   * in its start state and *then* changed, which meant applying the turned
+   * state a frame after mount and hoping the ordering held — it didn't, and
+   * the card sat there face-up. An animation just runs when the element is
+   * inserted.
+   */
+  .flip {
     position: relative;
-    z-index: 1;
-    padding: 2.5rem 1.5rem;
-    text-align: center;
+    transform-style: preserve-3d;
+    animation: turn 560ms cubic-bezier(0.3, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes turn {
+    from {
+      transform: rotateY(0deg);
+    }
+    to {
+      transform: rotateY(180deg);
+    }
+  }
+
+  /* Nothing was reviewed, so there is no face to turn over — the summary is
+     simply what the card says. */
+  .flip.instant {
+    animation: none;
+    transform: rotateY(180deg);
+  }
+
+  .face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    padding: 1.3rem 1.15rem;
+    text-align: center;
+    background: var(--surface);
+    border-radius: var(--radius);
+  }
+
+  .front {
+    font-size: clamp(1.35rem, 5.5vw, 1.9rem);
+    overflow-wrap: anywhere;
+  }
+
+  .back {
+    transform: rotateY(180deg);
     gap: 0.5rem;
   }
 
   .summary p {
     margin: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flip {
+      animation: none;
+      transform: rotateY(180deg);
+    }
   }
 
   .score {
@@ -446,4 +521,5 @@
     margin-top: 1rem;
     min-width: 140px;
   }
+
 </style>

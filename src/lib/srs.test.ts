@@ -34,100 +34,80 @@ function walk(start: CardState, grades: Grade[], now = T0): CardState {
   return s
 }
 
-describe('learning steps', () => {
-  it('walks a new card through both steps before graduating', () => {
+describe('a new card', () => {
+  it('is scheduled for tomorrow on "good" — no steps in between', () => {
     const a = applyGrade(card(), 'good', T0, noFuzz)
-    expect(a.stage).toBe('learning')
-    expect(a.due - T0).toBe(10 * MINUTE)
-
-    const b = applyGrade(a, 'good', a.due, noFuzz)
-    expect(b.stage).toBe('review')
-    expect(b.interval).toBe(1)
-    expect(b.due - a.due).toBe(DAY)
+    expect(a.stage).toBe('review')
+    expect(a.interval).toBe(1)
+    expect(a.due - T0).toBe(DAY)
   })
 
-  it('sends "again" back to the first step', () => {
-    const a = applyGrade(card(), 'good', T0, noFuzz)
-    const b = applyGrade(a, 'again', a.due, noFuzz)
-    expect(b.stage).toBe('learning')
-    expect(b.step).toBe(0)
-    expect(b.due - a.due).toBe(1 * MINUTE)
-  })
-
-  it('graduates immediately on "easy"', () => {
+  it('jumps straight to four days on "easy"', () => {
     const a = applyGrade(card(), 'easy', T0, noFuzz)
     expect(a.stage).toBe('review')
     expect(a.interval).toBe(4)
   })
 
-  it('does not advance the step on "hard"', () => {
-    const a = applyGrade(card(), 'good', T0, noFuzz) // step 1
-    const b = applyGrade(a, 'hard', a.due, noFuzz)
-    expect(b.stage).toBe('learning')
-    expect(b.step).toBe(1)
+  it('stays new on "hard" — it has not earned a gap yet', () => {
+    // The session puts it back in the queue; nothing is scheduled, so it
+    // cannot roll silently into tomorrow half-learned.
+    const a = applyGrade(card(), 'hard', T0, noFuzz)
+    expect(a.stage).toBe('new')
+    expect(a.interval).toBe(0)
+    expect(a.due).toBe(T0)
+  })
+
+  it('counts the attempt even when it stays new', () => {
+    const a = applyGrade(card(), 'hard', T0, noFuzz)
+    expect(a.reps).toBe(1)
+    expect(a.lapses).toBe(1)
   })
 })
 
-describe('review intervals', () => {
-  const mature = card({ stage: 'review', interval: 10, ease: 2.5, reps: 5 })
+describe('a scheduled card', () => {
+  const young = card({ stage: 'review', interval: 10, ease: 2.5, reps: 4 })
 
-  it('multiplies by ease on "good"', () => {
-    const next = applyGrade(mature, 'good', T0, noFuzz)
-    expect(next.interval).toBeCloseTo(25)
-    expect(next.ease).toBe(2.5)
+  it('multiplies the gap by its ease on "good"', () => {
+    expect(applyGrade(young, 'good', T0, noFuzz).interval).toBe(25)
   })
 
-  it('grows slowly and drops ease on "hard"', () => {
-    const next = applyGrade(mature, 'hard', T0, noFuzz)
-    expect(next.interval).toBeCloseTo(12)
-    expect(next.ease).toBeCloseTo(2.35)
+  it('multiplies further, and raises the ease, on "easy"', () => {
+    const a = applyGrade(young, 'easy', T0, noFuzz)
+    expect(a.ease).toBeCloseTo(2.65)
+    expect(a.interval).toBeCloseTo(10 * 2.65 * 1.3)
   })
 
-  it('grows fastest and raises ease on "easy"', () => {
-    const next = applyGrade(mature, 'easy', T0, noFuzz)
-    expect(next.ease).toBeCloseTo(2.65)
-    expect(next.interval).toBeCloseTo(10 * 2.65 * 1.3)
+  it('halves the gap and drops the ease on "hard"', () => {
+    const a = applyGrade(young, 'hard', T0, noFuzz)
+    expect(a.interval).toBe(5)
+    expect(a.ease).toBeCloseTo(2.3)
+    expect(a.lapses).toBe(1)
   })
 
-  it('always moves a review card forward, even at minimum ease', () => {
-    const stuck = card({ stage: 'review', interval: 1, ease: MIN_EASE })
-    for (const grade of ['hard', 'good', 'easy'] as Grade[]) {
-      expect(applyGrade(stuck, grade, T0, noFuzz).interval).toBeGreaterThan(1)
-    }
+  it('schedules the halved gap, and leaves repeating to the session', () => {
+    // "Later today" is the queue's job now, not a due date a few minutes out —
+    // so the due date is the real next gap, and requeue decides the repeat.
+    const a = applyGrade(young, 'hard', T0, noFuzz)
+    expect(a.due - T0).toBe(5 * DAY)
+  })
+
+  it('keeps its stage on "hard" so the gap it earned is not thrown away', () => {
+    expect(applyGrade(young, 'hard', T0, noFuzz).stage).toBe('review')
   })
 })
 
-describe('lapses', () => {
-  const mature = card({ stage: 'review', interval: 20, ease: 2.5, reps: 8 })
-
-  it('halves the interval once and enters relearning', () => {
-    const lapsed = applyGrade(mature, 'again', T0, noFuzz)
-    expect(lapsed.stage).toBe('relearning')
-    expect(lapsed.lapses).toBe(1)
-    expect(lapsed.interval).toBe(10)
-    expect(lapsed.ease).toBeCloseTo(2.3)
-    expect(lapsed.due - T0).toBe(10 * MINUTE)
-  })
-
-  it('does not halve again when graduating out of relearning', () => {
-    const lapsed = applyGrade(mature, 'again', T0, noFuzz)
-    const back = applyGrade(lapsed, 'good', lapsed.due, noFuzz)
-    expect(back.stage).toBe('review')
-    expect(back.interval).toBe(10)
-  })
-
-  it('keeps ease at the floor no matter how many lapses', () => {
+describe('ease', () => {
+  it('never falls below the floor, however often a card is missed', () => {
     let s = card({ stage: 'review', interval: 20, ease: 2.5 })
     for (let i = 0; i < 20; i++) {
-      s = applyGrade(s, 'again', s.due, noFuzz)
+      s = applyGrade(s, 'hard', s.due, noFuzz)
       s = applyGrade(s, 'good', s.due, noFuzz)
     }
     expect(s.ease).toBe(MIN_EASE)
-    expect(s.interval).toBeGreaterThanOrEqual(1)
   })
 
-  it('never lets the interval fall below one day', () => {
-    const s = walk(card({ stage: 'review', interval: 1, ease: 1.3 }), ['again', 'good'])
+  it('never lets the gap fall below one day', () => {
+    const s = walk(card({ stage: 'review', interval: 1, ease: 1.3 }), ['hard', 'good'])
     expect(s.interval).toBeGreaterThanOrEqual(1)
   })
 })
@@ -179,7 +159,6 @@ describe('maturity', () => {
   it('classifies by interval and lapse count', () => {
     expect(maturityOf(undefined, s)).toBe('new')
     expect(maturityOf(card(), s)).toBe('new')
-    expect(maturityOf(card({ stage: 'learning' }), s)).toBe('learning')
     expect(maturityOf(card({ stage: 'review', interval: 5 }), s)).toBe('young')
     expect(maturityOf(card({ stage: 'review', interval: 30 }), s)).toBe('mature')
   })
@@ -192,7 +171,10 @@ describe('maturity', () => {
 describe('previews', () => {
   it('labels every button and orders them by increasing delay', () => {
     const p = previewIntervals(card({ stage: 'review', interval: 10, ease: 2.5 }), T0)
-    expect(p).toEqual({ again: '10m', hard: '12d', good: '25d', easy: '1.1mo' })
+    // Hard is labelled by what you will experience, not by the delay it
+    // computes — that delay is the *next* gap, and the card is in front of you
+    // again before then.
+    expect(p).toEqual({ hard: 'again now', good: '25d', easy: '1.1mo' })
   })
 
   it('matches what grading actually does', () => {

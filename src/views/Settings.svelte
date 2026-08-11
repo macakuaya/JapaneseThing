@@ -261,71 +261,69 @@
     {/if}
   </div>
 
-  <div class="card-surface panel">
-    <!--
-    The scheduler, in five lines.
-    
-    The first attempt explained the mechanism: ease factors, multipliers, what
-    each button does to the gap. All true, and none of it answers the question
-    someone actually has, which is "what is this card doing and when will I see
-    it again". These are the five states and what they mean about the card.
+  <!--
+    The scheduler, in four states and three buttons.
 
-    The numbers come from the scheduler's own constants and the user's own
+    An earlier version explained the mechanism — ease factors, multipliers,
+    what each button does to the gap. All true, and none of it answers the
+    question someone actually has, which is what a card is doing and when it
+    comes back.
+
+    The numbers are read from the scheduler's own constants and the user's own
     limits, so this can't drift out of step with the code it describes.
   -->
   <div class="card-surface panel">
     <h2>How it works</h2>
     <p class="intro muted">
-      Get a card right and the gap before you see it again gets longer. Get it wrong and the gap
-      shrinks. That is the whole idea; the states below are just names for how far along a card is.
+      Get a card right and the gap before you see it again grows. Get it wrong and it shrinks, and
+      the card comes back before you finish. The states are just names for how far along a card is.
     </p>
 
     <dl class="stages">
       <dt><span class="pill new">New</span></dt>
       <dd>Never answered. {store.settings.newPerDay} of these start each day.</dd>
 
-      <dt><span class="pill learning">Learning</span></dt>
-      <dd>Today only — a few minutes apart, until you get it right twice.</dd>
-
       <dt><span class="pill young">Young</span></dt>
-      <dd>Coming back in days rather than minutes, and the gap is still short.</dd>
+      <dd>Answered at least once, and coming back within a few days.</dd>
 
       <dt><span class="pill mature">Mature</span></dt>
       <dd>The gap has passed {MATURE_DAYS} days. You know this one.</dd>
 
       <dt><span class="pill leech">Leech</span></dt>
       <dd>
-        Forgotten {store.settings.leechThreshold} times. Usually the card is at fault rather than
-        you — worth rewriting before drilling it again.
+        Missed {store.settings.leechThreshold} times. Usually the card is at fault rather than you
+        — worth rewriting before drilling it again.
       </dd>
     </dl>
   </div>
 
   <div class="card-surface panel">
-    <h2>The four buttons</h2>
+    <h2>The three buttons</h2>
     <p class="intro muted">Each one moves the gap, rather than setting it.</p>
 
     <dl class="stages">
-      <dt><span class="pill again">Again</span></dt>
-      <dd>Forgotten. Back in ten minutes, and the gap halves for next time.</dd>
-
-      <dt><span class="pill hard">Hard</span></dt>
-      <dd>Got there, barely. The gap grows a little, and grows more slowly from now on.</dd>
+      <dt><span class="pill again">Hard</span></dt>
+      <dd>
+        Struggled, or forgot. The card comes round again before this session ends, and next time
+        it will be sooner than it would have been.
+      </dd>
 
       <dt><span class="pill good">Good</span></dt>
       <dd>Knew it. The gap multiplies — this is the one to press most of the time.</dd>
 
       <dt><span class="pill easy">Easy</span></dt>
-      <dd>Instant. A bigger jump, and bigger jumps from now on too.</dd>
+      <dd>Instant. A bigger jump now, and bigger jumps from here on.</dd>
     </dl>
 
     <p class="hint faint">
       Each card carries its own multiplier, starting at {START_EASE} and moving with your answers.
-      Intervals are nudged a few per cent either way so one heavy day doesn't all come back at once.
+      Intervals are nudged a few per cent either way so one heavy day doesn't all come back at
+      once.
     </p>
   </div>
 
-  <!--
+  <div class="card-surface panel">
+    <!--
       Credit, in jisho.org/about's sense: where the words actually come from.
       The counts that used to be here were trivia — how many entries, how many
       log lines — and none of it told you anything you could act on.

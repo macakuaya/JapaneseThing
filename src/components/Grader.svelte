@@ -20,16 +20,15 @@
   const preview = $derived(writeThrough ? previewIntervals(state, now) : null)
 
   const SCHEDULING: { grade: Grade; label: string; key: string }[] = [
-    { grade: 'again', label: 'Again', key: '1' },
-    { grade: 'hard', label: 'Hard', key: '2' },
-    { grade: 'good', label: 'Good', key: '3' },
-    { grade: 'easy', label: 'Easy', key: '4' },
+    { grade: 'hard', label: 'Hard', key: '1' },
+    { grade: 'good', label: 'Good', key: '2' },
+    { grade: 'easy', label: 'Easy', key: '3' },
   ]
 
   // Without scheduling there is no consumer for four-way granularity, so
   // practice collapses to the only distinction that still means something.
   const PRACTICE: { grade: Grade; label: string; key: string }[] = [
-    { grade: 'again', label: 'Missed', key: '1' },
+    { grade: 'hard', label: 'Missed', key: '1' },
     { grade: 'good', label: 'Got it', key: '2' },
   ]
 
@@ -48,7 +47,7 @@
 <style>
   .grader {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 0.5rem;
   }
 
@@ -97,13 +96,11 @@
 
   /* Hovering hints at the colour the press will bring, without the resting
      state having to carry it. */
-  .again:hover:not(:disabled) {
+  /* Hard is the one that means "that went badly" now that Again is gone, so
+     it takes the red Again used to wear. */
+  .hard:hover:not(:disabled) {
     background: color-mix(in srgb, var(--again) 18%, transparent);
     border-color: color-mix(in srgb, var(--again) 45%, transparent);
-  }
-  .hard:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--hard) 18%, transparent);
-    border-color: color-mix(in srgb, var(--hard) 45%, transparent);
   }
   .good:hover:not(:disabled) {
     background: color-mix(in srgb, var(--good) 18%, transparent);
@@ -116,15 +113,10 @@
 
   /* Pressed wins over hover — the mouse is still on the button it just hit.
      Border matches the fill so the lit button has no rim of its own. */
-  .again.on,
-  .again.on:hover {
-    background: var(--again);
-    border-color: var(--again);
-  }
   .hard.on,
   .hard.on:hover {
-    background: var(--hard);
-    border-color: var(--hard);
+    background: var(--again);
+    border-color: var(--again);
   }
   .good.on,
   .good.on:hover {

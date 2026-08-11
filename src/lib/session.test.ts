@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
   EMPTY_FILTER,
-  REQUEUE_HORIZON_MS,
   buildQueue,
   cardKey,
   countsFor,
@@ -251,38 +250,51 @@ describe('shuffle', () => {
 })
 
 describe('requeue', () => {
-  const mk = (id: string, due: number): Card => ({
+  const mk = (id: string): Card => ({
     key: `${id}:recognition`,
     entry: word(id, 'verbos', 'Cocina'),
     direction: 'recognition',
-    state: { ...newCardState(`${id}:recognition`, T0), stage: 'learning', due },
+    state: newCardState(`${id}:recognition`, T0),
   })
 
-  it('puts a card still in a learning step back in the queue', () => {
-    const queue = [mk('a', T0), mk('b', T0), mk('c', T0)]
-    const answered = { ...queue[0], state: { ...queue[0].state, due: T0 + 10 * MINUTE } }
-    const next = requeue(queue, 0, answered, T0)
-    expect(next.map((c) => c.key)).toContain('a:recognition')
-    expect(next).toHaveLength(3)
+  it('drops the answered card when it is not to be repeated', () => {
+    const queue = [mk('a'), mk('b'), mk('c')]
+    expect(requeue(queue, 0, queue[0], false).map((c) => c.key)).toEqual([
+      'b:recognition',
+      'c:recognition',
+    ])
+  })
+
+  it('puts a repeated card at the back, behind the rest of the deck', () => {
+    const queue = [mk('a'), mk('b'), mk('c')]
+    expect(requeue(queue, 0, queue[0], true).map((c) => c.key)).toEqual([
+      'b:recognition',
+      'c:recognition',
+      'a:recognition',
+    ])
   })
 
   it('never places it immediately next', () => {
-    const queue = [mk('a', T0), mk('b', T0 + 60 * MINUTE)]
-    const answered = { ...queue[0], state: { ...queue[0].state, due: T0 + MINUTE } }
-    expect(requeue(queue, 0, answered, T0)[0].key).toBe('b:recognition')
+    // Seeing the same card twice in a row tests nothing but your short-term
+    // memory, which is the one thing this app is not for.
+    const queue = [mk('a'), mk('b')]
+    expect(requeue(queue, 0, queue[0], true)[0].key).toBe('b:recognition')
   })
 
-  it('drops a card whose next review is beyond the session horizon', () => {
-    const queue = [mk('a', T0), mk('b', T0)]
-    const answered = { ...queue[0], state: { ...queue[0].state, due: T0 + REQUEUE_HORIZON_MS + 1 } }
-    const next = requeue(queue, 0, answered, T0)
-    expect(next.map((c) => c.key)).toEqual(['b:recognition'])
+  it('repeats the last card rather than ending on a miss', () => {
+    const queue = [mk('a')]
+    expect(requeue(queue, 0, queue[0], true).map((c) => c.key)).toEqual(['a:recognition'])
   })
 
-  it('empties the queue once the last card graduates', () => {
-    const queue = [mk('a', T0)]
-    const answered = { ...queue[0], state: { ...queue[0].state, due: T0 + DAY } }
-    expect(requeue(queue, 0, answered, T0)).toEqual([])
+  it('empties the queue when the last card is done with', () => {
+    const queue = [mk('a')]
+    expect(requeue(queue, 0, queue[0], false)).toEqual([])
+  })
+
+  it('keeps the state it is handed, so the repeat shows the new schedule', () => {
+    const queue = [mk('a'), mk('b')]
+    const answered = { ...queue[0], state: { ...queue[0].state, interval: 5 } }
+    expect(requeue(queue, 0, answered, true).at(-1)?.state.interval).toBe(5)
   })
 })
 
@@ -298,7 +310,7 @@ describe('countsFor', () => {
       'a:recognition': reviewed('a:recognition', T0 - DAY),
       'b:recognition': {
         ...newCardState('b:recognition', T0),
-        stage: 'learning' as const,
+        stage: 'review' as const,
         due: T0 - MINUTE,
       },
     }
@@ -312,12 +324,12 @@ describe('countsFor', () => {
     })
   })
 
-  it('counts a learning card due later today as "later", not "due"', () => {
+  it('counts a card due later today as "later", not "due"', () => {
     const soon = T0 + 10 * MINUTE
     const srs = {
       'a:recognition': {
         ...newCardState('a:recognition', T0),
-        stage: 'learning' as const,
+        stage: 'review' as const,
         due: soon,
       },
     }

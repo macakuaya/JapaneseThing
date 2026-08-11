@@ -39,7 +39,32 @@ function write(key: string, value: unknown): void {
   }
 }
 
-export const loadSrs = (): Record<string, CardState> => read(K.srs, {})
+/**
+ * Cards scheduled before the learning steps were removed.
+ *
+ * They were stored mid-step, in stages that no longer exist, with a due time
+ * minutes away. A card part-way through learning had shown it was worth
+ * scheduling but hadn't earned a gap yet, so it becomes new; one that had
+ * lapsed keeps the interval it was relearning back to. Nothing is discarded —
+ * reps, lapses and ease all carry over.
+ */
+function migrate(states: Record<string, CardState>): Record<string, CardState> {
+  const out: Record<string, CardState> = {}
+  for (const [key, state] of Object.entries(states)) {
+    const stage = state.stage as string
+    if (stage !== 'learning' && stage !== 'relearning') {
+      out[key] = state
+      continue
+    }
+    out[key] =
+      stage === 'relearning' && state.interval >= 1
+        ? { ...state, stage: 'review', step: 0, due: state.lastReviewed ?? state.due }
+        : { ...state, stage: 'new', step: 0, interval: 0 }
+  }
+  return out
+}
+
+export const loadSrs = (): Record<string, CardState> => migrate(read(K.srs, {}))
 export const saveSrs = (v: Record<string, CardState>): void => write(K.srs, v)
 
 export const loadUserEntries = (): Entry[] => read<Entry[]>(K.entries, [])
@@ -48,7 +73,11 @@ export const saveUserEntries = (v: Entry[]): void => write(K.entries, v)
 export const loadSettings = (): Settings => ({ ...DEFAULT_SETTINGS, ...read(K.settings, {}) })
 export const saveSettings = (v: Settings): void => write(K.settings, v)
 
-export const loadLog = (): ReviewLogEntry[] => read<ReviewLogEntry[]>(K.log, [])
+/** 'again' was folded into 'hard'; old lines keep counting toward the heatmap. */
+export const loadLog = (): ReviewLogEntry[] =>
+  read<ReviewLogEntry[]>(K.log, []).map((l) =>
+    (l.grade as string) === 'again' ? { ...l, grade: 'hard' as const } : l,
+  )
 export const saveLog = (v: ReviewLogEntry[]): void =>
   write(K.log, v.length > MAX_LOG ? v.slice(-MAX_LOG) : v)
 

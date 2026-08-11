@@ -11,10 +11,6 @@ export const MINUTE = 60_000
 export const DAY = 86_400_000
 
 /** Sub-day steps a new card walks before graduating to daily intervals. */
-export const LEARNING_STEPS_MIN = [1, 10]
-/** Single step used while relearning a lapsed card. */
-export const RELEARN_STEP_MIN = 10
-
 export const GRADUATING_INTERVAL = 1
 export const EASY_INTERVAL = 4
 export const MIN_EASE = 1.3
@@ -57,88 +53,69 @@ export function applyGrade(
 ): CardState {
   const next: CardState = { ...state, reps: state.reps + 1, lastReviewed: now }
 
-  const graduate = (days: number) => {
+  const schedule = (days: number) => {
     next.stage = 'review'
     next.step = 0
     next.interval = Math.max(1, fuzz(days, rand))
     next.due = now + next.interval * DAY
   }
 
-  const learnStep = (index: number) => {
-    const steps = LEARNING_STEPS_MIN
-    const i = Math.min(Math.max(index, 0), steps.length - 1)
-    next.step = i
-    next.due = now + steps[i] * MINUTE
+  if (grade === 'hard') {
+    /*
+     * The one answer that means "that did not go well".
+     *
+     * It never schedules the card forward — the session puts it back in the
+     * queue and you see it again before you finish. What it does change is
+     * next time: the gap it had earned is halved and its multiplier drops, so
+     * a card you keep struggling with keeps coming back sooner.
+     *
+     * A card still new stays new. It has no gap to halve, and it has not yet
+     * shown it is worth scheduling.
+     */
+    next.lapses = state.lapses + 1
+    next.ease = clampEase(state.ease - 0.2)
+    if (state.stage === 'review') {
+      next.interval = Math.max(1, state.interval * 0.5)
+      next.due = now + next.interval * DAY
+    } else {
+      next.due = now
+    }
+    return next
   }
 
-  switch (state.stage) {
-    case 'new':
-    case 'learning': {
-      next.stage = 'learning'
-      if (grade === 'again') {
-        learnStep(0)
-      } else if (grade === 'hard') {
-        learnStep(state.stage === 'new' ? 0 : state.step)
-      } else if (grade === 'good') {
-        const nextStep = (state.stage === 'new' ? 0 : state.step) + 1
-        if (nextStep >= LEARNING_STEPS_MIN.length) graduate(GRADUATING_INTERVAL)
-        else learnStep(nextStep)
-      } else {
-        graduate(EASY_INTERVAL)
-      }
-      break
-    }
-
-    case 'review': {
-      if (grade === 'again') {
-        next.lapses = state.lapses + 1
-        next.ease = clampEase(state.ease - 0.2)
-        next.stage = 'relearning'
-        next.step = 0
-        // Halve the interval once, here. Graduating out of relearning reuses
-        // this value rather than halving again.
-        next.interval = Math.max(1, state.interval * 0.5)
-        next.due = now + RELEARN_STEP_MIN * MINUTE
-      } else if (grade === 'hard') {
-        next.ease = clampEase(state.ease - 0.15)
-        graduate(Math.max(state.interval * 1.2, state.interval + 1 / 24))
-      } else if (grade === 'good') {
-        graduate(state.interval * state.ease)
-      } else {
-        next.ease = state.ease + 0.15
-        graduate(state.interval * next.ease * 1.3)
-      }
-      break
-    }
-
-    case 'relearning': {
-      if (grade === 'again' || grade === 'hard') {
-        next.due = now + RELEARN_STEP_MIN * MINUTE
-      } else {
-        // interval was already reduced at lapse time.
-        graduate(state.interval)
-      }
-      break
-    }
+  if (state.stage === 'new') {
+    schedule(grade === 'easy' ? EASY_INTERVAL : GRADUATING_INTERVAL)
+    return next
   }
 
+  if (grade === 'easy') {
+    next.ease = state.ease + 0.15
+    schedule(state.interval * next.ease * 1.3)
+  } else {
+    schedule(state.interval * state.ease)
+  }
   return next
 }
 
 /**
- * What each button would do, for the labels under Again/Hard/Good/Easy.
- * Uses a fixed rand so the preview matches what actually happens for short
- * intervals and stays stable across re-renders for long ones.
+ * What each button would do, for the labels under Hard/Good/Easy.
+ *
+ * Hard is labelled by what you will actually experience — the card comes back
+ * in this session — rather than by the delay it computes, which is zero and
+ * would read as "<1m".
+ *
+ * A fixed rand so the preview matches what happens for short intervals and
+ * doesn't jitter between re-renders for long ones.
  */
 export function previewIntervals(
   state: CardState,
   now: number = Date.now(),
 ): Record<Grade, string> {
-  const grades: Grade[] = ['again', 'hard', 'good', 'easy']
+  const grades: Grade[] = ['hard', 'good', 'easy']
   const out = {} as Record<Grade, string>
   for (const g of grades) {
     const after = applyGrade(state, g, now, () => 0.5)
-    out[g] = formatDelay(after.due - now)
+    out[g] = g === 'hard' ? 'again now' : formatDelay(after.due - now)
   }
   return out
 }
@@ -189,20 +166,16 @@ export const isDueToday = (s: CardState, now: number, hour: number): boolean =>
 export function maturityOf(state: CardState | undefined, settings: Settings): Maturity {
   if (!state || state.stage === 'new') return 'new'
   if (state.lapses >= settings.leechThreshold) return 'leech'
-  if (state.stage === 'learning' || state.stage === 'relearning') return 'learning'
   return state.interval >= MATURE_DAYS ? 'mature' : 'young'
 }
 
 export const STAGE_LABEL: Record<Stage, string> = {
   new: 'New',
-  learning: 'Learning',
   review: 'Review',
-  relearning: 'Relearning',
 }
 
 export const MATURITY_LABEL: Record<Maturity, string> = {
   new: 'New',
-  learning: 'Learning',
   young: 'Young',
   mature: 'Mature',
   leech: 'Leech',

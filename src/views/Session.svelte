@@ -204,18 +204,13 @@
     // Snapshotting the queue array is safe because it is only ever replaced,
     // never mutated in place — so undo gets the exact deck it had before.
     // svelte-ignore state_referenced_locally
-    history = [...history, { card, previous, queue, index, wasCorrect: g !== 'again' }]
+    history = [...history, { card, previous, queue, index, wasCorrect: g !== 'hard' }]
     answered++
-    if (g !== 'again') correct++
+    if (g !== 'hard') correct++
 
-    if (config.writeThrough) {
-      queue = requeue(queue, index, { ...card, state: nextState }, at)
-    } else {
-      // Practice never reschedules, so a missed card simply comes round again
-      // at the back of the deck.
-      const rest = queue.toSpliced(index, 1)
-      queue = g === 'again' ? [...rest, card] : rest
-    }
+    // A missed card comes round again before the session ends, whether or not
+    // the answer changed its schedule.
+    queue = requeue(queue, index, { ...card, state: nextState }, g === 'hard')
 
     // The answered card left the queue, so the cursor now points at whatever
     // took its place. Clamp for the case where it was the last one.
@@ -316,9 +311,7 @@
     }
     if (!revealed) return
 
-    const grades: Grade[] = config.writeThrough
-      ? ['again', 'hard', 'good', 'easy']
-      : ['again', 'good']
+    const grades: Grade[] = config.writeThrough ? ['hard', 'good', 'easy'] : ['hard', 'good']
     const index = Number(event.key) - 1
     if (Number.isInteger(index) && index >= 0 && index < grades.length) {
       event.preventDefault()

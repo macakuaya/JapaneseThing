@@ -209,30 +209,22 @@ export function buildQueue(
 }
 
 /**
- * Re-insert a card that is still in a sub-day learning step, so 1- and
- * 10-minute steps actually happen inside the session instead of silently
- * rolling to tomorrow. Cards due further out are dropped from the queue.
+ * Take the answered card out, and put it back if it is to be seen again.
+ *
+ * Whether it comes back is the caller's to say, not something to infer from
+ * the due date: a missed card is rescheduled for days away *and* asked again
+ * before the session ends, and those two facts no longer agree. They used to,
+ * when a miss meant "due in ten minutes", which is exactly what made reading
+ * the due date look like it worked.
  *
  * Returns a new queue; `index` is the position of the card just answered.
  */
-export const REQUEUE_HORIZON_MS = 20 * 60_000
-
-export function requeue(queue: Card[], index: number, answered: Card, now: number): Card[] {
+export function requeue(queue: Card[], index: number, answered: Card, repeat: boolean): Card[] {
   const rest = queue.slice(0, index).concat(queue.slice(index + 1))
-  const delay = answered.state.due - now
-  if (delay > REQUEUE_HORIZON_MS) return rest
-
-  // Place it after any cards that come due sooner, so the order stays honest.
-  let at = rest.length
-  for (let i = 0; i < rest.length; i++) {
-    if (rest[i].state.due > answered.state.due) {
-      at = i
-      break
-    }
-  }
-  // Never immediately next: seeing the same card twice in a row isn't a test.
-  at = Math.max(at, Math.min(1, rest.length))
-  return rest.slice(0, at).concat([answered], rest.slice(at))
+  if (!repeat) return rest
+  // At the back, so the rest of the deck comes between. Immediately next is
+  // not a test of anything.
+  return [...rest, answered]
 }
 
 // ---------------------------------------------------------------------------

@@ -122,12 +122,27 @@ export interface Dataset {
 // Scheduling
 // ---------------------------------------------------------------------------
 
-export type Grade = 'again' | 'hard' | 'good' | 'easy'
+/**
+ * Three, not four.
+ *
+ * "Again" and "Hard" both meant "that did not go well", and asking which
+ * flavour of badly is a question you cannot answer honestly a hundred times a
+ * day. Hard now carries both: the gap shrinks and the card comes back before
+ * the session ends.
+ */
+export type Grade = 'hard' | 'good' | 'easy'
 
-export type Stage = 'new' | 'learning' | 'review' | 'relearning'
+/**
+ * A card is either unseen or scheduled. There is no minute-level middle.
+ *
+ * Learning and relearning existed to hold 1- and 10-minute steps; a card you
+ * miss now simply returns later in the same session, which is the same idea
+ * without a clock.
+ */
+export type Stage = 'new' | 'review'
 
 /** How well established a card is. Drives Practice filters and Browse badges. */
-export type Maturity = 'new' | 'learning' | 'young' | 'mature' | 'leech'
+export type Maturity = 'new' | 'young' | 'mature' | 'leech'
 
 export interface CardState {
   /** `${entryId}:${direction}` */

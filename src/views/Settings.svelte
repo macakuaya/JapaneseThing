@@ -281,7 +281,13 @@
 
     <dl class="stages">
       <dt><span class="pill new">New</span></dt>
-      <dd>Never answered. {store.settings.newPerDay} of these start each day.</dd>
+      <!-- Both numbers below are settings, not rules. Stated bare they read
+           as how the app works, which is why "5 of these start each day" was
+           worth querying — it is 5 because you set it to 5. -->
+      <dd>
+        Never answered. How many begin each day is yours to set under
+        <strong>Daily limits</strong> — {store.settings.newPerDay} at the moment.
+      </dd>
 
       <dt><span class="pill young">Young</span></dt>
       <dd>Answered at least once, and coming back within a few days.</dd>
@@ -291,8 +297,9 @@
 
       <dt><span class="pill leech">Leech</span></dt>
       <dd>
-        Missed {store.settings.leechThreshold} times. Usually the card is at fault rather than you
-        — worth rewriting before drilling it again.
+        Missed more times than <strong>Daily limits</strong> allows for —
+        {store.settings.leechThreshold} at the moment. Usually the card is at fault rather than
+        you, so it is worth rewriting before drilling it again.
       </dd>
     </dl>
   </div>

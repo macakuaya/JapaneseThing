@@ -320,16 +320,21 @@
 
   /* Sits over the entire card, under the pen. Deliberately invisible: it adds
      a hit area, not a control. */
+  /* Borderless on purpose. It is the size of the card, so the button border
+     every other control now carries would draw a ring around the card itself
+     — which is exactly what it did. */
   .tap {
     position: absolute;
     inset: 0;
     background: transparent;
+    border: none;
     border-radius: inherit;
     padding: 0;
   }
 
   .tap:hover {
     background: transparent;
+    border: none;
   }
 
   /* --- the answer ------------------------------------------------------ */

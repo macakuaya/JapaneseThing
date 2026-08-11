@@ -205,8 +205,22 @@
     transition: transform 0.12s ease, background 0.12s ease;
   }
 
+  /* The lift is the affordance. The tint is a whisper under it, and the border
+     stays exactly as it was — a card acquiring an outline because the mouse
+     passed over it is the shape changing, not the state. */
+  /*
+   * The lift is the affordance. The tint is a whisper under it, and the border
+   * stays exactly as it was — a card acquiring an outline because the mouse
+   * passed over it is the shape changing, not the state.
+   *
+   * The tint is *layered* over the surface, not mixed with it. --fill-hover is
+   * translucent by design so it works on any background, and color-mix() with
+   * a translucent colour averages the alphas too: mixed, the card went half
+   * transparent and the page showed through it.
+   */
   .card:hover:not(:disabled) {
-    background: var(--surface-2);
+    background: linear-gradient(var(--fill-hover), var(--fill-hover)), var(--surface);
+    border-color: var(--card-border);
     transform: translateY(-3px);
   }
 

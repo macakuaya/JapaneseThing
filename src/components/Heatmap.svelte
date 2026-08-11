@@ -119,6 +119,7 @@
     inset: 0;
     z-index: 40;
     background: color-mix(in srgb, var(--bg) 70%, transparent);
+    border: none;
     border-radius: 0;
     padding: 0;
     cursor: default;
@@ -126,6 +127,7 @@
 
   .scrim:hover {
     background: color-mix(in srgb, var(--bg) 70%, transparent);
+    border: none;
   }
 
   .panel {

@@ -333,12 +333,19 @@
       Credit, in jisho.org/about's sense: where the words actually come from.
       The counts that used to be here were trivia — how many entries, how many
       log lines — and none of it told you anything you could act on.
+
+      The two dictionary links point at /wiki/<Page>.html, not at
+      /wiki/index.php/<Page>. EDRDG closed its documentation wiki after bots
+      overran it, and every index.php address — including the ones its own home
+      page and its own redirects still use — now serves the closure notice
+      instead of the page. It kept static copies at the shorter path, and those
+      are the only live ones.
     -->
     <h2>Data sources</h2>
 
     <dl class="sources">
       <dt>
-        <a href="https://www.edrdg.org/jmdict/j_jmdict.html" target="_blank" rel="noreferrer">
+        <a href="https://www.edrdg.org/wiki/JMdict-EDICT_Dictionary_Project.html" target="_blank" rel="noreferrer">
           JMdict
         </a>
         <span class="faint">Spanish edition</span>
@@ -349,7 +356,7 @@
       </dd>
 
       <dt>
-        <a href="https://www.edrdg.org/wiki/index.php/KANJIDIC_Project" target="_blank" rel="noreferrer">
+        <a href="https://www.edrdg.org/wiki/KANJIDIC_Project.html" target="_blank" rel="noreferrer">
           KANJIDIC2
         </a>
       </dt>

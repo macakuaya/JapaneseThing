@@ -224,8 +224,8 @@ rule between a word and its kanji breakdown in the lookup tooltip.
 
 ## Credits
 
-Dictionary data from [JMdict](https://www.edrdg.org/jmdict/j_jmdict.html) and
-[KANJIDIC2](https://www.edrdg.org/wiki/index.php/KANJIDIC_Project), © the
+Dictionary data from [JMdict](https://www.edrdg.org/wiki/JMdict-EDICT_Dictionary_Project.html) and
+[KANJIDIC2](https://www.edrdg.org/wiki/KANJIDIC_Project.html), © the
 Electronic Dictionary Research and Development Group, used under
 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) and packaged
 via [jmdict-simplified](https://github.com/scriptin/jmdict-simplified).

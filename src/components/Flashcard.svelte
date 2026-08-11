@@ -222,8 +222,17 @@
       third for the character and two thirds for the entry, and the buttons are
       neither.
     -->
-    {#if revealed && !readOnly}
-      <div class="grading">
+    {#if !readOnly}
+      <!--
+        Always present, invisible until there is an answer to judge.
+        
+        Rendered only after the reveal, it appeared as an 80px row and the two
+        halves above it shrank to make room — so the character rose up the card
+        the instant you tapped it. Holding the space costs nothing and the card
+        stops moving. `inert` keeps it off the tab order and out of reach of a
+        click while it is hidden.
+      -->
+      <div class="grading" class:waiting={!revealed} inert={!revealed} aria-hidden={!revealed}>
         <Grader state={card.state} {writeThrough} {now} {pressed} {onGrade} />
       </div>
     {/if}
@@ -329,8 +338,11 @@
   /* The one card that fills its two thirds exactly. Tightened until the
      translation's last line clears the grading buttons without scrolling —
      you should be able to read a kanji card without moving it. */
+  /* Air between the parts. They are four separate things — what it means, how
+     it is read, where it turns up, and one sentence — and run together at a
+     tight gap they read as one block of small text. */
   .card.kanji .told {
-    gap: 0.5rem;
+    gap: 0.85rem;
     justify-content: flex-start;
   }
 
@@ -341,10 +353,10 @@
     padding-bottom: 0.9rem;
   }
 
-  /* The sentence is a different kind of thing from the word list, and ran
-     straight on from it. */
-  .card.kanji .example {
-    margin-top: 0.15rem;
+  /* Centred, with the character above it: the two belong together, and the
+     answer to "what does this mean" should not be tucked into a corner. */
+  .card.kanji .meaning {
+    text-align: center;
   }
 
   .card.kanji .vocab {
@@ -364,6 +376,10 @@
 
   .grading {
     flex: 0 0 auto;
+  }
+
+  .grading.waiting {
+    visibility: hidden;
   }
 
   .line {

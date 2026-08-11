@@ -223,10 +223,15 @@
           checked={store.settings.productionCategories.includes(cat.id)}
           onchange={() => store.toggleProduction(cat.id)}
         />
-        <span>{cat.label}</span>
-        <span class="spacer"></span>
-        <span class="faint">
-          {store.dataset.entries.filter((e) => e.category === cat.id).length} entries
+        <!-- Count against the name, as on the deck cards. Pushed to the far
+             edge it read as a second column to scan; here it is an annotation
+             on the label, which is all it is. The unit goes with it — the
+             number is next to a category, so nothing else it could count. -->
+        <span>
+          {cat.label}
+          <span class="count">
+            {store.dataset.entries.filter((e) => e.category === cat.id).length}
+          </span>
         </span>
       </label>
     {/each}
@@ -361,8 +366,10 @@
     cursor: pointer;
   }
 
-  .toggle .faint {
+  .toggle .count {
+    color: var(--faint);
     font-size: 0.78rem;
+    font-variant-numeric: tabular-nums;
   }
 
   .danger {

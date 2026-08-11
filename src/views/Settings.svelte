@@ -188,25 +188,24 @@
       <span>Tap a word to look it up</span>
     </label>
 
-    <p class="hint faint">
-      Headword furigana always works offline — it comes from your own deck. Furigana over example
-      sentences and word lookup need the dictionary below.
-    </p>
-
-    <p class="dict-status">
-      {#if store.dict === 'ready'}
-        <span class="ok">Dictionary loaded</span>
-        <span class="faint"> · 34,298 words · 2,582 kanji · available offline</span>
-      {:else if store.dict === 'loading'}
-        <span class="faint">Loading dictionary…</span>
-      {:else if store.dict === 'error'}
-        <span class="err">Dictionary failed to load.</span>
-        <button class="ghost tiny" onclick={() => store.ensureDict()}>Retry</button>
-        <span class="faint"> {store.dictError}</span>
-      {:else}
-        <button class="ghost tiny" onclick={() => store.ensureDict()}>Load dictionary now</button>
-      {/if}
-    </p>
+    <!--
+      Nothing while the dictionary is ready: a working feature does not need to
+      announce itself, and the counts belong in Data sources. What stays is the
+      part you can act on — it is still loading, or it failed and needs a retry.
+    -->
+    {#if store.dict !== 'ready'}
+      <p class="dict-status">
+        {#if store.dict === 'loading'}
+          <span class="faint">Loading dictionary…</span>
+        {:else if store.dict === 'error'}
+          <span class="err">Dictionary failed to load.</span>
+          <button class="ghost tiny" onclick={() => store.ensureDict()}>Retry</button>
+          <span class="faint"> {store.dictError}</span>
+        {:else}
+          <button class="ghost tiny" onclick={() => store.ensureDict()}>Load dictionary now</button>
+        {/if}
+      </p>
+    {/if}
   </div>
 
   <div class="card-surface panel">
@@ -270,22 +269,6 @@
     <h2>Data sources</h2>
 
     <dl class="sources">
-      <dt>{store.dataset.name}</dt>
-      <!--
-        Two facts, in the order they are wanted: what the deck is, and how to
-        change it. The old wording ran them together and answered a worry it
-        never named — "will re-importing wipe what I have studied" — with a
-        clause about how ids are derived, which is the reason rather than the
-        answer.
-      -->
-      <dd>
-        Everything the teacher has sent so far.
-        <br />
-        Add to it with <strong>+</strong> above, one card at a time. For a whole lesson at once,
-        edit <code>japones_organizado.md</code> on your laptop and run <code>npm run import</code>.
-        Re-importing never resets what you have already studied.
-      </dd>
-
       <dt>
         <a href="https://www.edrdg.org/jmdict/j_jmdict.html" target="_blank" rel="noreferrer">
           JMdict
@@ -462,10 +445,6 @@
   .dict-status {
     margin: 0;
     font-size: 0.82rem;
-  }
-
-  .dict-status .ok {
-    color: var(--good);
   }
 
   .dict-status .err {

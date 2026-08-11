@@ -252,19 +252,20 @@
    * Sized in line units, not rows.
    *
    * `rows` counts lines at the font's own metrics, but .jp sets line-height
-   * 1.4, so four rows were shorter than four lines and the fourth was sliced
-   * in half. `lh` measures the line box that is actually used.
+   * 1.4, so four rows came out shorter than four lines and the fourth was
+   * sliced in half. `lh` measures the line box actually in use.
    *
-   * It grows with what you type, up to eight lines, and then scrolls inside
-   * itself. Dragging is off: the handle could stretch the field past the
-   * bottom of a card whose height is fixed.
+   * Three lines by default, which is what leaves Save, Cancel and the bin
+   * visible without scrolling the card — the form was overflowing by 7px at
+   * four. It deliberately does not grow with its content: a field that resizes
+   * itself would push the buttons back off the bottom as you typed. Drag it
+   * when you want to see more; the rest scrolls behind it.
    */
   .vocab-field {
-    field-sizing: content;
-    min-height: calc(4lh + 1.1rem);
-    max-height: calc(8lh + 1.1rem);
+    height: calc(3lh + 1.1rem);
+    min-height: calc(2lh + 1.1rem);
     overflow-y: auto;
-    resize: none;
+    resize: vertical;
     line-height: 1.4;
   }
 

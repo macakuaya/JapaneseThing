@@ -342,8 +342,17 @@
      it is read, where it turns up, and one sentence — and run together at a
      tight gap they read as one block of small text. */
   .card.kanji .told {
-    gap: 0.85rem;
+    gap: 1.15rem;
     justify-content: flex-start;
+  }
+
+  /*
+   * The gaps between the four parts are worth more than the gap above them:
+   * the character already has a whole third to itself, and the answer's own
+   * top padding was buying nothing that the ratio hadn't already given it.
+   */
+  .card.kanji .answer {
+    padding-top: 0.1rem;
   }
 
   /* The character sits low in its share, close to the meaning it belongs to,

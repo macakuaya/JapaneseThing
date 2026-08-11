@@ -342,7 +342,7 @@
      it is read, where it turns up, and one sentence — and run together at a
      tight gap they read as one block of small text. */
   .card.kanji .told {
-    gap: 1.15rem;
+    gap: 1.05rem;
     justify-content: flex-start;
   }
 
@@ -362,10 +362,14 @@
     padding-bottom: 0.9rem;
   }
 
-  /* Centred, with the character above it: the two belong together, and the
-     answer to "what does this mean" should not be tucked into a corner. */
+  /*
+   * Centred and a size up, like the meaning on every other card. The one line
+   * that answers the question is the one exception to the single-size rule —
+   * the rest of the entry is reference, this is the answer.
+   */
   .card.kanji .meaning {
     text-align: center;
+    font-size: 1.15rem;
   }
 
   .card.kanji .vocab {
@@ -494,16 +498,17 @@
    * about which line matters, and on a reference card they matter in the order
    * you read them, which the layout already says.
    *
-   * `rt` is the exception, and has to be: furigana is sized in `em` so it
-   * stays a fraction of whatever it sits above. Swept up by the blanket rule
-   * it became the same size as the sentence, which is not furigana, it is a
-   * second line of text.
+   * Two exceptions, both named here rather than fought over on specificity.
+   * `rt` has to be relative — furigana sized in `em` stays a fraction of
+   * whatever it sits above, and pinned to the body size it becomes a second
+   * line of text. `.meaning` is the answer to the question the card asked, and
+   * gets the same size it has on every other card.
    */
   .card.kanji .told {
     font-size: 0.9rem;
   }
 
-  .card.kanji .told :global(*:not(rt)) {
+  .card.kanji .told :global(*:not(rt):not(.meaning)) {
     font-size: inherit;
   }
 

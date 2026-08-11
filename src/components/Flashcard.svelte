@@ -468,10 +468,18 @@
    * One size for the whole entry. Ranking the parts by type size was a guess
    * about which line matters, and on a reference card they matter in the order
    * you read them, which the layout already says.
+   *
+   * `rt` is the exception, and has to be: furigana is sized in `em` so it
+   * stays a fraction of whatever it sits above. Swept up by the blanket rule
+   * it became the same size as the sentence, which is not furigana, it is a
+   * second line of text.
    */
-  .card.kanji .told,
-  .card.kanji .told :global(*) {
+  .card.kanji .told {
     font-size: 0.9rem;
+  }
+
+  .card.kanji .told :global(*:not(rt)) {
+    font-size: inherit;
   }
 
   /*

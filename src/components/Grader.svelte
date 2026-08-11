@@ -85,7 +85,6 @@
 
   .label {
     font-weight: 600;
-    font-size: 0.92rem;
   }
 
   .sub {

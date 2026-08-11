@@ -7,6 +7,7 @@
   // during review, not only from Browse.
 
   import { store } from '../lib/store.svelte.ts'
+  import { Trash2 } from '@lucide/svelte'
   import { cardFront, hasKanji } from '../lib/text.ts'
   import type { Entry } from '../lib/types.ts'
 
@@ -30,8 +31,6 @@
   /* svelte-ignore state_referenced_locally */
   let meaning = $state(entry.meaning)
   /* svelte-ignore state_referenced_locally */
-  let note = $state(entry.note ?? '')
-  /* svelte-ignore state_referenced_locally */
   let exampleTarget = $state(entry.example?.target ?? '')
   /* svelte-ignore state_referenced_locally */
   let exampleNative = $state(entry.example?.native ?? '')
@@ -43,9 +42,15 @@
 
   function save() {
     if (!canSave) return
+    /*
+     * `note` is deliberately absent. It is set by the importer for the two
+     * halves of a verb pair and shown on the card, but there is nothing here
+     * worth editing by hand — and leaving it out of the patch is what
+     * *preserves* it, since updateEntry merges. Sending `note: undefined`,
+     * which an empty field did, wiped it.
+     */
     const shared = {
       meaning: meaning.trim(),
-      note: note.trim() || undefined,
       example: exampleTarget.trim()
         ? { target: exampleTarget.trim(), native: exampleNative.trim() }
         : null,
@@ -147,20 +152,22 @@
       <input id="e-exn" bind:value={exampleNative} />
     </div>
 
-    <div class="wide">
-      <label for="e-note">Note</label>
-      <input id="e-note" bind:value={note} placeholder="optional" />
-    </div>
   </div>
 
   <div class="row actions">
     <button class="primary" onclick={save} disabled={!canSave}>Save</button>
     <button class="ghost" onclick={onDone}>Cancel</button>
     <span class="spacer"></span>
-    {#if fromImport}
-      <span class="faint small">Your edit shadows the imported entry</span>
-    {/if}
-    <button class="ghost danger small" onclick={remove}>Delete</button>
+    <!-- A bin rather than the word: it sits beside Save and Cancel, and of the
+         three it is the one you should not be able to press by reading fast. -->
+    <button
+      class="ghost danger icon"
+      onclick={remove}
+      title="Delete this card"
+      aria-label="Delete this card"
+    >
+      <Trash2 size={16} />
+    </button>
   </div>
 </form>
 
@@ -184,10 +191,6 @@
 
   .actions {
     gap: 0.5rem;
-  }
-
-  .small {
-    font-size: 0.75rem;
   }
 
   .danger {

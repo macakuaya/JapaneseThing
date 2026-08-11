@@ -420,7 +420,6 @@
     justify-content: center;
     gap: 0.45rem;
     padding: 0.6rem 0.5rem;
-    font-size: 0.88rem;
     color: var(--muted);
   }
 
@@ -559,7 +558,6 @@
 
   .tiny {
     padding: 0.15rem 0.45rem;
-    font-size: 0.78rem;
   }
 
   dl {

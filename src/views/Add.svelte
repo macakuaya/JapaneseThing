@@ -599,9 +599,9 @@ Chat log:
     }
   }
 
+  /* Tighter padding for a dense row. The label keeps the one button size. */
   .tiny {
     padding: 0.2rem 0.5rem;
-    font-size: 0.76rem;
   }
 
   .card-surface input.missing {

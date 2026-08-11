@@ -82,7 +82,7 @@
       system" is a third state, not the absence of a choice, and one tap
       settling it beats opening a menu to pick from three.
     -->
-    <div class="segmented" role="radiogroup" aria-label="Theme">
+    <div class="modes" role="radiogroup" aria-label="Theme">
       {#each THEMES as theme (theme.id)}
         {@const Icon = theme.icon}
         <button
@@ -342,41 +342,41 @@
   }
 
   /*
-   * A track one step off the card, with the chosen option returning to the
-   * card's own fill — so the selection reads as the raised one without an
-   * outline or a colour. Same trick as the surface ramp, one level in.
+   * Three buttons, not a segmented control.
+   *
+   * The tray around them was a fourth shape doing no work: it grouped three
+   * things that a row already groups, and it needed its own fill, which put a
+   * grey slab in the middle of a card. Left as plain buttons they match every
+   * other control on the page, and the chosen one is marked the way a chosen
+   * thing should be — by its own edge, not by a well cut out behind it.
    */
-  .segmented {
+  .modes {
     display: flex;
-    gap: 0.25rem;
-    padding: 0.25rem;
-    background: var(--surface-2);
-    border-radius: var(--radius-sm);
+    gap: 0.5rem;
   }
 
-  .segmented button {
+  .modes button {
     flex: 1;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.4rem;
-    padding: 0.45rem 0.5rem;
+    gap: 0.45rem;
+    padding: 0.6rem 0.5rem;
     font-size: 0.88rem;
     color: var(--muted);
-    background: transparent;
-    border-radius: calc(var(--radius-sm) - 3px);
   }
 
-  .segmented button:hover:not(.on) {
+  .modes button:hover:not(.on) {
     color: var(--text);
-    background: var(--surface-3);
   }
 
-  .segmented button.on {
+  /* Two pixels of border rather than one, in the accent: enough to read as
+     chosen at a glance without the button having to change colour or weight
+     and shove its neighbours around. */
+  .modes button.on {
     color: var(--text);
-    font-weight: 600;
-    background: var(--surface);
-    border: 1px solid var(--card-border);
+    border-color: var(--accent);
+    box-shadow: inset 0 0 0 1px var(--accent);
   }
 
   .grid {

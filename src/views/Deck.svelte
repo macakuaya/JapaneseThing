@@ -10,17 +10,25 @@
   // The rule here is that what you see is what you drill: search and the two
   // dropdowns narrow one list, and Drill studies exactly that list.
 
-  import CardSheet from '../components/CardSheet.svelte'
+  import CardPreview from '../components/CardPreview.svelte'
   import { store } from '../lib/store.svelte.ts'
   import { cardFront } from '../lib/text.ts'
   import { MATURITY_LABEL, formatDelay, maturityOf } from '../lib/srs.ts'
-  import type { Entry } from '../lib/types.ts'
 
   // Filter lives in the store so it survives leaving and returning.
   const f = store.deckFilter
-  /** The entry whose card is open over the list. */
-  let opened = $state<string | null>(null)
-  const openedEntry = $derived(opened ? store.entryById(opened) : undefined)
+  /** The entry whose card is open. Lives in the store: the header edits it. */
+  const openedEntry = $derived(store.previewId ? store.entryById(store.previewId) : undefined)
+
+  function open(id: string) {
+    store.previewId = id
+    store.previewEditing = false
+  }
+
+  function close() {
+    store.previewId = null
+    store.previewEditing = false
+  }
 
   /** Deck labels carry their own progress, which Home used to show. */
   const deckOptions = $derived(
@@ -73,18 +81,6 @@
       limit: f.limit,
       writeThrough: f.countToward,
     })
-  }
-
-  function remove(entry: Entry) {
-    const label = cardFront(entry)
-    if (entry.source === 'seed' && !store.isOverridden(entry.id)) {
-      alert(
-        `"${label}" comes from the imported deck and can't be deleted here.\n\n` +
-          'Remove it from japones_organizado.md and re-run `npm run import`.',
-      )
-      return
-    }
-    if (confirm(`Delete "${label}" and its review history?`)) store.deleteEntry(entry.id)
   }
 
   const relativeDue = (due: number) =>
@@ -148,7 +144,7 @@
   <div class="list card-surface">
     {#each rows as row (row.entry.id)}
       <div class="entry">
-        <button class="row-button" onclick={() => (opened = row.entry.id)}>
+        <button class="row-button" onclick={() => open(row.entry.id)}>
             <div class="head row">
               <div class="text">
                 <div class="jp front">{cardFront(row.entry)}</div>
@@ -183,15 +179,7 @@
 </section>
 
 {#if openedEntry}
-  <CardSheet
-    entry={openedEntry}
-    onClose={() => (opened = null)}
-    onDelete={() => {
-      const entry = openedEntry
-      opened = null
-      if (entry) remove(entry)
-    }}
-  />
+  <CardPreview entry={openedEntry} onClose={close} />
 {/if}
 
 <style>

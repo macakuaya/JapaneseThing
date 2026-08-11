@@ -43,7 +43,7 @@
     </button>
     <span class="spacer"></span>
 
-    {#if store.sessionActive}
+    {#if store.sessionActive || store.previewId}
       <!--
         The same kebab that sits here everywhere else, so the corner glyph
         never changes between views — only what it opens does. In a session
@@ -51,8 +51,11 @@
       -->
       <button
         class="ghost icon"
-        class:on={store.sessionEditing}
-        onclick={() => (store.sessionEditing = !store.sessionEditing)}
+        class:on={store.previewId ? store.previewEditing : store.sessionEditing}
+        onclick={() =>
+          store.previewId
+            ? (store.previewEditing = !store.previewEditing)
+            : (store.sessionEditing = !store.sessionEditing)}
         title="Edit this card"
         aria-label="Edit this card"
       >

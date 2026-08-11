@@ -79,6 +79,15 @@ class Store {
   sessionEditing = $state(false)
 
   /**
+   * An entry opened from the deck list, shown as the card it is.
+   *
+   * App-level for the same reason `sessionEditing` is: the control that edits
+   * it lives in the header, and the card it edits does not.
+   */
+  previewId = $state<string | null>(null)
+  previewEditing = $state(false)
+
+  /**
    * Which Home card is currently growing into the study view. Only the one
    * being opened may claim the shared view-transition-name — if several
    * elements hold it at once the browser matches none of them.

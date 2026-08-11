@@ -7,7 +7,7 @@
   // during review, not only from Browse.
 
   import { store } from '../lib/store.svelte.ts'
-  import { hasKanji } from '../lib/text.ts'
+  import { cardFront, hasKanji } from '../lib/text.ts'
   import type { Entry } from '../lib/types.ts'
 
   interface Props {
@@ -67,6 +67,30 @@
           }
     store.updateEntry(entry.id, patch as Partial<Entry>)
     onDone()
+  }
+
+  /**
+   * Deleting is an edit, so it lives with the other edits rather than beside
+   * whatever surface happens to be showing the card.
+   *
+   * A seed entry can't go: it would come back on the next import, so removing
+   * it here would look like it worked and then quietly undo itself.
+   */
+  const fromImport = $derived(entry.source === 'seed' && !store.isOverridden(entry.id))
+
+  function remove() {
+    const label = cardFront(entry)
+    if (fromImport) {
+      alert(
+        `"${label}" comes from the imported deck and can't be deleted here.\n\n` +
+          'Remove it from japones_organizado.md and re-run `npm run import`.',
+      )
+      return
+    }
+    if (confirm(`Delete "${label}" and its review history?`)) {
+      store.deleteEntry(entry.id)
+      onDone()
+    }
   }
 
   function onKeydown(event: KeyboardEvent) {
@@ -133,9 +157,10 @@
     <button class="primary" onclick={save} disabled={!canSave}>Save</button>
     <button class="ghost" onclick={onDone}>Cancel</button>
     <span class="spacer"></span>
-    {#if entry.source === 'seed'}
+    {#if fromImport}
       <span class="faint small">Your edit shadows the imported entry</span>
     {/if}
+    <button class="ghost danger small" onclick={remove}>Delete</button>
   </div>
 </form>
 
@@ -163,5 +188,16 @@
 
   .small {
     font-size: 0.75rem;
+  }
+
+  .danger {
+    color: var(--again);
+    border-color: transparent;
+    padding: 0.3rem 0.5rem;
+  }
+
+  .danger:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--again) 12%, transparent);
+    border-color: transparent;
   }
 </style>

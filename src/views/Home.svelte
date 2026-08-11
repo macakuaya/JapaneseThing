@@ -10,6 +10,7 @@
   import { store, type View } from '../lib/store.svelte.ts'
   import { dayStart, formatDelay } from '../lib/srs.ts'
   import { MORPH, withViewTransition } from '../lib/transition.ts'
+  import Heatmap from '../components/Heatmap.svelte'
   import * as storage from '../lib/storage.ts'
 
   interface Props {
@@ -85,6 +86,9 @@
    */
   const subject = $derived(store.dataset.subject)
 
+  /** The footer doubles as the way in to "did I turn up?". */
+  let showStreak = $state(false)
+
 </script>
 
 <section class="hand">
@@ -152,7 +156,7 @@
   card because those numbers describe the day, not that deck: the four
   category decks all feed the same queue.
 -->
-<p class="page-status">
+<button class="page-status" onclick={() => (showStreak = true)} title="Your streak">
   {#if inProgress}
     <span class="n">{inProgress.queue.length}</span> left in today's review
   {:else if ready > 0}
@@ -162,7 +166,11 @@
   {:else}
     all caught up
   {/if}
-</p>
+</button>
+
+{#if showStreak}
+  <Heatmap onClose={() => (showStreak = false)} />
+{/if}
 
 <style>
   /*
@@ -189,6 +197,7 @@
     aspect-ratio: 3 / 4;
     background: var(--surface);
     border-radius: var(--radius);
+    border: 1px solid var(--card-border);
     padding: 1.1rem 1rem 0.9rem;
     text-align: left;
     font: inherit;

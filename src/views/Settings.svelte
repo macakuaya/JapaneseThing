@@ -1,6 +1,7 @@
 <script lang="ts">
+  import { Monitor, Moon, Sun } from '@lucide/svelte'
   import { store } from '../lib/store.svelte.ts'
-  import type { FuriganaMode } from '../lib/types.ts'
+  import type { FuriganaMode, ThemeMode } from '../lib/types.ts'
   import {
     applyBackup,
     backupFilename,
@@ -10,6 +11,12 @@
 
   let message = $state<{ kind: 'ok' | 'error'; text: string } | null>(null)
   let fileInput: HTMLInputElement
+
+  const THEMES: { id: ThemeMode; label: string; icon: typeof Sun }[] = [
+    { id: 'system', label: 'System', icon: Monitor },
+    { id: 'light', label: 'Light', icon: Sun },
+    { id: 'dark', label: 'Dark', icon: Moon },
+  ]
 
   function download() {
     const blob = new Blob([JSON.stringify(exportBackup(), null, 2)], {
@@ -66,6 +73,34 @@
 </script>
 
 <section class="stack">
+  <!-- First, because it is the setting you go looking for when you cannot read
+       the screen well enough to look for anything else. -->
+  <div class="card-surface panel">
+    <h2>Appearance</h2>
+    <!--
+      Three radios rather than a select or a light/dark switch: "follow the
+      system" is a third state, not the absence of a choice, and one tap
+      settling it beats opening a menu to pick from three.
+    -->
+    <div class="segmented" role="radiogroup" aria-label="Theme">
+      {#each THEMES as theme (theme.id)}
+        {@const Icon = theme.icon}
+        <button
+          role="radio"
+          aria-checked={store.settings.theme === theme.id}
+          class:on={store.settings.theme === theme.id}
+          onclick={() => store.setTheme(theme.id)}
+        >
+          <Icon size={16} />
+          <span>{theme.label}</span>
+        </button>
+      {/each}
+    </div>
+    <p class="hint faint">
+      Stored on this device, like your progress — set it again on your phone.
+    </p>
+  </div>
+
   <div class="card-surface panel">
     <h2>Daily limits</h2>
     <div class="grid">
@@ -262,6 +297,44 @@
   .intro {
     margin: 0;
     font-size: 0.88rem;
+  }
+
+  /*
+   * A track one step off the card, with the chosen option returning to the
+   * card's own fill — so the selection reads as the raised one without an
+   * outline or a colour. Same trick as the surface ramp, one level in.
+   */
+  .segmented {
+    display: flex;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+  }
+
+  .segmented button {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.5rem;
+    font-size: 0.88rem;
+    color: var(--muted);
+    background: transparent;
+    border-radius: calc(var(--radius-sm) - 3px);
+  }
+
+  .segmented button:hover:not(.on) {
+    color: var(--text);
+    background: var(--surface-3);
+  }
+
+  .segmented button.on {
+    color: var(--text);
+    font-weight: 600;
+    background: var(--surface);
+    border: 1px solid var(--card-border);
   }
 
   .grid {

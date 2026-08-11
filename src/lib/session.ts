@@ -159,6 +159,8 @@ export function newIntroducedToday(
   const start = dayStart(now, settings.dayStartHour)
   const firstSeen = new Map<string, number>()
   for (const entry of log) {
+    // A drill introduces no new cards, so it cannot spend the daily allowance.
+    if (entry.practice) continue
     const at = firstSeen.get(entry.key)
     if (at === undefined || entry.at < at) firstSeen.set(entry.key, entry.at)
   }

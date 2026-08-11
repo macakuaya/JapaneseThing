@@ -96,7 +96,7 @@
 
 {#if tooltip.open}
   <div
-    class="panel card-surface"
+    class="panel popover"
     class:flip={placement.flip}
     style:left="{placement.left}px"
     style:top="{placement.top}px"

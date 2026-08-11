@@ -151,6 +151,15 @@ export interface ReviewLogEntry {
   at: number
   /** Interval in days before this answer, for future FSRS migration. */
   prevInterval: number
+  /**
+   * Set when the answer was a drill rather than a scheduled review.
+   *
+   * The log has two readers who want different things from it. Scheduling asks
+   * "how many new cards have I introduced today", and a drill introduces none.
+   * The heatmap asks "did I turn up", and a drill certainly counts. Marking
+   * the line lets both be right off one record.
+   */
+  practice?: 1
 }
 
 /**
@@ -158,6 +167,9 @@ export interface ReviewLogEntry {
  * lets you test yourself on the reading.
  */
 export type FuriganaMode = 'off' | 'always' | 'revealed'
+
+/** 'system' follows the OS; the other two pin the theme for this device. */
+export type ThemeMode = 'system' | 'light' | 'dark'
 
 export interface Settings {
   newPerDay: number
@@ -171,6 +183,7 @@ export interface Settings {
   furigana: FuriganaMode
   /** Tap or hover a word to look it up. Needs the dictionary files. */
   lookup: boolean
+  theme: ThemeMode
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -181,4 +194,5 @@ export const DEFAULT_SETTINGS: Settings = {
   leechThreshold: 5,
   furigana: 'revealed',
   lookup: true,
+  theme: 'system',
 }

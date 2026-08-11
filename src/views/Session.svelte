@@ -230,6 +230,7 @@
     const last = history.at(-1)
     if (!last || pressed) return
     if (config.writeThrough) store.ungrade(last.card.key, last.previous)
+    else store.unlog(last.card.key)
     queue = last.queue
     index = last.index
     history = history.slice(0, -1)

@@ -391,3 +391,32 @@ describe('cardKey', () => {
     expect(cardKey('abc', 'production')).toBe('abc:production')
   })
 })
+
+
+/*
+ * The log now holds drills as well as reviews, so anything reading it for
+ * scheduling has to say which it wants. The daily new-card allowance is the
+ * one that would go wrong quietly: twenty drilled cards would look like twenty
+ * new ones introduced, and the next day's review would offer nothing.
+ */
+describe('practice lines in the review log', () => {
+  const settings = { ...DEFAULT_SETTINGS, newPerDay: 10 }
+  const now = new Date(2026, 6, 15, 12, 0, 0).getTime()
+  const line = (practice: boolean) => ({
+    key: 'a:recognition',
+    grade: 'good' as const,
+    at: now,
+    prevInterval: 0,
+    ...(practice ? { practice: 1 as const } : {}),
+  })
+
+  it('do not spend the daily new-card allowance', () => {
+    const drilled = Array.from({ length: 8 }, () => line(true))
+    expect(newAllowance(drilled, settings, now)).toBe(settings.newPerDay)
+  })
+
+  it('while real reviews still do', () => {
+    const reviewed = [line(false), line(false)]
+    expect(newAllowance(reviewed, settings, now)).toBeLessThan(settings.newPerDay)
+  })
+})

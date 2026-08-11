@@ -10,8 +10,10 @@ import type {
   Grade,
   ReviewLogEntry,
   Settings,
+  ThemeMode,
 } from './types.ts'
 import { applyGrade, newCardState } from './srs.ts'
+import { applyTheme } from './theme.ts'
 import { installDeck, loadDict } from './dict.ts'
 import { type Card, countsFor, enumerateCards } from './session.ts'
 import * as storage from './storage.ts'
@@ -192,20 +194,40 @@ class Store {
 
   /**
    * Record an answer. Returns the updated card state so the caller can decide
-   * whether to requeue it. When `writeThrough` is false (Practice) nothing is
-   * persisted and the state is returned unchanged.
+   * whether to requeue it.
+   *
+   * A drill (`writeThrough` false) still leaves a line in the log, marked as
+   * practice: it changes no schedule, but it happened, and the heatmap has no
+   * other way to know you spent an evening on the deck. Scheduling skips those
+   * lines; see ReviewLogEntry.practice.
    */
   grade(card: Card, grade: Grade, writeThrough: boolean, now = Date.now()): CardState {
-    if (!writeThrough) return card.state
-    const next = applyGrade(card.state, grade, now)
-    this.srs = { ...this.srs, [card.key]: next }
+    const next = writeThrough ? applyGrade(card.state, grade, now) : card.state
+    if (writeThrough) {
+      this.srs = { ...this.srs, [card.key]: next }
+      storage.saveSrs(this.srs)
+    }
     this.log = [
       ...this.log,
-      { key: card.key, grade, at: now, prevInterval: card.state.interval },
+      {
+        key: card.key,
+        grade,
+        at: now,
+        prevInterval: card.state.interval,
+        ...(writeThrough ? {} : { practice: 1 as const }),
+      },
     ]
-    storage.saveSrs(this.srs)
     storage.saveLog(this.log)
     return next
+  }
+
+  /** Drop a practice line on undo. It has no scheduling to restore. */
+  unlog(key: string): void {
+    const lastIndex = this.log.findLastIndex((l) => l.key === key && l.practice)
+    if (lastIndex >= 0) {
+      this.log = this.log.toSpliced(lastIndex, 1)
+      storage.saveLog(this.log)
+    }
   }
 
   /** Restore a card's prior state and drop its last log line. Used by undo. */
@@ -285,6 +307,15 @@ class Store {
     storage.saveSettings(this.settings)
   }
 
+  /**
+   * The theme lives in <html> rather than in any component, so the change has
+   * to be pushed out as well as stored — nothing re-renders it.
+   */
+  setTheme(mode: ThemeMode): void {
+    this.updateSettings({ theme: mode })
+    applyTheme(mode)
+  }
+
   toggleProduction(categoryId: string): void {
     const on = this.settings.productionCategories.includes(categoryId)
     this.updateSettings({
@@ -300,6 +331,8 @@ class Store {
     this.settings = storage.loadSettings()
     this.log = storage.loadLog()
     this.syncDeck()
+    // An imported backup carries its own theme; the DOM has to be told.
+    applyTheme(this.settings.theme)
   }
 }
 

@@ -1,6 +1,13 @@
 import { mount } from 'svelte'
 import './app.css'
 import App from './App.svelte'
+import { store } from './lib/store.svelte.ts'
+import { applyTheme } from './lib/theme.ts'
+
+// The inline script in index.html has already set the attribute, so this is
+// not what prevents the flash — it paints the browser chrome to match and
+// starts watching for the OS flipping under a 'system' setting.
+applyTheme(store.settings.theme)
 
 const app = mount(App, { target: document.getElementById('app')! })
 

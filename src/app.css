@@ -12,82 +12,119 @@
  */
 
 /*
- * Graphite, and close to monochrome.
+ * Ink on paper by day, near-neutral by night, and close to monochrome.
  *
- * The greys are deliberately neutral — no blue in them — so the app reads as
- * paper and ink rather than as a screen. The accent is near-white rather than
- * a colour, which means the primary action is the brightest thing on screen
- * without competing with anything.
+ * Light keeps a little yellow in its greys so it reads as paper: #f7f6f3 for
+ * the page with white cards on top, and a warm off-black for the type. Dark
+ * drops the warmth — a warm dark reads as brown rather than as unlit — and
+ * softens the text to about 83% white, because pure white on near-black
+ * glares. The accent is the *other* theme's paper rather than a colour, which
+ * means the primary action is the highest-contrast thing on screen without
+ * competing with anything.
  *
  * The four grade colours are the one exception. Again/Hard/Good/Easy have to
  * be told apart at a glance, so they keep their hue, but at low saturation so
  * they read as tinted grey rather than as a palette.
+ *
+ * Both themes are declared once, together, with light-dark(): light value
+ * first, dark second. Which one resolves is decided entirely by `color-scheme`
+ * below, so switching themes is one attribute rather than a second copy of the
+ * ramp — and a token's two values sit on one line where they can be compared.
  */
 
 :root {
-  --bg: #1a1a1c;
-  --surface: #232326;
-  --surface-2: #2c2c30;
-  --surface-3: #38383d;
+  /*
+   * The switch itself. Unset, the system decides — so the default theme costs
+   * no JavaScript at all. `data-theme` on <html> pins it; see lib/theme.ts.
+   */
+  color-scheme: light dark;
 
-  /* A stacked card sits on these, darkest at the back. */
-  --stack-1: #202023;
-  --stack-2: #1d1d20;
+  /*
+   * Tuned against Notion's two themes, which get the *contrast* right in a way
+   * a cream-and-brown ramp did not.
+   *
+   * Two things carry over from it. In light, the page is a shade below the
+   * cards rather than above them, so a card reads as paper laid on a desk —
+   * and the darkest text is a warm off-black, never #000, which is what keeps
+   * a bright screen from feeling like a spotlight. In dark, the text is around
+   * 83% white rather than the full amount: on a near-black page pure white
+   * glares, and every long reading session pays for it.
+   *
+   * The warmth stays in light, where it reads as paper. Dark goes near-neutral
+   * — a warm dark reads as brown rather than as unlit.
+   */
+  --bg: light-dark(#f7f6f3, #191918);
+  --surface: light-dark(#ffffff, #212020);
+  --surface-2: light-dark(#efedea, #2b2a29);
+  --surface-3: light-dark(#e3e1dc, #363534);
+
+  /* A stacked card sits on these, furthest from the page colour at the back. */
+  --stack-1: light-dark(#f1efec, #1e1d1d);
+  --stack-2: light-dark(#e9e7e3, #1b1b1a);
 
   /* Spent sparingly — see the note above. */
-  --divider: #303034;
+  --divider: light-dark(#e9e7e3, #302f2e);
 
-  --text: #ececee;
-  --muted: #a0a0a7;
-  --faint: #6e6e76;
+  --text: light-dark(#37352f, #d6d4d0);
+  --muted: light-dark(#787672, #9a9895);
+  --faint: light-dark(#9b9a96, #6e6c69);
 
-  --accent: #e9e9ec;
-  --on-accent: #1a1a1c;
+  --accent: light-dark(#37352f, #e9e7e3);
+  --on-accent: light-dark(#ffffff, #191918);
 
-  --again: #d18d8d;
-  --hard: #cbab84;
-  --good: #9ec2a4;
-  --easy: #9bb6c4;
+  /*
+   * A field inside a card. Elsewhere an input steps *up* to --surface-2; on a
+   * card it steps down to the page behind it instead. In light that page is
+   * within a hair of the card's white, so there it takes --surface-2's tone.
+   */
+  --field-on-card: light-dark(#f1efec, #191918);
+
+  --again: light-dark(#a15b53, #cf8d84);
+  --hard: light-dark(#8a6a33, #c9a878);
+  --good: light-dark(#4c7a58, #93bd9c);
+  --easy: light-dark(#4a6d80, #93b2c2);
+
+  /*
+   * Cards sit on the page; popovers float above it. Only the second gets a
+   * shadow.
+   *
+   * A card is part of the layout, and a shadow claims otherwise — in light,
+   * where white-on-near-white is a weak fill contrast, a hairline does the job
+   * instead and says nothing about depth. In dark the fill ramp is legible on
+   * its own, so the border resolves to transparent and costs nothing.
+   *
+   * A popover genuinely is above the page and can be dismissed, so it earns
+   * both: a shadow to lift it and a border to keep its edge from dissolving
+   * into whatever it covers.
+   */
+  --card-border: light-dark(rgba(55, 53, 47, 0.09), transparent);
+  --popover-border: light-dark(rgba(55, 53, 47, 0.08), rgba(255, 255, 255, 0.07));
+  --popover-shadow:
+    light-dark(
+      0 0 0 1px rgba(15, 15, 15, 0.03),
+      0 0 0 1px rgba(0, 0, 0, 0.35)
+    ),
+    light-dark(
+      0 12px 32px rgba(15, 15, 15, 0.12),
+      0 12px 32px rgba(0, 0, 0, 0.45)
+    );
+
+  /* The heatmap's orange, and nothing else. The palette is deliberately
+     near-monochrome; this is the one screen whose subject is you rather than
+     the deck, so it gets the one colour. */
+  --heat: #eb5e28;
 
   --radius: 14px;
   --radius-sm: 9px;
   --maxw: 760px;
-  --elevation: none;
-
-  color-scheme: dark;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #f2f2f3;
-    --surface: #ffffff;
-    --surface-2: #e9e9eb;
-    --surface-3: #dcdcdf;
+:root[data-theme='light'] {
+  color-scheme: light;
+}
 
-    --stack-1: #e4e4e6;
-    --stack-2: #d8d8da;
-
-    --divider: #e6e6e8;
-
-    --text: #1a1a1c;
-    --muted: #5f5f66;
-    --faint: #90909a;
-
-    /* Mirrored: the accent is near-black here, so the primary action is still
-       the highest-contrast thing on the page. */
-    --accent: #1f1f22;
-    --on-accent: #ffffff;
-
-    --again: #a85757;
-    --hard: #8a6a33;
-    --good: #4a7a56;
-    --easy: #4a6d80;
-
-    /* White on light grey is a weak fill contrast, so elevation carries it. */
-    --elevation: 0 1px 2px rgba(20, 20, 22, 0.05), 0 4px 12px rgba(20, 20, 22, 0.05);
-
-    color-scheme: light;
-  }
+:root[data-theme='dark'] {
+  color-scheme: dark;
 }
 
 * {
@@ -223,11 +260,11 @@ textarea {
   width: 100%;
 }
 
-/* A field sitting on --surface-2 needs the next step up to stay distinct. */
+/* A field sitting on a card needs its own step to stay distinct. */
 .card-surface input,
 .card-surface select,
 .card-surface textarea {
-  background: var(--bg);
+  background: var(--field-on-card);
 }
 
 input::placeholder,
@@ -257,7 +294,7 @@ a {
 .card-surface {
   background: var(--surface);
   border-radius: var(--radius);
-  box-shadow: var(--elevation);
+  border: 1px solid var(--card-border);
 }
 
 /* --- the sanctioned dividers --------------------------------------------- */
@@ -347,6 +384,7 @@ a {
   aspect-ratio: 3 / 4;
   background: var(--surface);
   border-radius: var(--radius);
+  border: 1px solid var(--card-border);
 
   /*
    * aspect-ratio only states a *preferred* height. The card is a flex item, so
@@ -377,12 +415,43 @@ a {
   font-size: 0.75rem;
   text-align: center;
   color: var(--faint);
+  /* Ignores the mouse by default so it can never eat a click meant for the
+     card behind it. Home opts back in, because there it is a button. */
   pointer-events: none;
+}
+
+/* The same line, when it opens something. */
+button.page-status {
+  pointer-events: auto;
+  background: none;
+  border: none;
+  padding: 0.35rem 0.6rem;
+  width: auto;
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 0.75rem;
+  color: var(--faint);
+}
+
+button.page-status:hover {
+  background: var(--surface-2);
+  color: var(--muted);
 }
 
 .page-status .n {
   color: var(--text);
   font-variant-numeric: tabular-nums;
+}
+
+/* Anything that floats over the page and can be dismissed. */
+.popover {
+  background: var(--surface);
+  border: 1px solid var(--popover-border);
+  border-radius: var(--radius);
+  box-shadow: var(--popover-shadow);
 }
 
 /* Wide content scrolls inside its own box; the page never scrolls sideways. */

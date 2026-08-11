@@ -143,7 +143,7 @@
     {/if}
   </div>
 
-  <div class="list card-surface divide">
+  <div class="list card-surface">
     {#each rows as row (row.entry.id)}
       <div class="entry" class:open={editing === row.entry.id}>
         {#if editing === row.entry.id}
@@ -234,15 +234,33 @@
     overflow: hidden;
   }
 
+  /*
+   * One hairline between rows, inset to the same margin as the text.
+   *
+   * Drawn as a background rather than a border because every row is a button,
+   * and a button's border goes all the way round: stacked, they read as a
+   * frame around the list with a doubled rule between each pair. A background
+   * line can start and stop where the words do.
+   */
+  .list > * + * {
+    background-image: linear-gradient(var(--divider), var(--divider));
+    background-repeat: no-repeat;
+    background-size: calc(100% - 2rem) 1px;
+    background-position: 1rem 0;
+  }
+
   .entry.open {
     padding: 0.8rem 1rem;
   }
 
+  /* Borderless: the list draws the one line between rows, and a row is a
+     region of the list rather than a control sitting on it. */
   .row-button {
     display: block;
     width: 100%;
     text-align: left;
     background: transparent;
+    border: none;
     border-radius: 0;
     padding: 0.8rem 1rem;
     font: inherit;
@@ -250,7 +268,8 @@
   }
 
   .row-button:hover {
-    background: var(--surface-2);
+    background: var(--fill-hover);
+    border: none;
   }
 
   .head {

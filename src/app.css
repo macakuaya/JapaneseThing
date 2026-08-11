@@ -318,6 +318,12 @@ textarea {
   padding: 0.5rem 0.65rem;
 }
 
+/* The chevron is drawn inside the padding box, so it sits hard against the
+   border unless the box makes room for it. */
+select {
+  padding-right: 1.9rem;
+}
+
 input:hover:not(:disabled),
 select:hover:not(:disabled),
 textarea:hover:not(:disabled) {

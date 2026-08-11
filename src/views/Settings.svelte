@@ -1,6 +1,13 @@
 <script lang="ts">
   import { Monitor, Moon, Sun } from '@lucide/svelte'
   import { store } from '../lib/store.svelte.ts'
+  import {
+    EASY_INTERVAL,
+    LEARNING_STEPS_MIN,
+    MATURE_DAYS,
+    MIN_EASE,
+    START_EASE,
+  } from '../lib/srs.ts'
   import type { FuriganaMode, ThemeMode } from '../lib/types.ts'
   import {
     applyBackup,
@@ -228,9 +235,9 @@
              number is next to a category, so nothing else it could count. -->
         <span>
           {cat.label}
-          <span class="count">
-            {store.dataset.entries.filter((e) => e.category === cat.id).length}
-          </span>
+          <span class="count"
+            >· {store.dataset.entries.filter((e) => e.category === cat.id).length}</span
+          >
         </span>
       </label>
     {/each}
@@ -262,6 +269,61 @@
 
   <div class="card-surface panel">
     <!--
+    The scheduler, in words. Every number here is read from the same constants
+    the scheduler uses — MATURE_DAYS, START_EASE, LEARNING_STEPS_MIN and the
+    user's own limits — so this panel cannot drift out of step with the code it
+    describes, which is the usual fate of a page like this.
+  -->
+  <div class="card-surface panel">
+    <h2>How it works</h2>
+    <p class="intro muted">
+      Every card moves through the same five states. The words are the ones on the labels in
+      Deck.
+    </p>
+
+    <dl class="stages">
+      <dt><span class="pill new">New</span></dt>
+      <dd>
+        Never answered. Up to {store.settings.newPerDay} enter the queue each day, so a big import
+        doesn't become a wall.
+      </dd>
+
+      <dt><span class="pill learning">Learning</span></dt>
+      <dd>
+        Comes back after {LEARNING_STEPS_MIN[0]} minute, then {LEARNING_STEPS_MIN[1]}. Two rights
+        in a row and it graduates to tomorrow; <strong>Easy</strong> skips both steps and jumps
+        straight to {EASY_INTERVAL} days.
+      </dd>
+
+      <dt><span class="pill young">Young</span></dt>
+      <dd>
+        Now scheduled in days. Each <strong>Good</strong> multiplies the gap by the card's ease,
+        which starts at {START_EASE} — roughly 1 day, 3, 6, 15, and on out.
+      </dd>
+
+      <dt><span class="pill mature">Mature</span></dt>
+      <dd>
+        The same card once its gap passes {MATURE_DAYS} days. Nothing about the scheduling
+        changes; it is simply one you evidently know.
+      </dd>
+
+      <dt><span class="pill leech">Leech</span></dt>
+      <dd>
+        {store.settings.leechThreshold} lapses. You keep forgetting it, which usually means the
+        card is at fault rather than you — worth rewriting with the pen before drilling it again.
+      </dd>
+    </dl>
+
+    <p class="hint faint">
+      The buttons move the gap rather than set it. <strong>Good</strong> multiplies by the ease,
+      <strong>Hard</strong> by 1.2 and lowers the ease a little, <strong>Easy</strong> raises both.
+      <strong>Again</strong> is a lapse: the gap halves, the ease drops, and the card returns in
+      ten minutes. Ease never falls below {MIN_EASE}, and every interval is jittered by a few per
+      cent so one heavy day doesn't come back as a single spike.
+    </p>
+  </div>
+
+  <!--
       Credit, in jisho.org/about's sense: where the words actually come from.
       The counts that used to be here were trivia — how many entries, how many
       log lines — and none of it told you anything you could act on.
@@ -384,9 +446,10 @@
     cursor: pointer;
   }
 
+  /* Same size as the label, set apart by an interpunct rather than by being
+     smaller. Shrunk, it read as a footnote clinging to the word. */
   .toggle .count {
     color: var(--faint);
-    font-size: 0.78rem;
     font-variant-numeric: tabular-nums;
   }
 
@@ -396,6 +459,18 @@
    * so the gap grows and both sides start on the same line — a margin on the
    * term alone would push it out of step with the text beside it.
    */
+  /* Term is a pill, so the row aligns on the pill's own line rather than on a
+     baseline the pill doesn't share. */
+  .stages {
+    row-gap: 0.8rem;
+    align-items: baseline;
+  }
+
+  .stages dd {
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
   .sources {
     row-gap: 1rem;
     align-items: baseline;

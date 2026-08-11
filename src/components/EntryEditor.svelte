@@ -174,8 +174,7 @@
         <label for="e-vocab">Vocabulario</label>
         <textarea
           id="e-vocab"
-          class="jp"
-          rows="4"
+          class="jp vocab-field"
           bind:value={vocabulary}
           placeholder="日本・にほん・Japón"
         ></textarea>
@@ -247,6 +246,26 @@
     display: flex;
     flex-direction: column;
     gap: 0.9rem;
+  }
+
+  /*
+   * Sized in line units, not rows.
+   *
+   * `rows` counts lines at the font's own metrics, but .jp sets line-height
+   * 1.4, so four rows were shorter than four lines and the fourth was sliced
+   * in half. `lh` measures the line box that is actually used.
+   *
+   * It grows with what you type, up to eight lines, and then scrolls inside
+   * itself. Dragging is off: the handle could stretch the field past the
+   * bottom of a card whose height is fixed.
+   */
+  .vocab-field {
+    field-sizing: content;
+    min-height: calc(4lh + 1.1rem);
+    max-height: calc(8lh + 1.1rem);
+    overflow-y: auto;
+    resize: none;
+    line-height: 1.4;
   }
 
   .grid {

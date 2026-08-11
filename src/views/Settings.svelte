@@ -271,10 +271,19 @@
 
     <dl class="sources">
       <dt>{store.dataset.name}</dt>
+      <!--
+        Two facts, in the order they are wanted: what the deck is, and how to
+        change it. The old wording ran them together and answered a worry it
+        never named — "will re-importing wipe what I have studied" — with a
+        clause about how ids are derived, which is the reason rather than the
+        answer.
+      -->
       <dd>
-        Everything the teacher has sent, kept in <code>japones_organizado.md</code>. To bulk-update
-        it, edit that file and run <code>npm run import</code> — review progress survives, because
-        card ids come from the Japanese itself rather than from row order.
+        Everything the teacher has sent so far.
+        <br />
+        Add to it with <strong>+</strong> above, one card at a time. For a whole lesson at once,
+        edit <code>japones_organizado.md</code> on your laptop and run <code>npm run import</code>.
+        Re-importing never resets what you have already studied.
       </dd>
 
       <dt>

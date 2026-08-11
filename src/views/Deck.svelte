@@ -137,7 +137,7 @@
       <span class="faint hint">Clear the search to drill this selection</span>
     {:else}
       <label class="check faint">
-        <input type="checkbox" bind:checked={f.countToward} />
+        <input type="checkbox" class="switch" bind:checked={f.countToward} />
         count toward review dates
       </label>
     {/if}
@@ -228,10 +228,6 @@
     margin: 0;
     font-size: 0.78rem;
     cursor: pointer;
-  }
-
-  .check input {
-    width: auto;
   }
 
   .list {

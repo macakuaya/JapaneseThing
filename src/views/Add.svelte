@@ -493,7 +493,6 @@ Chat log:
   }
 
   .tick {
-    width: auto;
     flex: 0 0 auto;
   }
 

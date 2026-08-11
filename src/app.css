@@ -1,14 +1,20 @@
 /*
- * Surfaces are distinguished by FILL, not by outline.
+ * Surfaces are distinguished by FILL. Controls are distinguished by OUTLINE.
  *
- * A border is treated as a negative: it is only spent where a genuine division
- * exists that fill and spacing cannot express — the sticky header boundary,
- * separators between repeated rows on one surface, and the front/back split on
- * a card. Everything else (panels, buttons, inputs, chips, pills) reads from
- * its own background against its parent's, so it carries no outline at all.
+ * Anything that is a *place* — a page, a card, a panel — reads from its own
+ * background against its parent's, and carries no border. The surface ramp has
+ * to do real work for that: each step must be legible against the one below it
+ * without help.
  *
- * That means the surface ramp has to do real work: each step must be legible
- * against the one below it without help.
+ * Anything you *operate* — a field, a select, a text area — keeps the colour
+ * of whatever it sits on and is drawn with a hairline instead. Filled, such a
+ * control needs a different grey from the card, the page and the panel it
+ * might appear on: three tones to keep in step, one of which always looks
+ * wrong. Outlined, it belongs to its surroundings.
+ *
+ * Two things sit across the line and get both: a card in the light theme,
+ * where white on near-white is too weak a fill contrast to stand alone, and a
+ * popover, which really is above the page and takes a shadow as well.
  */
 
 /*
@@ -73,11 +79,12 @@
   --on-accent: light-dark(#ffffff, #191918);
 
   /*
-   * A field inside a card. Elsewhere an input steps *up* to --surface-2; on a
-   * card it steps down to the page behind it instead. In light that page is
-   * within a hair of the card's white, so there it takes --surface-2's tone.
+   * The edge of a control. Fields and selects keep the colour of whatever they
+   * sit on and are drawn with this instead — see the note on form controls
+   * below.
    */
-  --field-on-card: light-dark(#f1efec, #191918);
+  --control-border: light-dark(rgba(55, 53, 47, 0.16), rgba(255, 255, 255, 0.13));
+  --control-border-hover: light-dark(rgba(55, 53, 47, 0.28), rgba(255, 255, 255, 0.22));
 
   --again: light-dark(#a15b53, #cf8d84);
   --hard: light-dark(#8a6a33, #c9a878);
@@ -248,23 +255,92 @@ button.ghost:hover:not(:disabled) {
   color: var(--text);
 }
 
+/*
+ * Form controls are the exception to the fill rule at the top of this file.
+ *
+ * Filled, a field is a grey box that has to be a *different* grey from the
+ * card, the page and the panel it might sit on — three tones to keep in step,
+ * and one of them always looks wrong. Outlined, a field is the colour of
+ * whatever it sits on and the hairline does the work, which is why Notion's
+ * inputs and dropdowns look like part of the page rather than patches on it.
+ *
+ * That also deletes --field-on-card and the rule that went with it: there is
+ * nothing left to special-case, because the field already matches its host.
+ */
+/*
+ * `width: 100%` is for fields you type in. Applied to every input it also hit
+ * checkboxes, so each view that had one added a `width: auto` override — and
+ * those overrides, being scoped, outranked the switch below and collapsed it
+ * to nothing. Excluding the box types here is what lets those go away.
+ */
+input:not([type='checkbox']):not([type='radio']),
+select,
+textarea {
+  width: 100%;
+}
+
 input,
 select,
 textarea {
   font: inherit;
   color: var(--text);
-  background: var(--surface-2);
-  border: none;
+  background: transparent;
+  border: 1px solid var(--control-border);
   border-radius: var(--radius-sm);
   padding: 0.5rem 0.65rem;
-  width: 100%;
 }
 
-/* A field sitting on a card needs its own step to stay distinct. */
-.card-surface input,
-.card-surface select,
-.card-surface textarea {
-  background: var(--field-on-card);
+input:hover:not(:disabled),
+select:hover:not(:disabled),
+textarea:hover:not(:disabled) {
+  border-color: var(--control-border-hover);
+}
+
+/*
+ * A switch, for a setting that is simply on or off.
+ *
+ * A tick box asks you to read a label to know what state it is in; a switch
+ * shows it in the shape. The knob stays pale on the grey track and flips dark
+ * on the accent one, so it is legible against both without the track having to
+ * compromise.
+ */
+input[type='checkbox'].switch {
+  appearance: none;
+  flex: 0 0 auto;
+  position: relative;
+  width: 34px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: var(--surface-3);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+input[type='checkbox'].switch::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: light-dark(#ffffff, #c9c7c3);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+input[type='checkbox'].switch:checked {
+  background: var(--accent);
+}
+
+input[type='checkbox'].switch:checked::after {
+  transform: translateX(14px);
+  background: var(--on-accent);
+}
+
+input[type='checkbox'].switch:hover:not(:disabled) {
+  border: none;
 }
 
 input::placeholder,

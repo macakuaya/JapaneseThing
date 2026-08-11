@@ -178,6 +178,7 @@
     <label class="toggle">
       <input
         type="checkbox"
+        class="switch"
         checked={store.settings.lookup}
         onchange={(e) => {
           store.updateSettings({ lookup: e.currentTarget.checked })
@@ -218,6 +219,7 @@
       <label class="toggle">
         <input
           type="checkbox"
+          class="switch"
           checked={store.settings.productionCategories.includes(cat.id)}
           onchange={() => store.toggleProduction(cat.id)}
         />
@@ -357,10 +359,6 @@
     color: var(--text);
     font-size: 0.92rem;
     cursor: pointer;
-  }
-
-  .toggle input {
-    width: auto;
   }
 
   .toggle .faint {

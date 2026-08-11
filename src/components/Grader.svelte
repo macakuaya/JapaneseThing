@@ -98,34 +98,43 @@
   /* Hovering hints at the colour the press will bring, without the resting
      state having to carry it. */
   .again:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--again) 20%, var(--surface-2));
+    background: color-mix(in srgb, var(--again) 18%, transparent);
+    border-color: color-mix(in srgb, var(--again) 45%, transparent);
   }
   .hard:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--hard) 20%, var(--surface-2));
+    background: color-mix(in srgb, var(--hard) 18%, transparent);
+    border-color: color-mix(in srgb, var(--hard) 45%, transparent);
   }
   .good:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--good) 20%, var(--surface-2));
+    background: color-mix(in srgb, var(--good) 18%, transparent);
+    border-color: color-mix(in srgb, var(--good) 45%, transparent);
   }
   .easy:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--easy) 20%, var(--surface-2));
+    background: color-mix(in srgb, var(--easy) 18%, transparent);
+    border-color: color-mix(in srgb, var(--easy) 45%, transparent);
   }
 
-  /* Pressed wins over hover — the mouse is still on the button it just hit. */
+  /* Pressed wins over hover — the mouse is still on the button it just hit.
+     Border matches the fill so the lit button has no rim of its own. */
   .again.on,
   .again.on:hover {
     background: var(--again);
+    border-color: var(--again);
   }
   .hard.on,
   .hard.on:hover {
     background: var(--hard);
+    border-color: var(--hard);
   }
   .good.on,
   .good.on:hover {
     background: var(--good);
+    border-color: var(--good);
   }
   .easy.on,
   .easy.on:hover {
     background: var(--easy);
+    border-color: var(--easy);
   }
 
   /* The grade colours are pale in the dark theme and deep in the light one, so

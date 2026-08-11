@@ -434,9 +434,16 @@
     font-size: 0.75rem;
   }
 
+  /* Outlined like the buttons beside it, but in its own colour — the warning
+     is in the hue, and it no longer has to shout with a fill to be heard. */
   .danger {
     color: var(--again);
-    background: color-mix(in srgb, var(--again) 14%, transparent);
+    border-color: color-mix(in srgb, var(--again) 40%, transparent);
+  }
+
+  .danger:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--again) 12%, transparent);
+    border-color: color-mix(in srgb, var(--again) 60%, transparent);
   }
 
   .message {

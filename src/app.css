@@ -174,19 +174,31 @@ h3 {
 
 /* --- controls: filled, never outlined ------------------------------------ */
 
+/*
+ * A secondary button is an outline, not a grey slab.
+ *
+ * Filled at rest it is the same weight as the primary action beside it and
+ * competes with it; outlined, the hierarchy comes for free — the one that
+ * matters is the only thing with a fill. The fill it does have arrives on
+ * hover, which is where it means something.
+ *
+ * Same reasoning as the fields above, and the same border token: a button and
+ * an input are both things you operate.
+ */
 button {
   font: inherit;
   color: inherit;
   cursor: pointer;
-  border: none;
-  background: var(--surface-2);
+  background: transparent;
+  border: 1px solid var(--control-border);
   border-radius: var(--radius-sm);
   padding: 0.55rem 0.9rem;
-  transition: background 0.12s ease, color 0.12s ease;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
 }
 
 button:hover:not(:disabled) {
-  background: var(--surface-3);
+  background: var(--surface-2);
+  border-color: var(--control-border-hover);
 }
 
 button:disabled {
@@ -194,8 +206,11 @@ button:disabled {
   cursor: default;
 }
 
+/* The one thing on screen that keeps a fill. Its border matches the fill so
+   the shape has no rim of its own. */
 button.primary {
   background: var(--accent);
+  border-color: var(--accent);
   color: var(--on-accent);
   font-weight: 600;
 }
@@ -245,13 +260,17 @@ svg[stroke-width] {
 }
 
 /* The only truly transparent control: it lives inside another surface. */
+/* Lives inside another surface — a header, a card, a row — where even a
+   hairline would be one line too many. */
 button.ghost {
   background: transparent;
+  border-color: transparent;
   color: var(--muted);
 }
 
 button.ghost:hover:not(:disabled) {
   background: var(--surface-2);
+  border-color: transparent;
   color: var(--text);
 }
 

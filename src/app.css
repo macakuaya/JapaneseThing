@@ -210,7 +210,13 @@ button {
   background: transparent;
   border: 1px solid var(--control-border);
   border-radius: var(--radius-sm);
-  padding: 0.55rem 0.9rem;
+  padding: 0.5rem 0.9rem;
+  /*
+   * One height for every control, so a row of them lines up whatever is
+   * inside. Text buttons were 42px, header icons 35 and the editor's bin 32 —
+   * an icon has no line box, so padding alone could never make them agree.
+   */
+  min-height: 2.5rem;
   transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
 }
 
@@ -246,7 +252,7 @@ button.icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.45rem;
+  padding: 0.5rem;
   line-height: 0;
 }
 
@@ -275,6 +281,26 @@ p > svg {
  */
 svg[stroke-width] {
   stroke-width: 1.75;
+}
+
+/*
+ * The compact variant, for a dense row where a full-height control would
+ * dominate. Deliberately one alternative size rather than four accidental
+ * ones — every button is either this or the height above.
+ */
+button.tiny {
+  min-height: 1.75rem;
+  padding: 0.2rem 0.5rem;
+}
+
+/*
+ * Buttons that are really regions — a whole card, a list row, the scrim, the
+ * brand — take their height from what they contain, not from the control
+ * scale. A minimum here would push 語 off the corner it is aligned to.
+ */
+button.brand,
+button.page-status {
+  min-height: 0;
 }
 
 /* The only truly transparent control: it lives inside another surface. */

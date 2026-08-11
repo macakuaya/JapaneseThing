@@ -30,6 +30,19 @@
     state: store.srs[key] ?? newCardState(key, store.now),
   })
 
+  /*
+   * Clear the flag when this leaves the screen, however it leaves.
+   *
+   * `close()` handled the ways out from here — Escape, a click off the card —
+   * but not navigating away: tapping 語 unmounted this and left previewId set,
+   * so the header went on believing a card was open and kept Deck, Add and
+   * Settings hidden behind a kebab that edited nothing.
+   */
+  $effect(() => () => {
+    store.previewId = null
+    store.previewEditing = false
+  })
+
   function onKeydown(event: KeyboardEvent) {
     if (event.key !== 'Escape') return
     event.preventDefault()

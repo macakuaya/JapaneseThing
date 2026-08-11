@@ -12,6 +12,21 @@
 
   const home = () => (store.view = 'home')
 
+  /*
+   * Changing view puts any open card away.
+   *
+   * The card belongs to the deck list; leaving that list has to close it, or
+   * the header goes on showing a kebab for a card that is no longer anywhere —
+   * which is what hid Deck, Add and Settings behind it. CardPreview clears the
+   * flag when it unmounts too, for the case where the entry is deleted out
+   * from under it; this one covers the flag outliving the component.
+   */
+  $effect(() => {
+    void store.view
+    store.previewId = null
+    store.previewEditing = false
+  })
+
   // Due counts are time-dependent; without this the Home screen would still
   // claim "all caught up" an hour after a learning step came due.
   onMount(() => {

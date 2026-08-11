@@ -262,30 +262,56 @@
   </div>
 
   <div class="card-surface panel">
-    <h2>Deck</h2>
-    <dl>
-      <dt>Name</dt>
-      <dd>{store.dataset.name}</dd>
-      <dt>Languages</dt>
-      <dd>{store.dataset.targetLang} → {store.dataset.nativeLang}</dd>
-      <dt>Entries</dt>
+    <!--
+      Credit, in jisho.org/about's sense: where the words actually come from.
+      The counts that used to be here were trivia — how many entries, how many
+      log lines — and none of it told you anything you could act on.
+    -->
+    <h2>Data sources</h2>
+
+    <dl class="sources">
+      <dt>{store.dataset.name}</dt>
       <dd>
-        {store.dataset.entries.length}
-        <span class="faint">({store.userEntries.length} added by you)</span>
+        Everything the teacher has sent, kept in <code>japones_organizado.md</code>. To bulk-update
+        it, edit that file and run <code>npm run import</code> — review progress survives, because
+        card ids come from the Japanese itself rather than from row order.
       </dd>
-      <dt>Scheduled cards</dt>
-      <dd>{Object.keys(store.srs).length}</dd>
-      <dt>Answers recorded</dt>
-      <dd>{store.log.length}</dd>
+
+      <dt>
+        <a href="https://www.edrdg.org/jmdict/j_jmdict.html" target="_blank" rel="noreferrer">
+          JMdict
+        </a>
+        <span class="faint">Spanish edition</span>
+      </dt>
+      <dd>
+        Word meanings, readings and parts of speech — the tooltip when you tap a word, and the
+        readings the parser fills in for you.
+      </dd>
+
+      <dt>
+        <a href="https://www.edrdg.org/wiki/index.php/KANJIDIC_Project" target="_blank" rel="noreferrer">
+          KANJIDIC2
+        </a>
+      </dt>
+      <dd>Per-character readings and meanings, behind the kanji cards and the furigana.</dd>
+
+      <dt>
+        <a href="https://github.com/scriptin/jmdict-simplified" target="_blank" rel="noreferrer">
+          jmdict-simplified
+        </a>
+      </dt>
+      <dd>
+        The packaged form of both. <code>npm run dict</code> trims them down to what this deck can
+        actually reach, which is what keeps the download small enough to hold offline.
+      </dd>
     </dl>
+
     <p class="hint faint">
-      To bulk-update the deck, edit <code>japones_organizado.md</code> and run
-      <code>npm run import</code>. Review progress survives, because card ids are derived from
-      the Japanese itself rather than from row order.
-    </p>
-    <p class="hint faint">
-      Dictionary data from JMdict and KANJIDIC2, © the Electronic Dictionary Research and
-      Development Group, used under
+      JMdict and KANJIDIC2 are the property of the
+      <a href="https://www.edrdg.org/" target="_blank" rel="noreferrer">
+        Electronic Dictionary Research and Development Group
+      </a>
+      and are used under
       <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noreferrer"
         >CC BY-SA 4.0</a
       >.
@@ -370,6 +396,33 @@
     color: var(--faint);
     font-size: 0.78rem;
     font-variant-numeric: tabular-nums;
+  }
+
+  /*
+   * A source and what it is for. The shared dl grid already puts the term left
+   * and its description right; these rows are taller than a name/value pair,
+   * so the gap grows and both sides start on the same line — a margin on the
+   * term alone would push it out of step with the text beside it.
+   */
+  .sources {
+    row-gap: 1rem;
+    align-items: baseline;
+  }
+
+  .sources dt {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    color: var(--text);
+  }
+
+  .sources dd {
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .sources .faint {
+    font-size: 0.75rem;
   }
 
   .danger {

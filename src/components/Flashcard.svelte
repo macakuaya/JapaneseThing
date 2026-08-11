@@ -106,37 +106,34 @@
         <div class="told">
           {#if entry.kind === 'kanji'}
             <!--
-              Everything a kanji card owes you, in the order you want it: what
-              it means, how it is read, where you have met it, and one sentence.
-              The reference layout gave each of those a heading of its own,
-              which on a card this size is mostly headings.
-            -->
-            <p class="meaning">{entry.meaning}</p>
+              A kanji card is a reference entry, not a sentence, so it is set
+              as one: left-aligned, in columns that line up down the card.
+              Centred, the readings, the words and their meanings all started
+              at a different place on every row and none of them could be
+              scanned.
 
+              The readings sit side by side, split by a rule and unlabelled.
+              Katakana is on'yomi and hiragana is kun'yomi — the scripts say
+              which is which, and a label saying the same thing in smaller type
+              is a label you stop reading.
+            -->
             <div class="yomi">
-              {#if entry.on.length}
-                <div class="yomi-row">
-                  <span class="tag jp">音</span>
-                  <span class="jp reading">{entry.on.join('・')}</span>
-                </div>
-              {/if}
-              {#if entry.kun.length}
-                <div class="yomi-row">
-                  <span class="tag jp">訓</span>
-                  <span class="jp reading">{entry.kun.join('・')}</span>
-                </div>
-              {/if}
+              <span class="jp reading on">{entry.on.join('・') || '—'}</span>
+              <span class="jp reading kun">{entry.kun.join('・') || '—'}</span>
             </div>
 
+            <p class="meaning">{entry.meaning}</p>
+
             {#if entry.vocabulary.length}
-              <ul class="vocab">
+              <!-- Word, reading and meaning in three columns, so the eye can
+                   run down any one of them. -->
+              <dl class="vocab">
                 {#each entry.vocabulary as v (v.word)}
-                  <li>
-                    <span class="jp">{v.word}・{v.reading}</span>
-                    <span class="muted">{v.meaning}</span>
-                  </li>
+                  <dt class="jp">{v.word}</dt>
+                  <dd class="jp reading">{v.reading}</dd>
+                  <dd class="gloss muted">{v.meaning}</dd>
                 {/each}
-              </ul>
+              </dl>
             {/if}
 
             {#if entry.example}
@@ -402,48 +399,59 @@
 
   /* --- kanji ------------------------------------------------------------ */
 
+  /* A reference entry reads left to right down a column, not centred. */
+  .card.kanji .told {
+    text-align: left;
+    align-items: stretch;
+  }
+
+  /* On the left, kun on the right, one rule between. */
   .yomi {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-    align-items: center;
-  }
-
-  .yomi-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     align-items: baseline;
-    gap: 0.45rem;
-  }
-
-  /* 音 and 訓 rather than "Onyomi" and "Kunyomi": two characters say it, and
-     the words were longer than the readings they labelled. */
-  .tag {
-    font-size: 0.68rem;
-    color: var(--on-accent);
-    background: var(--faint);
-    border-radius: 4px;
-    padding: 0.05rem 0.25rem;
-    line-height: 1.3;
   }
 
   .reading {
     font-size: 0.95rem;
   }
 
+  .yomi .kun {
+    padding-left: 0.7rem;
+    border-left: 1px solid var(--divider);
+  }
+
+  .card.kanji .meaning {
+    font-size: 1rem;
+  }
+
+  /*
+   * Three columns that hold their width down the list: the writing, its
+   * reading, then the gloss. `auto auto 1fr` lets the two Japanese columns be
+   * as wide as their widest row and gives the rest to the meaning.
+   */
   .vocab {
-    list-style: none;
+    display: grid;
+    grid-template-columns: auto auto 1fr;
+    column-gap: 0.6rem;
+    row-gap: 0.1rem;
     margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
     font-size: 0.85rem;
   }
 
-  .vocab li {
-    display: flex;
-    justify-content: center;
-    gap: 0.4rem;
+  .vocab dt,
+  .vocab dd {
+    margin: 0;
+    min-width: 0;
+  }
+
+  .vocab .reading {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .vocab .gloss {
+    overflow-wrap: anywhere;
   }
 
   .grading {

@@ -117,12 +117,17 @@
               which is which, and a label saying the same thing in smaller type
               is a label you stop reading.
             -->
-            <div class="yomi">
-              <span class="jp reading on">{entry.on.join('・') || '—'}</span>
-              <span class="jp reading kun">{entry.kun.join('・') || '—'}</span>
-            </div>
-
+            <!--
+              Meaning first: it sits directly under the character, which is
+              where the eye lands and the one thing you were actually asked.
+              The readings follow, side by side and centred in their halves.
+            -->
             <p class="meaning">{entry.meaning}</p>
+
+            <div class="yomi">
+              <span class="jp on">{entry.on.join('・') || '—'}</span>
+              <span class="jp kun">{entry.kun.join('・') || '—'}</span>
+            </div>
 
             {#if entry.vocabulary.length}
               <!-- Word, reading and meaning in three columns, so the eye can
@@ -207,15 +212,21 @@
           {/if}
         </div>
 
-        {#if !readOnly}
-          <!-- Grading sits on the card: seeing the answer and judging it are one
-               action, in one place. -->
-          <div class="grading">
-            <Grader state={card.state} {writeThrough} {now} {pressed} {onGrade} />
-          </div>
-        {/if}
       {/if}
     </div>
+
+    <!--
+      The grader is the card's own footer, a sibling of the two halves rather
+      than the tail of the answer. That is what lets a card divide its *content*
+      in a ratio without the buttons counting toward it — the kanji card wants a
+      third for the character and two thirds for the entry, and the buttons are
+      neither.
+    -->
+    {#if revealed && !readOnly}
+      <div class="grading">
+        <Grader state={card.state} {writeThrough} {now} {pressed} {onGrade} />
+      </div>
+    {/if}
   {/if}
 </article>
 
@@ -291,18 +302,49 @@
     padding-bottom: 0.7rem;
   }
 
-  /* One character, so it can be as large as its share allows — the shape is
-     the whole question, and small type hides the strokes you need to read. */
+  /*
+   * Big enough to read every stroke, and no bigger. It was sized to fill its
+   * share of the card, which made it the loudest thing on a card whose answer
+   * is the part you came for.
+   */
   .question.glyph {
-    font-size: clamp(3.5rem, 17vw, 5.5rem);
+    font-size: clamp(2.6rem, 12vw, 4rem);
     line-height: 1;
+  }
+
+  /*
+   * A third for the character, two thirds for the entry — of the content, not
+   * of the card. The buttons are a sibling now, so they take their height off
+   * the top before this ratio is applied, which is what "a third, but not of
+   * the whole card" means.
+   */
+  .card.kanji .question {
+    flex: 1 1 0;
+  }
+
+  .card.kanji .answer {
+    flex: 2 1 0;
   }
 
   /* The one card that fills its two thirds exactly. Tightened until the
      translation's last line clears the grading buttons without scrolling —
      you should be able to read a kanji card without moving it. */
   .card.kanji .told {
-    gap: 0.4rem;
+    gap: 0.5rem;
+    justify-content: flex-start;
+  }
+
+  /* The character sits low in its share, close to the meaning it belongs to,
+     rather than floating in the middle of an empty third. */
+  .card.kanji .question {
+    justify-content: flex-end;
+    padding-bottom: 0.9rem;
+  }
+
+  /* The sentence is a different kind of thing from the word list, and ran
+     straight on from it. */
+  .card.kanji .example {
+    margin-top: 0.15rem;
   }
 
   .card.kanji .vocab {
@@ -315,8 +357,13 @@
   }
 
   .answer {
+    flex: 1 1 auto;
     padding-top: 0.7rem;
     justify-content: space-between;
+  }
+
+  .grading {
+    flex: 0 0 auto;
   }
 
   .line {
@@ -405,24 +452,26 @@
     align-items: stretch;
   }
 
-  /* On the left, kun on the right, one rule between. */
+  /* On the left, kun on the right, each centred in its own half. */
   .yomi {
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: baseline;
-  }
-
-  .reading {
-    font-size: 0.95rem;
+    text-align: center;
   }
 
   .yomi .kun {
-    padding-left: 0.7rem;
     border-left: 1px solid var(--divider);
   }
 
-  .card.kanji .meaning {
-    font-size: 1rem;
+  /*
+   * One size for the whole entry. Ranking the parts by type size was a guess
+   * about which line matters, and on a reference card they matter in the order
+   * you read them, which the layout already says.
+   */
+  .card.kanji .told,
+  .card.kanji .told :global(*) {
+    font-size: 0.9rem;
   }
 
   /*
@@ -446,7 +495,6 @@
   }
 
   .vocab .reading {
-    font-size: 0.8rem;
     color: var(--muted);
   }
 

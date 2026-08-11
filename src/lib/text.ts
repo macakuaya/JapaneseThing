@@ -3,7 +3,7 @@
 // Keep this module dependency-free apart from type-only imports so Node's
 // type stripping can load it directly.
 
-import type { Entry, Example } from './types.ts'
+import type { Entry, Example, KanjiVocab } from './types.ts'
 
 const HIRAGANA = /[ぁ-ゟ]/
 const KATAKANA = /[゠-ヿ]/
@@ -46,6 +46,34 @@ export function stripPlaceholder(s: string | undefined | null): string | null {
   const t = (s ?? '').trim()
   if (!t || t === '—' || t === '–' || t === '-' || t === '―') return null
   return t
+}
+
+/**
+ * Readings as they are written on the card: ニチ・ジツ.
+ *
+ * Also accepts 、 and a plain comma, because those are what you get from a
+ * keyboard that is not currently in Japanese mode.
+ */
+export function splitReadings(value: string): string[] {
+  return value
+    .split(/[・、,]/)
+    .map((r) => r.trim())
+    .filter(Boolean)
+}
+
+/**
+ * A kanji card's vocabulary, one word per line: 日本・にほん・Japón.
+ *
+ * A line without all three parts is dropped rather than half-saved — a word
+ * with no reading would render as a blank column, and silently keeping it
+ * would be worse than losing the line you were still typing.
+ */
+export function parseVocabulary(value: string): KanjiVocab[] {
+  return value
+    .split('\n')
+    .map((line) => line.split('・').map((f) => f.trim()))
+    .filter((fields) => fields.length >= 3 && fields[0] && fields[1])
+    .map(([word, reading, ...rest]) => ({ word, reading, meaning: rest.join('・') }))
 }
 
 /** Split a cell that packed several writings into one, e.g. 飛ぶ／飛ばす. */

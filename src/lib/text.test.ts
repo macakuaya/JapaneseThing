@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import {
   cardFront,
+  parseVocabulary,
+  splitReadings,
   isAllKana,
   makeId,
   normalizePattern,
@@ -222,5 +224,63 @@ describe('makeId', () => {
     const seed = (await import('../data/seed.json')).default as { entries: { id: string }[] }
     const ids = seed.entries.map((e) => e.id)
     expect(new Set(ids).size).toBe(ids.length)
+  })
+})
+
+
+/*
+ * What the kanji editor types back into an entry. Both round-trip the exact
+ * strings the card renders, so editing a kanji card and saving it unchanged
+ * has to leave it unchanged.
+ */
+describe('reading lists', () => {
+  it('splits on the interpunct the card uses', () => {
+    expect(splitReadings('ニチ・ジツ')).toEqual(['ニチ', 'ジツ'])
+  })
+
+  it('accepts 、 and a plain comma, which is what a Latin keyboard gives you', () => {
+    expect(splitReadings('ひ、び, か')).toEqual(['ひ', 'び', 'か'])
+  })
+
+  it('is empty for an empty field rather than one blank reading', () => {
+    expect(splitReadings('')).toEqual([])
+    expect(splitReadings('・・')).toEqual([])
+  })
+
+  it('round-trips what the card shows', () => {
+    const on = ['ニチ', 'ジツ']
+    expect(splitReadings(on.join('・'))).toEqual(on)
+  })
+})
+
+describe('the kanji vocabulary field', () => {
+  const text = ['日本・にほん・Japón', '今日・きょう・hoy'].join('\n')
+
+  it('reads one word per line', () => {
+    expect(parseVocabulary(text)).toEqual([
+      { word: '日本', reading: 'にほん', meaning: 'Japón' },
+      { word: '今日', reading: 'きょう', meaning: 'hoy' },
+    ])
+  })
+
+  it('keeps an interpunct inside the meaning', () => {
+    expect(parseVocabulary('国・くに・país・estado')[0].meaning).toBe('país・estado')
+  })
+
+  it('drops a line that is still being typed rather than half-saving it', () => {
+    // A word with no reading renders as a blank column; losing the incomplete
+    // line is the smaller harm.
+    expect(parseVocabulary('日本・にほん・Japón\n毎日')).toHaveLength(1)
+    expect(parseVocabulary('・にほん・Japón')).toHaveLength(0)
+  })
+
+  it('is empty for an empty field', () => {
+    expect(parseVocabulary('')).toEqual([])
+  })
+
+  it('round-trips what the card shows', () => {
+    const vocab = [{ word: '日本', reading: 'にほん', meaning: 'Japón' }]
+    const rendered = vocab.map((v) => `${v.word}・${v.reading}・${v.meaning}`).join('\n')
+    expect(parseVocabulary(rendered)).toEqual(vocab)
   })
 })

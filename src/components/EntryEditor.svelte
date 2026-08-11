@@ -8,7 +8,7 @@
 
   import { store } from '../lib/store.svelte.ts'
   import { Trash2 } from '@lucide/svelte'
-  import { cardFront, hasKanji } from '../lib/text.ts'
+  import { cardFront, hasKanji, parseVocabulary, splitReadings } from '../lib/text.ts'
   import type { Entry } from '../lib/types.ts'
 
   interface Props {
@@ -35,10 +35,37 @@
   /* svelte-ignore state_referenced_locally */
   let exampleNative = $state(entry.example?.native ?? '')
 
-  const canSave = $derived(
-    meaning.trim().length > 0 &&
-      (entry.kind === 'pattern' ? pattern.trim().length > 0 : (kanji || kana).trim().length > 0),
+  /*
+   * A kanji entry has fields no other kind has, and had no branch here at all
+   * — it fell through to the word fields, which showed an empty Kanji and Kana
+   * box for a card that has neither, hid its readings and its vocabulary, and
+   * left Save disabled so a typo in the meaning could not be corrected.
+   *
+   * Readings are edited as they are shown: ニチ・ジツ. Vocabulary is one word
+   * per line, 単語・たんご・significado, because a grid of six inputs to add a
+   * word is worse than a line you can type.
+   */
+  /* svelte-ignore state_referenced_locally */
+  let character = $state(entry.kind === 'kanji' ? entry.character : '')
+  /* svelte-ignore state_referenced_locally */
+  let onReadings = $state(entry.kind === 'kanji' ? entry.on.join('・') : '')
+  /* svelte-ignore state_referenced_locally */
+  let kunReadings = $state(entry.kind === 'kanji' ? entry.kun.join('・') : '')
+  /* svelte-ignore state_referenced_locally */
+  let vocabulary = $state(
+    entry.kind === 'kanji'
+      ? entry.vocabulary.map((v) => `${v.word}・${v.reading}・${v.meaning}`).join('\n')
+      : '',
   )
+
+
+
+  const canSave = $derived.by(() => {
+    if (!meaning.trim()) return false
+    if (entry.kind === 'pattern') return pattern.trim().length > 0
+    if (entry.kind === 'kanji') return character.trim().length > 0
+    return (kanji || kana).trim().length > 0
+  })
 
   function save() {
     if (!canSave) return
@@ -55,6 +82,20 @@
         ? { target: exampleTarget.trim(), native: exampleNative.trim() }
         : null,
     }
+    if (entry.kind === 'kanji') {
+      // `strokes` is left out on purpose: it is not editable here, and
+      // omitting it is what keeps it.
+      store.updateEntry(entry.id, {
+        ...shared,
+        character: character.trim(),
+        on: splitReadings(onReadings),
+        kun: splitReadings(kunReadings),
+        vocabulary: parseVocabulary(vocabulary),
+      } as Partial<Entry>)
+      onDone()
+      return
+    }
+
     const patch =
       entry.kind === 'pattern'
         ? {
@@ -112,7 +153,34 @@
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <form class="editor" aria-label="Edit entry" onkeydown={onKeydown} onsubmit={(e) => { e.preventDefault(); save() }}>
   <div class="grid">
-    {#if entry.kind === 'pattern'}
+    {#if entry.kind === 'kanji'}
+      <div>
+        <label for="e-char">Carácter</label>
+        <input id="e-char" class="jp" bind:value={character} maxlength="1" />
+      </div>
+      <div>
+        <label for="e-meaning-k">Meaning</label>
+        <input id="e-meaning-k" bind:value={meaning} placeholder="required" />
+      </div>
+      <div>
+        <label for="e-on">音読み</label>
+        <input id="e-on" class="jp" bind:value={onReadings} placeholder="ニチ・ジツ" />
+      </div>
+      <div>
+        <label for="e-kun">訓読み</label>
+        <input id="e-kun" class="jp" bind:value={kunReadings} placeholder="ひ・び・か" />
+      </div>
+      <div class="wide">
+        <label for="e-vocab">Vocabulario</label>
+        <textarea
+          id="e-vocab"
+          class="jp"
+          rows="4"
+          bind:value={vocabulary}
+          placeholder="日本・にほん・Japón"
+        ></textarea>
+      </div>
+    {:else if entry.kind === 'pattern'}
       <div class="wide">
         <label for="e-pattern">Pattern</label>
         <input id="e-pattern" class="jp" bind:value={pattern} />
@@ -137,10 +205,12 @@
       </div>
     {/if}
 
-    <div class="wide">
-      <label for="e-meaning">Meaning</label>
-      <input id="e-meaning" bind:value={meaning} />
-    </div>
+    {#if entry.kind !== 'kanji'}
+      <div class="wide">
+        <label for="e-meaning">Meaning</label>
+        <input id="e-meaning" bind:value={meaning} placeholder="required" />
+      </div>
+    {/if}
 
     <div class="wide">
       <label for="e-ex">Example</label>

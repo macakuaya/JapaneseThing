@@ -7,6 +7,7 @@
   // is something between you and that shape.
 
   import { X } from '@lucide/svelte'
+  import Overlay from './Overlay.svelte'
   import { store } from '../lib/store.svelte.ts'
   import { heatmap, streaks } from '../lib/streak.ts'
 
@@ -38,123 +39,78 @@
   const label = (day: number, count: number) =>
     `${fmt.format(day)} — ${count === 0 ? 'nothing' : `${count} answer${count === 1 ? '' : 's'}`}`
 
-  function onKeydown(event: KeyboardEvent) {
-    if (event.key === 'Escape') {
-      event.preventDefault()
-      onClose()
-    }
-  }
 </script>
 
-<svelte:window onkeydown={onKeydown} />
-
-<!-- The scrim is the way out, so it is a button rather than a div with a
-     click handler bolted on. -->
-<button class="scrim" onclick={onClose} aria-label="Close"></button>
-
-<div class="panel popover" role="dialog" aria-modal="true" aria-label="Your streak">
-  <header>
-    <div class="figures">
-      <div class="figure">
-        <span class="value">{stats.current}</span>
-        <span class="tag">day streak</span>
+<Overlay {onClose} anchor="bottom" label="Your streak">
+  <div class="sheet popover">
+    <header>
+      <div class="figures">
+        <div class="figure">
+          <span class="value">{stats.current}</span>
+          <span class="tag">day streak</span>
+        </div>
+        <div class="figure">
+          <span class="value">{stats.longest}</span>
+          <span class="tag">best</span>
+        </div>
+        <div class="figure">
+          <span class="value">{stats.activeDays}</span>
+          <span class="tag">days studied</span>
+        </div>
+        <div class="figure">
+          <span class="value">{stats.total}</span>
+          <span class="tag">answers</span>
+        </div>
       </div>
-      <div class="figure">
-        <span class="value">{stats.longest}</span>
-        <span class="tag">best</span>
-      </div>
-      <div class="figure">
-        <span class="value">{stats.activeDays}</span>
-        <span class="tag">days studied</span>
-      </div>
-      <div class="figure">
-        <span class="value">{stats.total}</span>
-        <span class="tag">answers</span>
-      </div>
-    </div>
-    <button class="ghost icon" onclick={onClose} aria-label="Close"><X size={16} /></button>
-  </header>
+      <button class="ghost icon" onclick={onClose} aria-label="Close"><X size={16} /></button>
+    </header>
 
-  <div class="grid-wrap scroll-x">
-    <div class="months">
-      {#each months as month, i (i)}
-        <span>{month}</span>
-      {/each}
-    </div>
-
-    <div class="body">
-      <div class="weekdays">
-        {#each DAYS as day, i (i)}
-          <span>{day}</span>
+    <div class="grid-wrap scroll-x">
+      <div class="months">
+        {#each months as month, i (i)}
+          <span>{month}</span>
         {/each}
       </div>
 
-      <div class="grid">
-        {#each grid as week, w (w)}
-          <div class="week">
-            {#each week as cell (cell.day)}
-              <!-- A day that hasn't happened is absent, not skipped: drawing
-                   the rest of this week as empty squares would read as five
-                   days you missed. -->
-              <span
-                class="cell l{cell.level}"
-                class:future={cell.future}
-                title={cell.future ? '' : label(cell.day, cell.count)}
-              ></span>
-            {/each}
-          </div>
-        {/each}
+      <div class="body">
+        <div class="weekdays">
+          {#each DAYS as day, i (i)}
+            <span>{day}</span>
+          {/each}
+        </div>
+
+        <div class="grid">
+          {#each grid as week, w (w)}
+            <div class="week">
+              {#each week as cell (cell.day)}
+                <!-- A day that hasn't happened is absent, not skipped: drawing
+                     the rest of this week as empty squares would read as five
+                     days you missed. -->
+                <span
+                  class="cell l{cell.level}"
+                  class:future={cell.future}
+                  title={cell.future ? '' : label(cell.day, cell.count)}
+                ></span>
+              {/each}
+            </div>
+          {/each}
+        </div>
       </div>
     </div>
+
+    {#if stats.total === 0}
+      <p class="empty muted">Nothing here yet. Answer a card and the first square lights up.</p>
+    {/if}
   </div>
-
-  {#if stats.total === 0}
-    <p class="empty muted">Nothing here yet. Answer a card and the first square lights up.</p>
-  {/if}
-</div>
+</Overlay>
 
 <style>
-  .scrim {
-    position: fixed;
-    inset: 0;
-    z-index: 40;
-    background: color-mix(in srgb, var(--bg) 70%, transparent);
-    border: none;
-    border-radius: 0;
-    padding: 0;
-    cursor: default;
-  }
-
-  .scrim:hover {
-    background: color-mix(in srgb, var(--bg) 70%, transparent);
-    border: none;
-  }
-
-  .panel {
-    position: fixed;
-    z-index: 41;
-    left: 50%;
-    bottom: 3.5rem;
-    transform: translateX(-50%);
+  .sheet {
     width: min(520px, calc(100vw - 2rem));
     padding: 1.1rem 1.2rem 1.2rem;
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    animation: rise 180ms ease-out;
-  }
-
-  /* Comes up from the footer it was opened from, rather than appearing in the
-     middle of the screen with no relationship to the thing you clicked. */
-  @keyframes rise {
-    from {
-      opacity: 0;
-      transform: translate(-50%, 8px);
-    }
-    to {
-      opacity: 1;
-      transform: translate(-50%, 0);
-    }
   }
 
   header {

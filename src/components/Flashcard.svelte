@@ -19,27 +19,35 @@
     card: Card
     revealed: boolean
     /** Grading mode: four scheduling buttons, or a simple pass/fail. */
-    writeThrough: boolean
-    now: number
+    writeThrough?: boolean
+    now?: number
     /** The grade being committed, lit on its button until the card changes. */
     pressed?: Grade | null
+    /**
+     * Browsing rather than studying: both halves are shown at once and there
+     * is nothing to grade. Looking a card up is not answering it, and offering
+     * the buttons anyway would invite you to reschedule a card you only opened
+     * to read.
+     */
+    readOnly?: boolean
     /** Owned by the session, because the control that opens it is the header's. */
     editing?: boolean
     onEditDone?: () => void
-    onReveal: () => void
-    onGrade: (grade: Grade) => void
+    onReveal?: () => void
+    onGrade?: (grade: Grade) => void
   }
 
   const {
     card,
     revealed,
-    writeThrough,
-    now,
+    writeThrough = true,
+    now = Date.now(),
     pressed = null,
+    readOnly = false,
     editing = false,
     onEditDone = () => {},
-    onReveal,
-    onGrade,
+    onReveal = () => {},
+    onGrade = () => {},
   }: Props = $props()
 
   const entry = $derived(card.entry)
@@ -80,7 +88,7 @@
       <EntryEditor {entry} onDone={onEditDone} />
     </div>
   {:else}
-    {#if !revealed}
+    {#if !revealed && !readOnly}
       <!-- The whole face is the target. No label and no hover: an empty half
            under a question is already an invitation, and a button drawn inside
            the card would compete with the card for being the thing you click. -->
@@ -202,11 +210,13 @@
           {/if}
         </div>
 
-        <!-- Grading sits on the card: seeing the answer and judging it are one
-             action, in one place. -->
-        <div class="grading">
-          <Grader state={card.state} {writeThrough} {now} {pressed} {onGrade} />
-        </div>
+        {#if !readOnly}
+          <!-- Grading sits on the card: seeing the answer and judging it are one
+               action, in one place. -->
+          <div class="grading">
+            <Grader state={card.state} {writeThrough} {now} {pressed} {onGrade} />
+          </div>
+        {/if}
       {/if}
     </div>
   {/if}

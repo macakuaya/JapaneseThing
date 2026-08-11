@@ -1,13 +1,7 @@
 <script lang="ts">
   import { Monitor, Moon, Sun } from '@lucide/svelte'
   import { store } from '../lib/store.svelte.ts'
-  import {
-    EASY_INTERVAL,
-    LEARNING_STEPS_MIN,
-    MATURE_DAYS,
-    MIN_EASE,
-    START_EASE,
-  } from '../lib/srs.ts'
+  import { MATURE_DAYS, START_EASE } from '../lib/srs.ts'
   import type { FuriganaMode, ThemeMode } from '../lib/types.ts'
   import {
     applyBackup,
@@ -269,57 +263,65 @@
 
   <div class="card-surface panel">
     <!--
-    The scheduler, in words. Every number here is read from the same constants
-    the scheduler uses — MATURE_DAYS, START_EASE, LEARNING_STEPS_MIN and the
-    user's own limits — so this panel cannot drift out of step with the code it
-    describes, which is the usual fate of a page like this.
+    The scheduler, in five lines.
+    
+    The first attempt explained the mechanism: ease factors, multipliers, what
+    each button does to the gap. All true, and none of it answers the question
+    someone actually has, which is "what is this card doing and when will I see
+    it again". These are the five states and what they mean about the card.
+
+    The numbers come from the scheduler's own constants and the user's own
+    limits, so this can't drift out of step with the code it describes.
   -->
   <div class="card-surface panel">
     <h2>How it works</h2>
     <p class="intro muted">
-      Every card moves through the same five states. The words are the ones on the labels in
-      Deck.
+      Get a card right and the gap before you see it again gets longer. Get it wrong and the gap
+      shrinks. That is the whole idea; the states below are just names for how far along a card is.
     </p>
 
     <dl class="stages">
       <dt><span class="pill new">New</span></dt>
-      <dd>
-        Never answered. Up to {store.settings.newPerDay} enter the queue each day, so a big import
-        doesn't become a wall.
-      </dd>
+      <dd>Never answered. {store.settings.newPerDay} of these start each day.</dd>
 
       <dt><span class="pill learning">Learning</span></dt>
-      <dd>
-        Comes back after {LEARNING_STEPS_MIN[0]} minute, then {LEARNING_STEPS_MIN[1]}. Two rights
-        in a row and it graduates to tomorrow; <strong>Easy</strong> skips both steps and jumps
-        straight to {EASY_INTERVAL} days.
-      </dd>
+      <dd>Today only — a few minutes apart, until you get it right twice.</dd>
 
       <dt><span class="pill young">Young</span></dt>
-      <dd>
-        Now scheduled in days. Each <strong>Good</strong> multiplies the gap by the card's ease,
-        which starts at {START_EASE} — roughly 1 day, 3, 6, 15, and on out.
-      </dd>
+      <dd>Coming back in days rather than minutes, and the gap is still short.</dd>
 
       <dt><span class="pill mature">Mature</span></dt>
-      <dd>
-        The same card once its gap passes {MATURE_DAYS} days. Nothing about the scheduling
-        changes; it is simply one you evidently know.
-      </dd>
+      <dd>The gap has passed {MATURE_DAYS} days. You know this one.</dd>
 
       <dt><span class="pill leech">Leech</span></dt>
       <dd>
-        {store.settings.leechThreshold} lapses. You keep forgetting it, which usually means the
-        card is at fault rather than you — worth rewriting with the pen before drilling it again.
+        Forgotten {store.settings.leechThreshold} times. Usually the card is at fault rather than
+        you — worth rewriting before drilling it again.
       </dd>
+    </dl>
+  </div>
+
+  <div class="card-surface panel">
+    <h2>The four buttons</h2>
+    <p class="intro muted">Each one moves the gap, rather than setting it.</p>
+
+    <dl class="stages">
+      <dt><span class="pill again">Again</span></dt>
+      <dd>Forgotten. Back in ten minutes, and the gap halves for next time.</dd>
+
+      <dt><span class="pill hard">Hard</span></dt>
+      <dd>Got there, barely. The gap grows a little, and grows more slowly from now on.</dd>
+
+      <dt><span class="pill good">Good</span></dt>
+      <dd>Knew it. The gap multiplies — this is the one to press most of the time.</dd>
+
+      <dt><span class="pill easy">Easy</span></dt>
+      <dd>Instant. A bigger jump, and bigger jumps from now on too.</dd>
     </dl>
 
     <p class="hint faint">
-      The buttons move the gap rather than set it. <strong>Good</strong> multiplies by the ease,
-      <strong>Hard</strong> by 1.2 and lowers the ease a little, <strong>Easy</strong> raises both.
-      <strong>Again</strong> is a lapse: the gap halves, the ease drops, and the card returns in
-      ten minutes. Ease never falls below {MIN_EASE}, and every interval is jittered by a few per
-      cent so one heavy day doesn't come back as a single spike.
+      Each card carries its own multiplier, starting at {START_EASE} and moving with your answers.
+      Intervals are nudged a few per cent either way so one heavy day doesn't all come back at once.
     </p>
   </div>
 
@@ -459,6 +461,24 @@
    * so the gap grows and both sides start on the same line — a margin on the
    * term alone would push it out of step with the text beside it.
    */
+  /* The four grade colours as pills, matching the buttons they describe. */
+  .stages :global(.pill.again) {
+    color: var(--again);
+    background: color-mix(in srgb, var(--again) 16%, transparent);
+  }
+  .stages :global(.pill.hard) {
+    color: var(--hard);
+    background: color-mix(in srgb, var(--hard) 16%, transparent);
+  }
+  .stages :global(.pill.good) {
+    color: var(--good);
+    background: color-mix(in srgb, var(--good) 16%, transparent);
+  }
+  .stages :global(.pill.easy) {
+    color: var(--easy);
+    background: color-mix(in srgb, var(--easy) 16%, transparent);
+  }
+
   /* Term is a pill, so the row aligns on the pill's own line rather than on a
      baseline the pill doesn't share. */
   .stages {

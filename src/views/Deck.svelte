@@ -10,7 +10,7 @@
   // The rule here is that what you see is what you drill: search and the two
   // dropdowns narrow one list, and Drill studies exactly that list.
 
-  import EntryEditor from '../components/EntryEditor.svelte'
+  import CardSheet from '../components/CardSheet.svelte'
   import { store } from '../lib/store.svelte.ts'
   import { cardFront } from '../lib/text.ts'
   import { MATURITY_LABEL, formatDelay, maturityOf } from '../lib/srs.ts'
@@ -18,7 +18,9 @@
 
   // Filter lives in the store so it survives leaving and returning.
   const f = store.deckFilter
-  let editing = $state<string | null>(null)
+  /** The entry whose card is open over the list. */
+  let opened = $state<string | null>(null)
+  const openedEntry = $derived(opened ? store.entryById(opened) : undefined)
 
   /** Deck labels carry their own progress, which Home used to show. */
   const deckOptions = $derived(
@@ -145,15 +147,8 @@
 
   <div class="list card-surface">
     {#each rows as row (row.entry.id)}
-      <div class="entry" class:open={editing === row.entry.id}>
-        {#if editing === row.entry.id}
-          <EntryEditor entry={row.entry} onDone={() => (editing = null)} />
-          <div class="row after-edit">
-            <span class="spacer"></span>
-            <button class="ghost danger tiny" onclick={() => remove(row.entry)}>Delete</button>
-          </div>
-        {:else}
-          <button class="row-button" onclick={() => (editing = row.entry.id)}>
+      <div class="entry">
+        <button class="row-button" onclick={() => (opened = row.entry.id)}>
             <div class="head row">
               <div class="text">
                 <div class="jp front">{cardFront(row.entry)}</div>
@@ -171,22 +166,33 @@
               </div>
             </div>
 
-            {#if row.entry.example}
-              <div class="detail">
-                <div class="jp example">{row.entry.example.target}</div>
-                {#if row.entry.example.native}
-                  <div class="faint example-native">{row.entry.example.native}</div>
-                {/if}
-              </div>
-            {/if}
-          </button>
-        {/if}
+          {#if row.entry.example}
+            <div class="detail">
+              <div class="jp example">{row.entry.example.target}</div>
+              {#if row.entry.example.native}
+                <div class="faint example-native">{row.entry.example.native}</div>
+              {/if}
+            </div>
+          {/if}
+        </button>
       </div>
     {:else}
       <p class="empty muted">Nothing matches that.</p>
     {/each}
   </div>
 </section>
+
+{#if openedEntry}
+  <CardSheet
+    entry={openedEntry}
+    onClose={() => (opened = null)}
+    onDelete={() => {
+      const entry = openedEntry
+      opened = null
+      if (entry) remove(entry)
+    }}
+  />
+{/if}
 
 <style>
   .filters {
@@ -249,10 +255,6 @@
     background-position: 1rem 0;
   }
 
-  .entry.open {
-    padding: 0.8rem 1rem;
-  }
-
   /* Borderless: the list draws the one line between rows, and a row is a
      region of the list rather than a control sitting on it. */
   .row-button {
@@ -308,19 +310,6 @@
 
   .example-native {
     margin-top: 0.1rem;
-  }
-
-  .tiny {
-    padding: 0.2rem 0.5rem;
-    font-size: 0.78rem;
-  }
-
-  .danger {
-    color: var(--again);
-  }
-
-  .after-edit {
-    margin-top: 0.6rem;
   }
 
   .empty {

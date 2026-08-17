@@ -9,7 +9,7 @@
 import type { ThemeMode } from './types.ts'
 
 /** Kept in step with --bg in app.css. */
-const PAGE = { light: '#f7f6f3', dark: '#191918' } as const
+const PAGE = { light: '#f9f8f7', dark: '#191918' } as const
 
 const system = (): 'light' | 'dark' =>
   typeof matchMedia === 'function' && matchMedia('(prefers-color-scheme: dark)').matches

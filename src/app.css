@@ -20,7 +20,7 @@
 /*
  * Ink on paper by day, near-neutral by night, and close to monochrome.
  *
- * Light keeps a little yellow in its greys so it reads as paper: #f7f6f3 for
+ * Light keeps a little yellow in its greys so it reads as paper: #f9f8f7 for
  * the page with white cards on top, and a warm off-black for the type. Dark
  * drops the warmth — a warm dark reads as brown rather than as unlit — and
  * softens the text to about 83% white, because pure white on near-black
@@ -59,7 +59,7 @@
    * The warmth stays in light, where it reads as paper. Dark goes near-neutral
    * — a warm dark reads as brown rather than as unlit.
    */
-  --bg: light-dark(#f7f6f3, #191918);
+  --bg: light-dark(#f9f8f7, #191918);
   --surface: light-dark(#ffffff, #212020);
   --surface-2: light-dark(#efedea, #2b2a29);
   --surface-3: light-dark(#e3e1dc, #363534);

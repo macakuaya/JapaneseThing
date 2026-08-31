@@ -130,3 +130,51 @@ describe('the shipped deck', () => {
     expect(repeated).toEqual([])
   })
 })
+
+
+/*
+ * Which entries can actually be deleted.
+ *
+ * Deleting only ever removes the user row. On an imported entry that has been
+ * edited, that row *is* the edit — so removing it restores the imported card
+ * rather than deleting anything. The editor offers a bin only where a bin is
+ * honest; these pin down the three cases it decides between.
+ */
+describe('deleting versus undoing an edit', () => {
+  const seed3 = [word('a', 'uno'), word('b', 'dos')]
+
+  it('removes an entry you added', () => {
+    const mine = word('nuevo', 'cuatro', 'user')
+    const out = merge(seed3, [mine]).filter((e) => e.id !== 'nuevo')
+    expect(out.map((e) => e.id)).toEqual(['a', 'b'])
+  })
+
+  it('restores the imported card when the user row was an edit', () => {
+    // The bug: this reads as a delete and is an undo.
+    const edit = word('b', 'DOS EDITADO', 'user')
+    const afterRemovingTheUserRow = merge(seed3, [])
+    expect(merge(seed3, [edit]).find((e) => e.id === 'b')!.meaning).toBe('DOS EDITADO')
+    expect(afterRemovingTheUserRow.find((e) => e.id === 'b')!.meaning).toBe('dos')
+    expect(afterRemovingTheUserRow).toHaveLength(2)
+  })
+
+  it('leaves an untouched imported entry there whatever you remove', () => {
+    expect(merge(seed3, []).map((e) => e.id)).toEqual(['a', 'b'])
+  })
+
+  it('tells the three cases apart by source and by having a user row', () => {
+    /*
+     * An edit keeps `source: 'seed'`. updateEntry spreads the existing entry
+     * and the patch, and the patch never carries a source — so "came from the
+     * import" survives being edited, which is the only thing separating an
+     * edit from an entry you added.
+     */
+    const userRows = [word('b', 'DOS EDITADO', 'seed'), word('nuevo', 'x', 'user')]
+    const overridden = (id: string) => userRows.some((e) => e.id === id)
+    const kindOf = (e: Entry) =>
+      e.source === 'user' ? 'added' : overridden(e.id) ? 'edited' : 'imported'
+
+    const merged = merge(seed3, userRows)
+    expect(merged.map(kindOf)).toEqual(['imported', 'edited', 'added'])
+  })
+})

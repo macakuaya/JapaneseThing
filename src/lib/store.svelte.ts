@@ -35,6 +35,9 @@ class Store {
   srs = $state<Record<string, CardState>>({})
   settings = $state<Settings>(storage.loadSettings())
   userEntries = $state<Entry[]>([])
+
+  /** Ids you have thrown away, whatever they came from. See storage.ts. */
+  deletedIds = $state<string[]>([])
   log = $state<ReviewLogEntry[]>([])
 
   /** Bumped on the minute so due counts don't go stale on an idle Home screen. */
@@ -136,6 +139,7 @@ class Store {
   constructor() {
     this.srs = storage.loadSrs()
     this.userEntries = storage.loadUserEntries()
+    this.deletedIds = storage.loadDeletedIds()
     this.log = storage.loadLog()
     this.syncDeck()
   }
@@ -157,7 +161,11 @@ class Store {
     const merged = seed.entries.map((e) => overrides.get(e.id) ?? e)
     const seedIds = new Set(seed.entries.map((e) => e.id))
     const added = this.userEntries.filter((e) => !seedIds.has(e.id))
-    return { ...seed, entries: [...merged, ...added] }
+    // Deletion is applied last, so it works the same on a bundled card as on
+    // one you added. The deck is not a place where a card's origin shows.
+    const gone = new Set(this.deletedIds)
+    const entries = [...merged, ...added].filter((e) => !gone.has(e.id))
+    return { ...seed, entries }
   })
 
   /**
@@ -291,20 +299,27 @@ class Store {
     this.syncDeck()
   }
 
+  /**
+   * Delete a card, whatever it came from.
+   *
+   * Dropping the user row is not enough on its own: a bundled card has no row
+   * to drop, and for an edited one the row *is* the edit, so removing it used
+   * to restore the imported original. Recording the id is what makes the
+   * outcome the same for all three.
+   */
   deleteEntry(id: string): void {
     this.userEntries = this.userEntries.filter((e) => e.id !== id)
     storage.saveUserEntries(this.userEntries)
+    if (!this.deletedIds.includes(id)) {
+      this.deletedIds = [...this.deletedIds, id]
+      storage.saveDeletedIds(this.deletedIds)
+    }
     this.syncDeck()
     const next = { ...this.srs }
     delete next[`${id}:recognition`]
     delete next[`${id}:production`]
     this.srs = next
     storage.saveSrs(this.srs)
-  }
-
-  /** True when a seed entry has been shadowed by a user edit. */
-  isOverridden(id: string): boolean {
-    return this.userEntries.some((e) => e.id === id)
   }
 
   // -------------------------------------------------------------------------

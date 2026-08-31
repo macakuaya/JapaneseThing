@@ -12,6 +12,7 @@ const K = {
   entries: PREFIX + 'entries',
   settings: PREFIX + 'settings',
   log: PREFIX + 'log',
+  deleted: PREFIX + 'deleted',
   session: PREFIX + 'session',
 } as const
 
@@ -66,6 +67,21 @@ function migrate(states: Record<string, CardState>): Record<string, CardState> {
 
 export const loadSrs = (): Record<string, CardState> => migrate(read(K.srs, {}))
 export const saveSrs = (v: Record<string, CardState>): void => write(K.srs, v)
+
+/**
+ * Ids of cards you have deleted.
+ *
+ * The bundled deck is a file, so a card from it cannot be removed by deleting
+ * a row — there is no row. Without this list, deleting an imported card either
+ * did nothing or silently undid an edit, and the app had to explain the
+ * difference between a card you added and one that arrived in the import.
+ * Keeping the ids means delete means delete, whatever the card's origin.
+ *
+ * It also survives `npm run import`: a card you threw away does not come back
+ * because the source file was rebuilt.
+ */
+export const loadDeletedIds = (): string[] => read<string[]>(K.deleted, [])
+export const saveDeletedIds = (v: string[]): void => write(K.deleted, v)
 
 export const loadUserEntries = (): Entry[] => read<Entry[]>(K.entries, [])
 export const saveUserEntries = (v: Entry[]): void => write(K.entries, v)
@@ -133,6 +149,8 @@ export interface Backup {
   entries: Entry[]
   settings: Settings
   log: ReviewLogEntry[]
+  /** Absent in backups written before deletion was possible. */
+  deleted?: string[]
 }
 
 export function exportBackup(): Backup {
@@ -144,6 +162,7 @@ export function exportBackup(): Backup {
     entries: loadUserEntries(),
     settings: loadSettings(),
     log: loadLog(),
+    deleted: loadDeletedIds(),
   }
 }
 
@@ -186,6 +205,7 @@ export function applyBackup(b: Backup): void {
   saveUserEntries(b.entries)
   saveSettings(b.settings)
   saveLog(b.log)
+  saveDeletedIds(b.deleted ?? [])
 }
 
 export function clearAll(): void {

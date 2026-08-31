@@ -7,7 +7,7 @@
   // during review, not only from Browse.
 
   import { store } from '../lib/store.svelte.ts'
-  import { RotateCcw, Trash2 } from '@lucide/svelte'
+  import { Trash2 } from '@lucide/svelte'
   import { cardFront, hasKanji, parseVocabulary, splitReadings } from '../lib/text.ts'
   import type { Entry } from '../lib/types.ts'
 
@@ -115,30 +115,16 @@
     onDone()
   }
 
-  /*
-   * There are three kinds of entry here and only one of them can be deleted.
+  /**
+   * Delete works the same on every card.
    *
-   *   added by you   — lives only in userEntries, so removing it removes it
-   *   imported       — comes back from seed.json every load; nothing to remove
-   *   imported+edited— your edit is the userEntries row; removing that row
-   *                    restores the imported original
-   *
-   * `deleteEntry` only ever removes the userEntries row, so on the third kind
-   * it looked like a delete, asked for confirmation, and put the original card
-   * straight back. That is not a delete, it is an undo, and it now says so.
+   * Where a card came from — the bundled file or the Add screen — is a fact
+   * about this app's plumbing, not about the card, and it has no business
+   * showing up in what you are allowed to do with it. The store records the
+   * id so a bundled card stays gone; see store.deleteEntry.
    */
-  const addedByYou = $derived(entry.source === 'user')
-  const edited = $derived(!addedByYou && store.isOverridden(entry.id))
-
   function remove() {
     if (!confirm(`Delete "${cardFront(entry)}" and its review history?`)) return
-    store.deleteEntry(entry.id)
-    onDone()
-  }
-
-  function revert() {
-    if (!confirm(`Undo your edits to "${cardFront(entry)}" and restore the imported version?`))
-      return
     store.deleteEntry(entry.id)
     onDone()
   }
@@ -231,33 +217,16 @@
     <button class="primary" onclick={save} disabled={!canSave}>Save</button>
     <button class="ghost" onclick={onDone}>Cancel</button>
     <span class="spacer"></span>
-    <!--
-      A bin rather than the word: it sits beside Save and Cancel, and of the
-      three it is the one you should not be able to press by reading fast.
-
-      Only where it can do something. An imported card cannot be deleted from
-      here — it returns on the next import — so it is offered no bin rather
-      than a bin that argues with you.
-    -->
-    {#if addedByYou}
-      <button
-        class="ghost danger icon"
-        onclick={remove}
-        title="Delete this card"
-        aria-label="Delete this card"
-      >
-        <Trash2 size={16} />
-      </button>
-    {:else if edited}
-      <button
-        class="ghost icon"
-        onclick={revert}
-        title="Undo your edits and restore the imported version"
-        aria-label="Undo your edits"
-      >
-        <RotateCcw size={16} />
-      </button>
-    {/if}
+    <!-- A bin rather than the word: it sits beside Save and Cancel, and of the
+         three it is the one you should not be able to press by reading fast. -->
+    <button
+      class="ghost danger icon"
+      onclick={remove}
+      title="Delete this card"
+      aria-label="Delete this card"
+    >
+      <Trash2 size={16} />
+    </button>
   </div>
 </form>
 

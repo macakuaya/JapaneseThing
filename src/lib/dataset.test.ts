@@ -133,48 +133,46 @@ describe('the shipped deck', () => {
 
 
 /*
- * Which entries can actually be deleted.
+ * Deletion, which must not care where a card came from.
  *
- * Deleting only ever removes the user row. On an imported entry that has been
- * edited, that row *is* the edit — so removing it restores the imported card
- * rather than deleting anything. The editor offers a bin only where a bin is
- * honest; these pin down the three cases it decides between.
+ * Removing the user row is not enough on its own: a bundled card has no row,
+ * and for an edited one the row *is* the edit, so removing it restores the
+ * original. Recording the id is what makes all three behave the same.
  */
-describe('deleting versus undoing an edit', () => {
-  const seed3 = [word('a', 'uno'), word('b', 'dos')]
+function deck(seedEntries: Entry[], userEntries: Entry[], deleted: string[]): Entry[] {
+  const gone = new Set(deleted)
+  return merge(seedEntries, userEntries).filter((e) => !gone.has(e.id))
+}
 
-  it('removes an entry you added', () => {
-    const mine = word('nuevo', 'cuatro', 'user')
-    const out = merge(seed3, [mine]).filter((e) => e.id !== 'nuevo')
-    expect(out.map((e) => e.id)).toEqual(['a', 'b'])
+describe('deleting a card', () => {
+  const mine = word('nuevo', 'cuatro', 'user')
+  // An edit keeps source 'seed': updateEntry spreads the existing entry and the
+  // patch never carries a source, so "came from the import" survives an edit.
+  const edit = word('b', 'DOS EDITADO', 'seed')
+
+  it('removes one you added', () => {
+    expect(deck(seed, [mine], ['nuevo']).map((e) => e.id)).toEqual(['a', 'b', 'c'])
   })
 
-  it('restores the imported card when the user row was an edit', () => {
-    // The bug: this reads as a delete and is an undo.
-    const edit = word('b', 'DOS EDITADO', 'user')
-    const afterRemovingTheUserRow = merge(seed3, [])
-    expect(merge(seed3, [edit]).find((e) => e.id === 'b')!.meaning).toBe('DOS EDITADO')
-    expect(afterRemovingTheUserRow.find((e) => e.id === 'b')!.meaning).toBe('dos')
-    expect(afterRemovingTheUserRow).toHaveLength(2)
+  it('removes an imported one, which has no row to remove', () => {
+    expect(deck(seed, [], ['b']).map((e) => e.id)).toEqual(['a', 'c'])
   })
 
-  it('leaves an untouched imported entry there whatever you remove', () => {
-    expect(merge(seed3, []).map((e) => e.id)).toEqual(['a', 'b'])
+  it('removes an imported one you had edited, rather than restoring it', () => {
+    // The bug this fixes: dropping the user row alone brought 'dos' back.
+    expect(deck(seed, [edit], ['b']).map((e) => e.id)).toEqual(['a', 'c'])
   })
 
-  it('tells the three cases apart by source and by having a user row', () => {
-    /*
-     * An edit keeps `source: 'seed'`. updateEntry spreads the existing entry
-     * and the patch, and the patch never carries a source — so "came from the
-     * import" survives being edited, which is the only thing separating an
-     * edit from an entry you added.
-     */
-    const userRows = [word('b', 'DOS EDITADO', 'seed'), word('nuevo', 'x', 'user')]
-    const overridden = (id: string) => userRows.some((e) => e.id === id)
-    const kindOf = (e: Entry) =>
-      e.source === 'user' ? 'added' : overridden(e.id) ? 'edited' : 'imported'
+  it('keeps it deleted after a re-import rebuilds the source file', () => {
+    const reimported = [...seed, word('d', 'cuatro')]
+    expect(deck(reimported, [], ['b']).map((e) => e.id)).toEqual(['a', 'c', 'd'])
+  })
 
-    const merged = merge(seed3, userRows)
-    expect(merged.map(kindOf)).toEqual(['imported', 'edited', 'added'])
+  it('leaves everything else alone', () => {
+    expect(deck(seed, [mine], ['b'])).toHaveLength(3)
+  })
+
+  it('is a no-op for an id that is not in the deck', () => {
+    expect(deck(seed, [], ['nope']).map((e) => e.id)).toEqual(['a', 'b', 'c'])
   })
 })

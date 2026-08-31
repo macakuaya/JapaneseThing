@@ -231,11 +231,18 @@
 </form>
 
 <style>
+  /*
+   * Fills the card, so the actions can sit on the bottom edge rather than
+   * wherever the last field happened to end. A pattern card has two fewer
+   * fields than a kanji one; without this the buttons moved up the card
+   * depending on which kind you opened.
+   */
   .editor {
     text-align: left;
     display: flex;
     flex-direction: column;
     gap: 0.9rem;
+    min-height: 100%;
   }
 
   /*
@@ -271,6 +278,7 @@
 
   .actions {
     gap: 0.5rem;
+    margin-top: auto;
   }
 
   .danger {

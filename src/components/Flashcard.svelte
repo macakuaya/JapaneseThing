@@ -265,11 +265,21 @@
     overflow: hidden;
   }
 
+  /*
+   * The 2px is room for a focus ring: this scrolls, and a scroll container
+   * clips at its own padding box, so a ring on the first or last field would
+   * be shaved off.
+   *
+   * It is borrowed from the card's padding rather than added to it — pulled
+   * out 2px on every side and grown by the 4px that costs — so the gap under
+   * the buttons is the same as the gap beside the fields. Shifting without
+   * growing left it 4px short.
+   */
   .editing-pane {
-    height: 100%;
-    overflow-y: auto;
-    /* Room for the focus ring on the last field, which a flush edge clips. */
+    height: calc(100% + 4px);
+    margin: -2px;
     padding: 2px;
+    overflow-y: auto;
   }
 
   /*

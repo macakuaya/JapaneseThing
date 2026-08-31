@@ -105,6 +105,15 @@ class Store {
   studySource = $state<string | null>(null)
 
   /**
+   * What the run that just ended did, read by Home's status line.
+   *
+   * A finished session used to say this on itself, on the back of a card that
+   * turned over. Now the card goes home instead, so the tally follows it there
+   * — the same line that tells you what is left tells you what you just did.
+   */
+  lastRun = $state<{ correct: number; answered: number; counted: boolean } | null>(null)
+
+  /**
    * The Deck view's filter, held here rather than in the component so it
    * survives navigating away. Drilling a subcategory and coming back to "All
    * decks" loses your place in a 202-card list.

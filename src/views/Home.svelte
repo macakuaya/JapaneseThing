@@ -89,6 +89,16 @@
   /** The footer doubles as the way in to "did I turn up?". */
   let showStreak = $state(false)
 
+  /**
+   * The run you just finished, if you have just finished one.
+   *
+   * It reports itself here because the card that used to carry this went home
+   * — the tally came with it. Cleared when Home goes away, so it is what you
+   * see on landing and not a stale figure you meet again tomorrow.
+   */
+  const run = $derived(store.lastRun)
+  $effect(() => () => (store.lastRun = null))
+
 </script>
 
 <section class="hand">
@@ -157,7 +167,10 @@
   category decks all feed the same queue.
 -->
 <button class="page-status" onclick={() => (showStreak = true)} title="Your streak">
-  {#if inProgress}
+  {#if run}
+    <span class="n">{run.correct}</span> / <span class="n">{run.answered}</span>
+    · {run.counted ? 'answers counted' : 'practice only'}
+  {:else if inProgress}
     <span class="n">{inProgress.queue.length}</span> left in today's review
   {:else if ready > 0}
     <span class="n">{counts.due}</span> review · <span class="n">{counts.fresh}</span> new

@@ -10,7 +10,6 @@
   } from '../lib/session.ts'
   import { dayStart } from '../lib/srs.ts'
   import { store } from '../lib/store.svelte.ts'
-  import { cardFront } from '../lib/text.ts'
   import { withViewTransition } from '../lib/transition.ts'
   import * as storage from '../lib/storage.ts'
   import type { CardState, Grade, ReviewLogEntry } from '../lib/types.ts'
@@ -142,7 +141,28 @@
     void current?.key
     store.sessionEditing = false
   })
-  const current = $derived(queue[Math.min(index, queue.length - 1)] ?? null)
+  /**
+   * The card that emptied the deck, held so it stays on screen while the run
+   * winds up. The queue is empty by then, and without this the card would be
+   * unmounted before the closing animation had anything to animate.
+   */
+  let lastCard = $state<Card | null>(null)
+
+  /**
+   * The keyed block's key, frozen at the last answer.
+   *
+   * It normally includes `answered`, so incrementing it would tear down the
+   * card and build a new one — in the frame before the closing animation, of
+   * all frames. Freezing it means the element that goes home is the same
+   * element you were just looking at, which is the entire point.
+   */
+  let frozenKey = $state<string | null>(null)
+
+  /*
+   * Falls back to the card that emptied the queue: finishing should not blank
+   * the screen, it should send that card back to its deck.
+   */
+  const current = $derived(queue[Math.min(index, queue.length - 1)] ?? lastCard)
   const done = $derived(queue.length === 0)
   const revealed = $derived(current ? revealedKeys.has(current.key) : false)
 
@@ -175,13 +195,6 @@
 
   let pressed = $state<Grade | null>(null)
 
-  /**
-   * The card that emptied the deck, kept so the summary can be its other side.
-   * Without it the run would end on a card vanishing and a differently shaped
-   * panel appearing somewhere else on the page.
-   */
-  let lastFront = $state<string | null>(null)
-
 
   /** Light the button, then commit. Also swallows a second press mid-flash. */
   function grade(g: Grade) {
@@ -197,6 +210,7 @@
     const card = current
     if (!card || !revealed) return
 
+    const key = `${card.key}:${index}:${answered}`
     const at = Date.now()
     const previous = store.srs[card.key] ?? null
     const nextState = store.grade(card, g, config.writeThrough, at)
@@ -215,10 +229,20 @@
     // The answered card left the queue, so the cursor now points at whatever
     // took its place. Clamp for the case where it was the last one.
     index = Math.min(index, Math.max(0, queue.length - 1))
-    if (!queue.length) lastFront = cardFront(card.entry)
-    revealedKeys = new Set([...revealedKeys].filter((k) => k !== card.key))
     now = at
     persist()
+
+    if (!queue.length) {
+      // Keep it exactly as it is — still face-up, still showing the grades it
+      // was showing — and send it home. Clearing its reveal or handing it the
+      // new schedule would change the card during its own exit.
+      lastCard = card
+      frozenKey = key
+      finish()
+      return
+    }
+
+    revealedKeys = new Set([...revealedKeys].filter((k) => k !== card.key))
   }
 
   function undo() {
@@ -234,6 +258,22 @@
     revealedKeys = new Set(revealedKeys).add(last.card.key)
     now = Date.now()
     persist()
+  }
+
+  /**
+   * The last answer ends the run, so the card goes back where it came from.
+   *
+   * It used to turn over instead, with the tally printed on its back. The turn
+   * read as the card contradicting itself — the same object, inverted, saying
+   * something else — when what actually happened is that the deck is finished.
+   * Reversing the motion that opened it says that without any words, and the
+   * tally goes home too, on Home's status line.
+   */
+  function finish() {
+    if (startedWith > 0) {
+      store.lastRun = { correct, answered, counted: config.writeThrough }
+    }
+    dismiss()
   }
 
   /**
@@ -261,7 +301,7 @@
     if (store.sessionEditing) return
     const target = event.target as HTMLElement | null
     if (!target || !target.isConnected) return
-    if (target.closest('.card, nav, .summary, .panel')) return
+    if (target.closest('.card, nav, .panel')) return
     dismiss()
   }
 
@@ -342,45 +382,10 @@
     it, sitting on the card as the smallest text on screen — and it was the
     one fact that actually mattered: whether the answers count.
   -->
-  {#if done && startedWith > 0}
-    <p class="page-status">
-      {#if config.writeThrough}
-        Answers counted — these cards come back on their new dates
-      {:else}
-        Practice only — your review dates are unchanged
-      {/if}
-    </p>
-  {/if}
-
-  {#if done}
-    <!--
-      The deck doesn't end by swapping the card for a panel; the last card
-      turns over and the tally is on its back. Same shape, same place, so the
-      end of a run belongs to the deck rather than interrupting it.
-    -->
-    <div class="stage">
-      <div class="flip card-shape" class:instant={!lastFront}>
-        <div class="face front jp">
-          {#if lastFront}{lastFront}{/if}
-        </div>
-
-        <div class="face back summary">
-          <h2>{startedWith === 0 ? 'Nothing to review' : 'Session complete'}</h2>
-          {#if startedWith === 0}
-            <p class="muted">
-              No cards are due right now. Try a deck if you want to drill something specific.
-            </p>
-          {:else}
-            <p class="score">{correct} / {answered}</p>
-          {/if}
-          <button class="primary" onclick={dismiss}>Done</button>
-        </div>
-      </div>
-    </div>
-  {:else if current}
+  {#if current}
     <!-- Takes all the room between header and hint, and centres the card in it. -->
     <div class="stage">
-      {#key current.key + ':' + index + ':' + answered}
+      {#key frozenKey ?? `${current.key}:${index}:${answered}`}
         <Flashcard
           card={current}
           {revealed}
@@ -401,9 +406,19 @@
       cards, so a card coming back for its next learning step counts each time
       — the progress bar measures the same, so the two never disagree.
     -->
-    <p class="page-status">
-      <span class="n">{answered}</span> done · <span class="n">{queue.length}</span> left
-    </p>
+    {#if !done}
+      <p class="page-status">
+        <span class="n">{answered}</span> done · <span class="n">{queue.length}</span> left
+      </p>
+    {/if}
+  {:else}
+    <!--
+      Nothing was due. Not the end of a run — there was no run — so it is a
+      plain line rather than a card, and there is nothing to send home.
+    -->
+    <div class="stage">
+      <p class="idle muted">No cards are due right now.</p>
+    </div>
   {/if}
 </section>
 
@@ -450,81 +465,10 @@
     transition: width 0.25s ease;
   }
 
-  /*
-   * Two faces of one card. preserve-3d is what makes the back genuinely the
-   * far side rather than a second element fading in over the first.
-   *
-   * An animation, not a transition. A transition needs the element laid out
-   * in its start state and *then* changed, which meant applying the turned
-   * state a frame after mount and hoping the ordering held — it didn't, and
-   * the card sat there face-up. An animation just runs when the element is
-   * inserted.
-   */
-  .flip {
-    position: relative;
-    transform-style: preserve-3d;
-    animation: turn 560ms cubic-bezier(0.3, 0, 0.2, 1) forwards;
-  }
-
-  @keyframes turn {
-    from {
-      transform: rotateY(0deg);
-    }
-    to {
-      transform: rotateY(180deg);
-    }
-  }
-
-  /* Nothing was reviewed, so there is no face to turn over — the summary is
-     simply what the card says. */
-  .flip.instant {
-    animation: none;
-    transform: rotateY(180deg);
-  }
-
-  .face {
-    position: absolute;
-    inset: 0;
-    backface-visibility: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 1.3rem 1.15rem;
-    text-align: center;
-    background: var(--surface);
-    border-radius: var(--radius);
-  }
-
-  .front {
-    font-size: clamp(1.35rem, 5.5vw, 1.9rem);
-    overflow-wrap: anywhere;
-  }
-
-  .back {
-    transform: rotateY(180deg);
-    gap: 0.5rem;
-  }
-
-  .summary p {
+  .idle {
     margin: 0;
+    font-size: 0.9rem;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .flip {
-      animation: none;
-      transform: rotateY(180deg);
-    }
-  }
-
-  .score {
-    font-size: 2.5rem;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .summary button {
-    margin-top: 1rem;
-    min-width: 140px;
-  }
 
 </style>

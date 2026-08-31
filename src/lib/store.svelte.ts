@@ -105,6 +105,13 @@ class Store {
   studySource = $state<string | null>(null)
 
   /**
+   * Whether a card's contents are currently out of the way, so that the shape
+   * alone can travel between Home and the study view. Set for the length of a
+   * morph and read by both ends of it.
+   */
+  morphHidden = $state(false)
+
+  /**
    * What the run that just ended did, read by Home's status line.
    *
    * A finished session used to say this on itself, on the back of a card that

@@ -9,7 +9,7 @@
   import { tick } from 'svelte'
   import { store, type View } from '../lib/store.svelte.ts'
   import { dayStart, formatDelay } from '../lib/srs.ts'
-  import { MORPH, withViewTransition } from '../lib/transition.ts'
+  import { MORPH, morph } from '../lib/transition.ts'
   import Heatmap from '../components/Heatmap.svelte'
   import * as storage from '../lib/storage.ts'
 
@@ -60,7 +60,7 @@
     // this same deck.
     store.studySource = id
     await tick()
-    await withViewTransition(go)
+    await morph(go)
     store.morphing = null
   }
 
@@ -106,6 +106,7 @@
   <button
     class="card daily"
     class:spent={ready === 0 && !inProgress}
+    class:hushed={store.morphHidden && store.morphing === 'daily'}
     style:view-transition-name={store.morphing === 'daily' ? MORPH : 'none'}
     onclick={startDaily}
     disabled={ready === 0 && !inProgress}
@@ -133,6 +134,7 @@
     <button
       class="card"
       class:spent={deck.total === 0}
+      class:hushed={store.morphHidden && store.morphing === deck.id}
       style:view-transition-name={store.morphing === deck.id ? MORPH : 'none'}
       onclick={() => studyDeck(deck.id)}
       disabled={deck.total === 0}
@@ -297,6 +299,16 @@
      ready as the ones that can. */
   .spent .title {
     opacity: 0.45;
+  }
+
+  /* The title is the deck's contents; it clears off so the shape can travel
+     without it, and comes back once the shape has arrived. */
+  .card > :global(*) {
+    transition: opacity var(--morph-fade) ease;
+  }
+
+  .card.hushed > :global(*) {
+    opacity: 0;
   }
 
   footer {

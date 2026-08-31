@@ -132,6 +132,14 @@
 
   --radius: 14px;
   --radius-sm: 9px;
+
+  /*
+   * The first and last beat of a deck opening: how long a card's contents take
+   * to clear off and to come back. Short — it is getting out of the way of the
+   * motion, not performing one. `transition.ts` reads this value, so the two
+   * halves of the choreography can't drift apart.
+   */
+  --morph-fade: 80ms;
   --maxw: 760px;
 }
 
@@ -614,32 +622,36 @@ button.page-status:hover {
 /* --- view transitions ---------------------------------------------------- */
 
 /*
- * A tapped deck grows into the card being studied. The morph is the whole
- * point, so it runs a little longer than the surrounding cross-fade and eases
- * out — the shape settling is what should read, not the fade.
+ * The middle beat: a tapped deck grows into the card being studied. Both
+ * snapshots are blank by now — `morph()` in transition.ts clears them first —
+ * so this is a shape travelling and resizing, and nothing else.
+ *
+ * Kept brief. The whole sequence is three beats end to end, and a morph you
+ * have time to watch is a morph you have time to wait for.
  */
 ::view-transition-group(card-morph) {
-  animation-duration: 320ms;
+  animation-duration: 190ms;
   animation-timing-function: cubic-bezier(0.2, 0, 0.15, 1);
 }
 
 /*
- * The two snapshots differ in content, so cross-fade them quickly and let the
- * geometry carry the motion.
+ * Two empty cards of different sizes, so there is nothing to read in this
+ * cross-fade — it is only here to cover the small difference between a deck's
+ * surface and a flashcard's while one becomes the other.
  *
- * No height override here. Forcing `height: 100%` stretches each snapshot to
- * fill the group box, which distorts both faces mid-flight — the card appeared
- * to squash rather than grow. The deck and the card now share a 3:4 ratio, so
- * the default scaling is already the right shape.
+ * No height override. Forcing `height: 100%` stretches each snapshot to fill
+ * the group box, which distorted both faces mid-flight — the card appeared to
+ * squash rather than grow. The deck and the card share a 3:4 ratio, so the
+ * default scaling is already the right shape.
  */
 ::view-transition-old(card-morph),
 ::view-transition-new(card-morph) {
-  animation-duration: 160ms;
+  animation-duration: 90ms;
 }
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
-  animation-duration: 180ms;
+  animation-duration: 150ms;
 }
 
 @media (prefers-reduced-motion: reduce) {

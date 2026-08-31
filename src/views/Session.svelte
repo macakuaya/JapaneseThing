@@ -10,7 +10,7 @@
   } from '../lib/session.ts'
   import { dayStart } from '../lib/srs.ts'
   import { store } from '../lib/store.svelte.ts'
-  import { withViewTransition } from '../lib/transition.ts'
+  import { morph } from '../lib/transition.ts'
   import * as storage from '../lib/storage.ts'
   import type { CardState, Grade, ReviewLogEntry } from '../lib/types.ts'
 
@@ -285,7 +285,7 @@
   async function dismiss() {
     store.morphing = store.studySource
     await tick()
-    await withViewTransition(onExit)
+    await morph(onExit)
     store.morphing = null
     store.studySource = null
   }

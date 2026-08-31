@@ -80,7 +80,12 @@
   })
 </script>
 
-<article class="card card-shape" class:editing class:kanji={entry.kind === 'kanji'}>
+<article
+  class="card card-shape"
+  class:editing
+  class:kanji={entry.kind === 'kanji'}
+  class:hushed={store.morphHidden}
+>
   {#if editing}
     <!-- Same box, same size, same place: the card doesn't become a different
          object to be corrected, it just shows its own fields. -->
@@ -255,6 +260,23 @@
     padding: 1.3rem 1.15rem;
     text-align: center;
     view-transition-name: card-morph;
+  }
+
+  /*
+   * The face, not the card. While the shape is travelling between here and a
+   * deck on Home there must be nothing written on it — a snapshot carries
+   * whatever the element contained, so contents left in place would be
+   * stretched along with the box.
+   *
+   * `:global` because some of these children belong to Grader and EntryEditor;
+   * what has to empty is everything the card is holding, whoever rendered it.
+   */
+  .card > :global(*) {
+    transition: opacity var(--morph-fade) ease;
+  }
+
+  .card.hushed > :global(*) {
+    opacity: 0;
   }
 
   /* Keeps the card's proportions rather than growing to fit the form, so

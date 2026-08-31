@@ -134,12 +134,17 @@
   --radius-sm: 9px;
 
   /*
-   * The first and last beat of a deck opening: how long a card's contents take
-   * to clear off and to come back. Short — it is getting out of the way of the
-   * motion, not performing one. `transition.ts` reads this value, so the two
-   * halves of the choreography can't drift apart.
+   * A deck opening, in three numbers. `transition.ts` reads all three from
+   * here and only decides when each beat starts, so the timing has one home.
+   *
+   * The fade is short because it is getting out of the way of the motion
+   * rather than performing one. The overlap is how far into the travel's tail
+   * the new contents start arriving — without it the shape stopping and the
+   * contents appearing read as two separate events.
    */
   --morph-fade: 80ms;
+  --morph-travel: 190ms;
+  --morph-overlap: 60ms;
   --maxw: 760px;
 }
 
@@ -628,9 +633,12 @@ button.page-status:hover {
  *
  * Kept brief. The whole sequence is three beats end to end, and a morph you
  * have time to watch is a morph you have time to wait for.
+ *
+ * Custom properties reach here because the view-transition pseudo tree hangs
+ * off the root element and inherits from it.
  */
 ::view-transition-group(card-morph) {
-  animation-duration: 190ms;
+  animation-duration: var(--morph-travel);
   animation-timing-function: cubic-bezier(0.2, 0, 0.15, 1);
 }
 

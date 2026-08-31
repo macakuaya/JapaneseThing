@@ -210,7 +210,19 @@ button {
   background: transparent;
   border: 1px solid var(--control-border);
   border-radius: var(--radius-sm);
-  padding: 0.55rem 0.9rem;
+  /*
+   * One height for every control.
+   *
+   * Text buttons came to 42px from their padding, header icons to 35 and the
+   * editor's bin to 28 — an icon has no line box, so padding alone could never
+   * make them agree. 2.5rem is not arbitrary: the header is 3.5rem tall with a
+   * 1rem inset, so 40px is exactly what fits there, and a control that cannot
+   * live in the header is the wrong size for the app.
+   *
+   * Vertical padding is the *minimum* each needs; the height comes from here.
+   */
+  padding: 0.45rem 0.9rem;
+  min-height: 2.5rem;
   transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
 }
 
@@ -275,6 +287,26 @@ p > svg {
  */
 svg[stroke-width] {
   stroke-width: 1.75;
+}
+
+/*
+ * The compact variant, for a dense row where a full-height control would
+ * dominate — the draft table's per-row buttons. One deliberate alternative
+ * rather than four accidental ones.
+ */
+button.tiny {
+  min-height: 1.75rem;
+  padding: 0.2rem 0.5rem;
+}
+
+/*
+ * Buttons that are really regions: a whole card, a list row, the scrim, the
+ * brand. They take their height from what they hold, and a minimum here would
+ * push 語 off the corner it is aligned to.
+ */
+button.brand,
+button.page-status {
+  min-height: 0;
 }
 
 /* The only truly transparent control: it lives inside another surface. */

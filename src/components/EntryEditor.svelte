@@ -284,7 +284,6 @@
   .danger {
     color: var(--again);
     border-color: transparent;
-    padding: 0.3rem 0.5rem;
   }
 
   .danger:hover:not(:disabled) {

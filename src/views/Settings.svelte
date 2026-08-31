@@ -419,7 +419,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.45rem;
-    padding: 0.6rem 0.5rem;
+    padding: 0.45rem 0.5rem;
     color: var(--muted);
   }
 
